@@ -147,6 +147,7 @@ export function SearchPage() {
                     key={c.slug}
                     data-testid={`category-${c.slug}`}
                     onClick={() => {
+                      setQuery('');
                       setCategory(c.slug);
                       setResult(null);
                     }}
