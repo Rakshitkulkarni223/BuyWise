@@ -5,3 +5,8 @@ credentials.json
 *.pem
 *.key
 .credentials
+
+backend/node_modules
+frontend/node_modules
+backend/__pycache__
+frontend/__pycache__
