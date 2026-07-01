@@ -11,12 +11,7 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
-  Layers,
-  Database,
-  Globe,
-  Shield,
   Zap,
-  GitBranch,
   CheckCircle2,
   Play,
 } from 'lucide-react';
@@ -40,13 +35,13 @@ const WALKTHROUGH_STEPS: Step[] = [
     description: 'Authenticate with your credentials or create a new account to access the platform.',
     icon: LogIn,
     details: [
-      'JWT-based authentication with bcrypt password hashing.',
-      'Default admin account is seeded on first startup.',
-      'Token is stored in localStorage and attached to every API request.',
-      'Protected routes redirect unauthenticated users to the login page.',
+      'Sign up with your name, email, and password.',
+      'Log in with your credentials to access the platform.',
+      'Your session stays active so you don\'t have to log in every time.',
+      'All your data is private and tied to your account.',
     ],
     route: '/login',
-    badge: { label: 'Auth', tone: 'neutral' },
+    badge: { label: 'Get Started', tone: 'neutral' },
   },
   {
     id: 2,
@@ -68,12 +63,12 @@ const WALKTHROUGH_STEPS: Step[] = [
     description: 'Search for any product across multiple suppliers simultaneously.',
     icon: Search,
     details: [
-      'Select a category (Electronics, Fashion, Groceries, etc.).',
-      'Choose which suppliers to compare (Amazon, Flipkart, etc.).',
-      'Enter your product query — all suppliers are queried in parallel.',
-      'Results are normalized, deduplicated, and ranked.',
-      'AI Recommendation Engine scores each result using your chosen weight profile.',
-      'View detailed comparison: price, delivery, rating, warranty, and more.',
+      'Pick a category — Electronics, Fashion, Groceries, and more.',
+      'Select which suppliers you want to compare (Amazon, Flipkart, etc.).',
+      'Type in the product you\'re looking for and hit Search.',
+      'Instantly see side-by-side results from all suppliers.',
+      'Our AI recommends the best option based on your priorities.',
+      'Compare price, delivery time, ratings, warranty, and return policy at a glance.',
     ],
     route: '/search',
     badge: { label: 'Core Feature', tone: 'success' },
@@ -85,11 +80,11 @@ const WALKTHROUGH_STEPS: Step[] = [
     icon: ShoppingCart,
     details: [
       'Switch to "Basket" mode on the Search page.',
-      'Add multiple items with quantities to your basket.',
-      'The Split-Cart Optimizer searches each item across all selected suppliers.',
-      'Compares a SPLIT plan (best supplier per item) vs. CONSOLIDATED (single supplier).',
-      'Consolidation penalty models real shipping costs.',
-      'Shows total cost, savings, and recommended procurement plan.',
+      'Add all the items you need to purchase with quantities.',
+      'The AI searches every item across all your selected suppliers.',
+      'See the smartest way to split your order — or buy everything from one supplier.',
+      'Shipping costs are factored in so the recommendation is realistic.',
+      'View your total cost, potential savings, and the recommended buying plan.',
     ],
     route: '/search',
     badge: { label: 'Core Feature', tone: 'success' },
@@ -100,13 +95,14 @@ const WALKTHROUGH_STEPS: Step[] = [
     description: 'Customize how the AI ranks suppliers based on what matters most to you.',
     icon: Zap,
     details: [
-      'Balanced — Equal weight across all factors.',
-      'Cost Saver — Prioritizes lowest price and highest discounts.',
-      'Speed Priority — Favors fastest delivery times.',
-      'Quality First — Emphasizes ratings, warranty, and return policy.',
-      'Profiles adjust weights for: price, delivery, rating, discount, availability, warranty, return policy.',
+      'Balanced — Considers all factors equally for a well-rounded pick.',
+      'Cost Saver — Finds you the absolute cheapest option.',
+      'Speed Priority — Picks the supplier that delivers fastest.',
+      'Quality First — Focuses on top ratings, best warranty, and easy returns.',
+      'Switch profiles anytime — results update instantly.',
     ],
-    badge: { label: 'AI Engine', tone: 'warning' },
+    route: '/search',
+    badge: { label: 'Smart Picks', tone: 'warning' },
   },
   {
     id: 6,
@@ -114,11 +110,11 @@ const WALKTHROUGH_STEPS: Step[] = [
     description: 'Review every comparison you\'ve run with full pagination support.',
     icon: History,
     details: [
-      'Paginated list with Prev/Next controls and "Page X of Y" display.',
-      'Shows query, category, weight profile, suppliers compared, and savings.',
-      'Re-run any past search with one click.',
-      'Delete individual entries — automatically adjusts pagination.',
-      'Server-side pagination with compound indexes for performance.',
+      'Browse through all your past searches, organized by date.',
+      'See the product searched, category, suppliers compared, and savings found.',
+      'Re-run any previous search with a single click.',
+      'Delete entries you no longer need.',
+      'Navigate through pages with simple Prev/Next controls.',
     ],
     route: '/history',
     badge: { label: 'Activity', tone: 'neutral' },
@@ -153,38 +149,6 @@ const WALKTHROUGH_STEPS: Step[] = [
   },
 ];
 
-const ARCH_LAYERS = [
-  {
-    icon: Globe,
-    title: 'Frontend (React SPA)',
-    tech: 'React 18 · TypeScript · TailwindCSS · Recharts',
-    description: 'Single-page application with responsive sidebar layout, Axios API client, and React Router v6.',
-  },
-  {
-    icon: Layers,
-    title: 'Backend (Express API)',
-    tech: 'Node.js · Express 4 · TypeScript · Zod · Swagger',
-    description: 'RESTful API with Controller → Service → Repository layering, JWT auth middleware, and async error handling.',
-  },
-  {
-    icon: Database,
-    title: 'Database (MongoDB)',
-    tech: 'MongoDB Atlas · Mongoose ODM',
-    description: 'Document database with compound indexes for efficient paginated queries. Models: User, SearchHistory, BasketHistory, Category, Supplier.',
-  },
-  {
-    icon: Shield,
-    title: 'Authentication',
-    tech: 'JWT · bcryptjs',
-    description: 'Stateless JWT tokens with bcrypt password hashing. Protected route middleware on all API endpoints.',
-  },
-  {
-    icon: GitBranch,
-    title: 'Provider Adapters',
-    tech: 'Adapter Pattern · Promise.allSettled',
-    description: 'Pluggable supplier integrations. Currently uses mock data; swap in real APIs without changing business logic.',
-  },
-];
 
 function StepCard({ step, isOpen, onToggle, onNavigate }: {
   step: Step;
@@ -354,49 +318,17 @@ export function WalkthroughPage() {
         </div>
       </div>
 
-      {/* Architecture Overview */}
-      <div>
-        <h2 className="mb-4 font-display text-xl font-bold text-ink flex items-center gap-2">
-          <Layers size={20} /> Architecture Overview
-        </h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {ARCH_LAYERS.map((layer) => {
-            const Icon = layer.icon;
-            return (
-              <Card key={layer.title}>
-                <CardBody>
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent">
-                      <Icon size={18} />
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-ink">{layer.title}</h3>
-                      <p className="text-[11px] font-medium text-muted">{layer.tech}</p>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-sm text-ink-soft leading-relaxed">{layer.description}</p>
-                </CardBody>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Request Flow Diagram */}
+      {/* How It Works — simple visual flow */}
       <Card>
         <CardBody>
-          <h2 className="mb-4 font-display text-lg font-bold text-ink">Request Flow — How a Search Works</h2>
+          <h2 className="mb-4 font-display text-lg font-bold text-ink">How It Works</h2>
           <div className="overflow-x-auto">
-            <div className="flex items-center gap-3 min-w-[700px] py-2">
+            <div className="flex items-center gap-3 min-w-[600px] py-2">
               {[
-                { label: 'User', sub: 'Enters query', color: 'bg-ink' },
-                { label: 'React App', sub: 'POST /api/search', color: 'bg-blue-600' },
-                { label: 'Express API', sub: 'Auth + Validate', color: 'bg-violet-600' },
-                { label: 'SearchService', sub: 'Parallel fetch', color: 'bg-amber-600' },
-                { label: 'Adapters', sub: 'Query suppliers', color: 'bg-emerald-600' },
-                { label: 'ComparisonSvc', sub: 'Dedupe + Sort', color: 'bg-rose-600' },
-                { label: 'RecommendSvc', sub: 'AI scoring', color: 'bg-purple-600' },
-                { label: 'Response', sub: 'Ranked results', color: 'bg-ink' },
+                { label: 'Search', sub: 'Enter a product', color: 'bg-blue-600' },
+                { label: 'Compare', sub: 'See all suppliers', color: 'bg-violet-600' },
+                { label: 'AI Recommends', sub: 'Best option picked', color: 'bg-amber-600' },
+                { label: 'Save', sub: 'Track your savings', color: 'bg-emerald-600' },
               ].map((node, i, arr) => (
                 <React.Fragment key={node.label}>
                   <div className="flex flex-col items-center gap-1.5 text-center">
