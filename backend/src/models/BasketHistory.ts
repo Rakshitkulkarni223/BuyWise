@@ -28,6 +28,8 @@ const basketHistorySchema = new Schema(
   { timestamps: true },
 );
 
+basketHistorySchema.index({ userId: 1, createdAt: -1 });
+
 basketHistorySchema.set('toJSON', {
   versionKey: false,
   transform: (_doc, ret: Record<string, unknown>) => {

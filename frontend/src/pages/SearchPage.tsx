@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Search,
@@ -58,7 +58,10 @@ const BASKET_PRESETS: Record<string, { query: string; quantity: number }[]> = {
 };
 
 type Mode = 'single' | 'basket';
+let nextRowId = 0;
+const makeRow = (query = '', quantity = 1): BasketRow => ({ id: nextRowId++, query, quantity });
 interface BasketRow {
+  id: number;
   query: string;
   quantity: number;
 }
@@ -84,7 +87,7 @@ export function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   // Basket
-  const [basketRows, setBasketRows] = useState<BasketRow[]>([{ query: '', quantity: 1 }]);
+  const [basketRows, setBasketRows] = useState<BasketRow[]>([makeRow()]);
   const [penalty, setPenalty] = useState(0);
   const [basketResult, setBasketResult] = useState<BasketOptimizeResponse | null>(null);
   const [basketLoading, setBasketLoading] = useState(false);
@@ -105,14 +108,63 @@ export function SearchPage() {
 
   useEffect(() => {
     if (!category) return;
+    let stale = false;
     api
       .suppliersForCategory(category)
       .then((s) => {
+        if (stale) return;
         setSuppliers(s);
         setSelected(new Set(s.filter((x) => x.enabled).map((x) => x.name)));
       })
-      .catch((e) => setError(apiError(e)));
+      .catch((e) => { if (!stale) setError(apiError(e)); });
+    return () => { stale = true; };
   }, [category]);
+
+  const supplierColors = useMemo(
+    () => Object.fromEntries(suppliers.map((s) => [s.name, s.color])),
+    [suppliers],
+  );
+
+  const toggleSupplier = useCallback((name: string) => {
+    try {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.has(name) ? next.delete(name) : next.add(name);
+        return next;
+      });
+    } catch (e) {
+      console.error('Failed to toggle supplier', e);
+    }
+  }, []);
+
+  const activeSuppliersRef = useRef<() => string[]>(() => []);
+  activeSuppliersRef.current = () => (selected.size ? [...selected] : suppliers.map((s) => s.name));
+
+  const weightProfileRef = useRef(weightProfile);
+  weightProfileRef.current = weightProfile;
+
+  const runSearch = useCallback(async (overrideQuery?: string, overrideSuppliers?: string[], profileOverride?: WeightProfileKey) => {
+    try {
+      const q = (overrideQuery ?? query).trim();
+      if (!q) {
+        setError('Enter a product to search for.');
+        return;
+      }
+      const names = overrideSuppliers ?? activeSuppliersRef.current();
+      if (!names.length) {
+        setError('Select at least one supplier.');
+        return;
+      }
+      setLoading(true);
+      setError('');
+      const res = await api.search({ category, suppliers: names, query: q, weightProfile: profileOverride ?? weightProfileRef.current, sortBy: sortPref });
+      setResult(res);
+    } catch (e) {
+      setError(apiError(e));
+    } finally {
+      setLoading(false);
+    }
+  }, [query, category, sortPref]);
 
   useEffect(() => {
     if (autoRan.current) return;
@@ -120,67 +172,29 @@ export function SearchPage() {
       autoRan.current = true;
       runSearch(preset.query, suppliers.map((s) => s.name));
     }
-  }, [suppliers]);
+  }, [suppliers, preset?.query, runSearch]);
 
-  const supplierColors = useMemo(
-    () => Object.fromEntries(suppliers.map((s) => [s.name, s.color])),
-    [suppliers],
-  );
-
-  const toggleSupplier = (name: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
-      return next;
-    });
-  };
-
-  const activeSuppliers = () => (selected.size ? [...selected] : suppliers.map((s) => s.name));
-
-  const runSearch = async (overrideQuery?: string, overrideSuppliers?: string[]) => {
-    const q = (overrideQuery ?? query).trim();
-    if (!q) {
-      setError('Enter a product to search for.');
-      return;
-    }
-    const names = overrideSuppliers ?? activeSuppliers();
-    if (!names.length) {
-      setError('Select at least one supplier.');
-      return;
-    }
-    setLoading(true);
-    setError('');
+  const runOptimize = useCallback(async (profileOverride?: WeightProfileKey) => {
     try {
-      const res = await api.search({ category, suppliers: names, query: q, weightProfile, sortBy: sortPref });
-      setResult(res);
-    } catch (e) {
-      setError(apiError(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const runOptimize = async () => {
-    const items = basketRows
-      .filter((r) => r.query.trim())
-      .map((r) => ({ query: r.query.trim(), quantity: Math.max(1, r.quantity || 1) }));
-    if (!items.length) {
-      setError('Add at least one item to your basket.');
-      return;
-    }
-    const names = activeSuppliers();
-    if (!names.length) {
-      setError('Select at least one supplier.');
-      return;
-    }
-    setBasketLoading(true);
-    setError('');
-    try {
+      const items = basketRows
+        .filter((r) => r.query.trim())
+        .map((r) => ({ query: r.query.trim(), quantity: Math.max(1, r.quantity || 1) }));
+      if (!items.length) {
+        setError('Add at least one item to your basket.');
+        return;
+      }
+      const names = activeSuppliersRef.current();
+      if (!names.length) {
+        setError('Select at least one supplier.');
+        return;
+      }
+      setBasketLoading(true);
+      setError('');
       const res = await api.basketOptimize({
         category,
         suppliers: names,
         items,
-        weightProfile,
+        weightProfile: profileOverride ?? weightProfileRef.current,
         consolidationPenalty: penalty || 0,
       });
       setBasketResult(res);
@@ -189,36 +203,45 @@ export function SearchPage() {
     } finally {
       setBasketLoading(false);
     }
-  };
+  }, [basketRows, category, penalty]);
 
-  const onProfileChange = (p: WeightProfileKey) => {
-    setWeightProfile(p);
-    if (mode === 'single' && result) runSearch(result.query, result.results.map((r) => r.provider));
-    if (mode === 'basket' && basketResult) setTimeout(runOptimize, 0);
-  };
+  const onProfileChange = useCallback((p: WeightProfileKey) => {
+    try {
+      setWeightProfile(p);
+      weightProfileRef.current = p;
+      if (mode === 'single' && result) runSearch(result.query, result.results.map((r) => r.provider), p);
+      if (mode === 'basket' && basketResult) runOptimize(p);
+    } catch (e) {
+      console.error('Failed to change profile', e);
+    }
+  }, [mode, result, basketResult, runSearch, runOptimize]);
 
-  const switchMode = (m: Mode) => {
-    setMode(m);
-    setError('');
-  };
+  const switchMode = useCallback((m: Mode) => {
+    try {
+      setMode(m);
+      setError('');
+    } catch (e) {
+      console.error('Failed to switch mode', e);
+    }
+  }, []);
 
   const setCat = (slug: string) => {
     setCategory(slug);
     setResult(null);
     setBasketResult(null);
-    if (BASKET_PRESETS[slug]) setBasketRows(BASKET_PRESETS[slug]);
-    else setBasketRows([{ query: '', quantity: 1 }]);
+    if (BASKET_PRESETS[slug]) setBasketRows(BASKET_PRESETS[slug].map((p) => makeRow(p.query, p.quantity)));
+    else setBasketRows([makeRow()]);
   };
 
-  const updateRow = (i: number, patch: Partial<BasketRow>) =>
-    setBasketRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
-  const addRow = () => setBasketRows((rows) => [...rows, { query: '', quantity: 1 }]);
-  const removeRow = (i: number) => setBasketRows((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows));
+  const updateRow = useCallback((i: number, patch: Partial<BasketRow>) =>
+    setBasketRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r))), []);
+  const addRow = useCallback(() => setBasketRows((rows) => [...rows, makeRow()]), []);
+  const removeRow = useCallback((i: number) => setBasketRows((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)), []);
 
   const categoryIcon = categories.find((c) => c.slug === category)?.icon;
   const categoryExamples = EXAMPLES[category] ?? ['Nike Shoes', 'UltraBook Laptop', 'Basmati Rice'];
   const searchPlaceholder = `e.g. ${categoryExamples.join(', ')}…`;
-  const basketPlaceholder = (i: number) => `e.g. ${categoryExamples[0]}`;
+  const basketPlaceholder = (i: number) => `e.g. ${categoryExamples[i % categoryExamples.length]}`;
 
   return (
     <div className="space-y-7">
@@ -270,6 +293,7 @@ export function SearchPage() {
                     key={c.slug}
                     data-testid={`category-${c.slug}`}
                     onClick={() => setCat(c.slug)}
+                    aria-pressed={active}
                     className={cn(
                       'inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors duration-200',
                       active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-ink-soft hover:border-ink/40',
@@ -378,7 +402,7 @@ export function SearchPage() {
               </div>
               <div className="space-y-2" data-testid="basket-rows">
                 {basketRows.map((row, i) => (
-                  <div key={i} className="flex items-center gap-2">
+                  <div key={row.id} className="flex items-center gap-2">
                     <div className="relative flex-1">
                       <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                       <input
@@ -401,6 +425,7 @@ export function SearchPage() {
                       data-testid={`basket-remove-${i}`}
                       onClick={() => removeRow(i)}
                       disabled={basketRows.length <= 1}
+                      aria-label={`Remove item ${i + 1}`}
                       className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
                     >
                       <Trash2 size={15} />
@@ -431,7 +456,7 @@ export function SearchPage() {
                   size="lg"
                   variant="accent"
                   loading={basketLoading}
-                  onClick={runOptimize}
+                  onClick={() => runOptimize()}
                   data-testid="basket-optimize-button"
                 >
                   <Split size={16} /> Optimise Basket

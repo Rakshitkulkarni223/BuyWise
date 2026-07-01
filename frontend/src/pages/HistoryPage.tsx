@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, RotateCw, History as HistoryIcon } from 'lucide-react';
+import { Trash2, RotateCw, History as HistoryIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { HistoryEntry } from '../types';
 import { api } from '../lib/api';
 import { Card, CardBody } from '../components/ui/Card';
@@ -8,25 +8,55 @@ import { Badge } from '../components/ui/Badge';
 import { SupplierLogo } from '../components/SupplierLogo';
 import { formatINR, formatDate } from '../lib/format';
 
+const PAGE_SIZE = 20;
+
 export function HistoryPage() {
   const navigate = useNavigate();
   const [items, setItems] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const load = () => {
-    setLoading(true);
-    api
-      .history()
-      .then(setItems)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+  const load = useCallback(async (p: number) => {
+    try {
+      setLoading(true);
+      const res = await api.history(p, PAGE_SIZE);
+      setItems(res.items);
+      setPage(res.page);
+      setTotalPages(res.totalPages);
+      setTotal(res.total);
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load(1);
+  }, [load]);
+
+  const goToPage = (p: number) => {
+    try {
+      const target = Math.max(1, Math.min(p, totalPages));
+      load(target);
+    } catch {
+      // silent
+    }
   };
 
-  useEffect(load, []);
-
   const remove = async (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    await api.deleteHistory(id).catch(() => {});
+    try {
+      setItems((prev) => prev.filter((i) => i.id !== id));
+      await api.deleteHistory(id);
+      const newTotal = total - 1;
+      const newTotalPages = Math.ceil(newTotal / PAGE_SIZE) || 1;
+      const targetPage = page > newTotalPages ? newTotalPages : page;
+      await load(targetPage);
+    } catch {
+      await load(page);
+    }
   };
 
   return (
@@ -37,11 +67,11 @@ export function HistoryPage() {
         <p className="mt-1 text-sm text-muted">Every comparison you've run, with savings and recommendations.</p>
       </div>
 
-      {loading ? (
+      {loading && items.length === 0 ? (
         <Card>
           <CardBody className="py-12 text-center text-sm text-muted">Loading…</CardBody>
         </Card>
-      ) : items.length === 0 ? (
+      ) : !loading && items.length === 0 ? (
         <Card>
           <CardBody className="flex flex-col items-center gap-3 py-14 text-center text-muted">
             <HistoryIcon size={26} />
@@ -98,6 +128,39 @@ export function HistoryPage() {
                 </div>
               ))}
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between border-t border-line px-5 py-3" data-testid="history-pagination">
+                <span className="text-xs text-muted">
+                  {total} {total === 1 ? 'entry' : 'entries'}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    data-testid="history-prev"
+                    onClick={() => goToPage(page - 1)}
+                    disabled={page <= 1 || loading}
+                    className="inline-flex items-center gap-1 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink disabled:opacity-40 disabled:pointer-events-none"
+                  >
+                    <ChevronLeft size={14} /> Prev
+                  </button>
+                  <span className="text-xs font-medium text-ink" data-testid="history-page-info">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    data-testid="history-next"
+                    onClick={() => goToPage(page + 1)}
+                    disabled={page >= totalPages || loading}
+                    className="inline-flex items-center gap-1 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink disabled:opacity-40 disabled:pointer-events-none"
+                  >
+                    Next <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {loading && items.length > 0 && (
+              <div className="border-t border-line px-5 py-2 text-center text-xs text-muted">Refreshing…</div>
+            )}
           </CardBody>
         </Card>
       )}

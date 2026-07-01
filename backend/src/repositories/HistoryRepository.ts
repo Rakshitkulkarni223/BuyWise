@@ -2,23 +2,56 @@ import { SearchHistory } from '../models/SearchHistory';
 
 export class HistoryRepository {
   create(data: Record<string, unknown>) {
-    return SearchHistory.create(data);
+    try {
+      return SearchHistory.create(data);
+    } catch (e) {
+      throw e;
+    }
   }
 
   listByUser(userId: string, limit = 50) {
-    return SearchHistory.find({ userId }).sort({ createdAt: -1 }).limit(limit);
+    try {
+      return SearchHistory.find({ userId }).sort({ createdAt: -1 }).limit(limit);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async paginatedByUser(userId: string, page: number, limit: number) {
+    try {
+      const skip = (page - 1) * limit;
+      const [items, total] = await Promise.all([
+        SearchHistory.find({ userId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
+        SearchHistory.countDocuments({ userId }),
+      ]);
+      return { items, total, page, limit, totalPages: Math.ceil(total / limit) || 1 };
+    } catch (e) {
+      throw e;
+    }
   }
 
   deleteById(userId: string, id: string) {
-    return SearchHistory.findOneAndDelete({ _id: id, userId });
+    try {
+      return SearchHistory.findOneAndDelete({ _id: id, userId });
+    } catch (e) {
+      throw e;
+    }
   }
 
   countByUser(userId: string) {
-    return SearchHistory.countDocuments({ userId });
+    try {
+      return SearchHistory.countDocuments({ userId });
+    } catch (e) {
+      throw e;
+    }
   }
 
   allByUser(userId: string) {
-    return SearchHistory.find({ userId }).sort({ createdAt: -1 });
+    try {
+      return SearchHistory.find({ userId }).sort({ createdAt: -1 });
+    } catch (e) {
+      throw e;
+    }
   }
 }
 

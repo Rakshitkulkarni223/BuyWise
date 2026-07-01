@@ -6,6 +6,7 @@ import type {
   DashboardSummary,
   HistoryEntry,
   Insight,
+  PaginatedResponse,
   Preferences,
   SearchResponse,
   Supplier,
@@ -86,7 +87,8 @@ export const api = {
     weightProfile?: string;
     consolidationPenalty?: number;
   }) => unwrap<BasketOptimizeResponse>(API.post('/basket/optimize', body)),
-  basketHistory: () => unwrap<BasketHistoryEntry[]>(API.get('/basket/history')),
+  basketHistory: (page = 1, limit = 20) =>
+    unwrap<PaginatedResponse<BasketHistoryEntry>>(API.get('/basket/history', { params: { page, limit } })),
 
   // Preferences
   preferences: () => unwrap<Preferences>(API.get('/preferences')),
@@ -94,7 +96,8 @@ export const api = {
   weightProfiles: () => unwrap<WeightProfile[]>(API.get('/weight-profiles')),
 
   // History
-  history: () => unwrap<HistoryEntry[]>(API.get('/history')),
+  history: (page = 1, limit = 20) =>
+    unwrap<PaginatedResponse<HistoryEntry>>(API.get('/history', { params: { page, limit } })),
   deleteHistory: (id: string) => API.delete(`/history/${id}`),
 
   // Dashboard / analytics

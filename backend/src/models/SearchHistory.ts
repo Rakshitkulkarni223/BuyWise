@@ -15,6 +15,8 @@ const searchHistorySchema = new Schema(
   { timestamps: true },
 );
 
+searchHistorySchema.index({ userId: 1, createdAt: -1 });
+
 searchHistorySchema.set('toJSON', {
   versionKey: false,
   transform: (_doc, ret: Record<string, unknown>) => {
