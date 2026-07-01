@@ -81,6 +81,9 @@ export function HistoryPage() {
       ) : (
         <Card>
           <CardBody className="p-0">
+            {loading && items.length > 0 && (
+              <div className="border-b border-line px-5 py-2 text-center text-xs text-muted">Refreshing…</div>
+            )}
             <div className="divide-y divide-line" data-testid="history-list">
               {items.map((h) => (
                 <div
@@ -156,10 +159,6 @@ export function HistoryPage() {
                   </button>
                 </div>
               </div>
-            )}
-
-            {loading && items.length > 0 && (
-              <div className="border-t border-line px-5 py-2 text-center text-xs text-muted">Refreshing…</div>
             )}
           </CardBody>
         </Card>
