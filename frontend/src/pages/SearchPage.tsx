@@ -218,7 +218,7 @@ export function SearchPage() {
   const categoryIcon = categories.find((c) => c.slug === category)?.icon;
   const categoryExamples = EXAMPLES[category] ?? ['Nike Shoes', 'UltraBook Laptop', 'Basmati Rice'];
   const searchPlaceholder = `e.g. ${categoryExamples.join(', ')}…`;
-  const basketPlaceholder = (i: number) => `Item ${i + 1} — e.g. ${categoryExamples[0]}`;
+  const basketPlaceholder = (i: number) => `e.g. ${categoryExamples[0]}`;
 
   return (
     <div className="space-y-7">
