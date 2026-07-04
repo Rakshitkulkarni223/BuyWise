@@ -17,8 +17,9 @@
     "surface": "#FFFFFF",
     "primary": "#0F172A",
     "primary_hover": "#1E293B",
-    "accent": "#2563EB",
-    "accent_hover": "#1D4ED8",
+    "accent": "#059669",
+    "accent_hover": "#047857",
+    "accent_soft": "#ECFDF5",
     "text_primary": "#0F172A",
     "text_secondary": "#64748B",
     "success": "#10B981",
@@ -49,11 +50,11 @@
     "containers": "Max border-radius of 6px (rounded-md). 1px solid borders (border-border). Minimal to no box-shadows (shadow-sm max). Flat, crisp surfaces."
   },
   "components": {
-    "buttons": "Square or slightly rounded (rounded-md). High contrast. Primary buttons use #0F172A (slate-900). Action/AI buttons use Accent blue. Hover states must explicitly lighten background and maintain text contrast.",
+    "buttons": "Square or slightly rounded (rounded-md). High contrast. Primary buttons use #0F172A (slate-900). Action/AI buttons use Accent green (#059669). Hover states must explicitly lighten background and maintain text contrast.",
     "tables": "Dense padding (py-2 px-3). Subtle zebra striping (bg-slate-50/50 on even rows). Sticky headers. Right-aligned numerical columns (Price, Savings).",
     "cards": "Flat background (surface), 1px subtle border, no shadow by default. Hover adds slight lift (-translate-y-px) and shadow-sm.",
-    "ai_recommendation_card": "Distinct visual treatment. Use 'Tracing Beam' concept or a subtle 1px border of #2563EB with a very faint blue background tint to signify AI intervention. Include confidence score prominently using data_mono font.",
-    "forms": "Use Shadcn Form/Input components. Solid borders, clear focus rings (focus:ring-2 focus:ring-slate-900).",
+    "ai_recommendation_card": "Distinct visual treatment. Use 'Tracing Beam' concept or a subtle 1px border of #059669 with a very faint green background tint (#ECFDF5) to signify AI intervention. Include confidence score prominently using data_mono font.",
+    "forms": "Use Shadcn Form/Input components. Solid borders, clear focus rings (focus:ring-2 focus:ring-accent).",
     "icons": "Phosphor Icons (dense/developer feel) or lucide-react (default). Use solid variants for active states, linear for inactive."
   },
   "animations": {
@@ -84,7 +85,7 @@
     "Use purely HTML/Tailwind for main layouts; use Shadcn components for complex interactions (Tables, Dropdowns, Tabs, Forms).",
     "Format all currency values in Indian Rupees (₹) using `Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })`.",
     "Implement the 'Control Room' grid layout for the dashboard. Maximize screen real estate. Use a sticky sidebar for navigation.",
-    "The AI Recommendation card must stand out visually from generic supplier cards. Give it a subtle blue tint or border, and list the explainable reasons clearly with checkmarks.",
+    "The AI Recommendation card must stand out visually from generic supplier cards. Give it a subtle green tint or border, and list the explainable reasons clearly with checkmarks.",
     "Supplier toggle section must use Shadcn Switch components.",
     "Ensure the split-procurement recommendation displays nicely, highlighting which items to buy from which supplier to maximize savings.",
     "Do NOT use Inter for headings. Use Cabinet Grotesk. Use IBM Plex Sans for body.",
