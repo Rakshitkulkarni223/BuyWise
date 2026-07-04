@@ -71,35 +71,37 @@ export function ProductImage({
       {/* Lightbox popover */}
       {showPopover && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-up"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md"
           onClick={closePopover}
         >
           <div
-            className="relative max-h-[85vh] max-w-[85vw] overflow-hidden rounded-xl border border-line bg-surface shadow-2xl"
+            className="relative flex flex-col items-center gap-3"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
-            <button
-              onClick={closePopover}
-              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/70"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-
-            {/* Large image */}
-            <img
-              src={src}
-              alt={alt}
-              className="max-h-[80vh] max-w-[80vw] object-contain"
-            />
+            {/* Image */}
+            <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
+              <img
+                src={src}
+                alt={alt}
+                className="max-h-[70vh] max-w-[70vw] object-contain"
+              />
+            </div>
 
             {/* Caption */}
             {alt && (
-              <div className="border-t border-line bg-surface px-4 py-2.5 text-center text-sm font-medium text-ink">
+              <span className="rounded-full bg-white/90 px-4 py-1.5 text-sm font-medium text-slate-800 shadow-sm backdrop-blur-sm">
                 {alt}
-              </div>
+              </span>
             )}
+
+            {/* Close button */}
+            <button
+              onClick={closePopover}
+              className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-600 shadow-md transition-colors hover:bg-slate-100"
+              aria-label="Close"
+            >
+              <X size={15} />
+            </button>
           </div>
         </div>
       )}
