@@ -6,6 +6,16 @@
 
 **AI-Powered Procurement & Vendor Intelligence Platform**
 
+### 👥 Who is ProcureAI for?
+
+- 🏭 Manufacturers
+- 🛒 Retail & D2C brands
+- 📦 Supply-chain & logistics teams
+- 🏢 SMEs
+- 💼 Procurement & sourcing teams
+
+> Any business that compares suppliers before purchasing can use ProcureAI.
+
 Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
 
 ⭐ **~93% faster** supplier comparison *(estimated based on typical procurement workflow)*  
