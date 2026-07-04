@@ -1,120 +1,67 @@
-# ProcureAI — AI-Powered Procurement & Vendor Intelligence Platform
+<p align="center">
+  <img src="screenshots/dashboard.png" alt="ProcureAI Dashboard" width="800" />
+</p>
 
-> **Transforming how businesses buy — from hours of manual comparison to AI-optimized decisions in seconds.**
+# 🚀 ProcureAI
+
+**AI-Powered Procurement & Vendor Intelligence Platform**
+
+Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
+
+⭐ Up to **93% faster** supplier comparison
+&nbsp;&nbsp;·&nbsp;&nbsp;
+💰 **Business Impact** Dashboard
+&nbsp;&nbsp;·&nbsp;&nbsp;
+📊 **ROI Calculator**
+&nbsp;&nbsp;·&nbsp;&nbsp;
+🤖 **Explainable AI** Recommendations
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
 ---
 
-## 🚀 Business Transformation
+## � Live Demo
 
-### The Problem
-
-Businesses spend **45–60 minutes** manually comparing suppliers across multiple marketplaces, maintaining spreadsheets, and making procurement decisions with limited visibility.
-
-- 🔍 Opening **5–10 supplier websites** one by one
-- 📋 Copying prices into **Excel spreadsheets**
-- ⏱️ Comparing delivery timelines and ratings **manually**
-- 🧮 Running calculations to find the best deal
-- 📝 Preparing reports for **management approvals**
-- 🔁 Repeating this for **every single purchase**
-
-### The Solution
-
-ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and recommend the best procurement strategy in seconds.**
-
-### Impact
+> Try ProcureAI right now — no setup required.
 
 | | |
 |---|---|
-| ✅ Up to **93% reduction** in procurement time | ✅ Automated supplier comparison across all marketplaces |
-| ✅ **Explainable AI** recommendations with "Why?" panel | ✅ One-click professional PDF & CSV reports |
-| ✅ **Split-cart optimizer** for multi-item purchases | ✅ Real-time savings tracking & ROI dashboard |
-| ✅ Lower operational costs | ✅ Dark mode for extended use |
+| **Production** | `https://buywise-compare-1.emergent.host/` |
+| **Preview** | `https://buywise-compare-1.preview.emergentagent.com/` |
 
-### Before vs After
+### Demo Account
 
-| Metric | Before (Manual) | After (ProcureAI) |
-|---|---|---|
-| **Supplier comparison** | Manual across multiple websites | Automated — all suppliers in one click |
-| **Time per procurement** | 45–60 minutes | 3–5 minutes |
-| **Websites visited** | 5–10 per purchase | 1 (ProcureAI) |
-| **Manual calculations** | Required (Excel/paper) | Eliminated — AI handles scoring |
-| **AI recommendations** | ❌ Not available | ✅ Weighted scoring with explanation |
-| **Procurement reports** | Manual preparation | One-click CSV & PDF export |
-| **Multi-item optimization** | Not feasible manually | ✅ Split-cart optimizer across suppliers |
-| **Savings tracking** | No visibility | ✅ Real-time dashboard with trends |
-| **Decision transparency** | "Gut feel" | ✅ Radar chart + scoreboard |
+| Field | Value |
+|---|---|
+| **Email** | `demo@procureai.com` |
+| **Password** | `Demo@123` |
+
+> The demo user is auto-created on first startup via the seed script.
 
 ---
 
 ## 📸 Product Screenshots
 
-### Dashboard — KPIs & AI Insights
+| Dashboard | Search & Compare | AI Explanation |
+|---|---|---|
+| ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
-> Real-time procurement intelligence with date range filtering.
+| Basket Optimization | Business Impact | ROI Calculator |
+|---|---|---|
+| ![Basket](screenshots/basket-optimization.png) | ![Impact](screenshots/business-impact.png) | ![ROI](screenshots/roi-calculator.png) |
 
-![Dashboard](screenshots/dashboard.png)
+| Analytics | Search History | Watchlist |
+|---|---|---|
+| ![Analytics](screenshots/analytics.png) | ![History](screenshots/history.png) | ![Watchlist](screenshots/watchlist.png) |
 
-### Search & Compare — AI Recommendations
+<details>
+<summary>More screenshots — Settings & Documentation</summary>
 
-> Search any product across all suppliers. AI scores and ranks every option.
+| Settings & Weight Profiles | Built-in Documentation |
+|---|---|
+| ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
 
-![Search & Compare](screenshots/search-compare.png)
-
-### AI Explanation Panel
-
-> "Why this recommendation?" — Radar chart + supplier scoreboard with scores out of 100.
-
-![AI Explanation](screenshots/ai-explanation.png)
-
-### Basket Optimization
-
-> Multi-item split-cart optimizer finds the cheapest combination across suppliers.
-
-![Basket Optimization](screenshots/basket-optimization.png)
-
-### Business Impact Dashboard
-
-> Measurable business transformation — savings, hours saved, efficiency score.
-
-![Business Impact](screenshots/business-impact.png)
-
-### ROI Calculator
-
-> Interactive calculator — estimate monthly savings based on your team size and purchase volume.
-
-![ROI Calculator](screenshots/roi-calculator.png)
-
-### Analytics — Spend & Savings Trends
-
-> Visual charts showing spending patterns, category breakdown, and cumulative savings.
-
-![Analytics](screenshots/analytics.png)
-
-### Search History
-
-> Every successful procurement search, automatically logged and paginated.
-
-![Search History](screenshots/history.png)
-
-### Price Watchlist
-
-> Track products and set target price alerts — persists across sessions.
-
-![Watchlist](screenshots/watchlist.png)
-
-### Settings & Weight Profiles
-
-> Customize AI priorities per business type — Balanced, Startup, Hospital, Restaurant.
-
-![Settings](screenshots/settings.png)
-
-### Built-in Documentation
-
-> General guide for business users + Developer API reference with code examples.
-
-![Documentation](screenshots/docs.png)
+</details>
 
 ---
 
@@ -125,11 +72,36 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 [Demo Video](https://github.com/user-attachments/assets/80705382-ff09-4438-9ee8-7c09f00f426b)
 
 <details>
-<summary>Can't see the video above? Click to expand.</summary>
+<summary>Can't see the video? Click to expand.</summary>
 
-The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4). Download and play locally.
+Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play locally.
 
 </details>
+
+---
+
+## 🏆 Business Transformation
+
+### The Problem
+
+Businesses spend **45–60 minutes** manually comparing suppliers across multiple marketplaces, maintaining spreadsheets, and making procurement decisions with limited visibility.
+
+### The Solution
+
+ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and recommend the best procurement strategy in seconds** — with full transparency into why each supplier was chosen.
+
+### Before vs After
+
+| | Before (Manual) | After (ProcureAI) |
+|---|---|---|
+| **Supplier comparison** | Manual across 5–10 websites | Automated — all suppliers in one click |
+| **Time per procurement** | 45–60 minutes | 3–5 minutes |
+| **Calculations** | Excel / paper | Eliminated — AI handles scoring |
+| **AI recommendations** | ❌ Not available | ✅ Weighted scoring with explanation |
+| **Reports** | Manual preparation | One-click CSV & PDF export |
+| **Multi-item optimization** | Not feasible | ✅ Split-cart optimizer across suppliers |
+| **Savings tracking** | No visibility | ✅ Real-time dashboard with trends |
+| **Decision transparency** | "Gut feel" | ✅ Radar chart + scoreboard |
 
 ---
 
@@ -143,9 +115,9 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 | **AI Explanation Panel** | "Why this recommendation?" — interactive radar chart comparing top suppliers + color-coded scoreboard with scores out of 100. |
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
-| **Business Impact Dashboard** | Dedicated page showing measurable business transformation: total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
+| **Business Impact Dashboard** | Total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
 | **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) showing 93% time reduction. |
-| **ROI Calculator** | Interactive calculator with sliders — input purchases/month, hourly cost, manual vs AI time to estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
+| **ROI Calculator** | Interactive calculator with sliders — estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
 | **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
 | **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. |
 | **Dark Mode** | Full light/dark theme support with CSS variable theming. |
@@ -155,7 +127,7 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 ## 🔄 How It Works
 
 ```
-� Business Need  →  🤖 ProcureAI  →  📊 AI Recommendation  →  💰 Business Impact
+🏢 Business Need  →  🤖 ProcureAI  →  📊 AI Recommendation  →  💰 Business Impact
 ```
 
 1. **Search** — Type a product name, pick a category, and ProcureAI queries all suppliers simultaneously
@@ -168,7 +140,7 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 
 ---
 
-## �🏗️ Architecture
+## ️ Architecture
 
 ### Technology Stack
 
@@ -327,18 +299,9 @@ Start the frontend:
 npm start
 ```
 
-### 4. Default Login
-
-| Field | Value |
-|---|---|
-| Email | `demo@procureai.com` |
-| Password | `Demo@123` |
-
-The demo user is automatically created via the seed script on first startup.
-
 ---
 
-## �️ Developer Guide
+## 🛠️ Developer Guide
 
 ### Project Structure
 
@@ -395,6 +358,21 @@ ProcureAI/
 cd backend
 python -m pytest tests/backend_test.py -v
 ```
+
+---
+
+## 🗺️ Future Roadmap
+
+| Phase | Feature | Description |
+|---|---|---|
+| **P1** | Real Supplier Integrations | Connect to live marketplace APIs (Amazon, Flipkart, IndiaMART) for real-time pricing |
+| **P1** | ERP Integration | Sync procurement data with SAP, Oracle, or Zoho for seamless order management |
+| **P2** | Approval Workflows | Multi-level purchase approval chains with role-based routing |
+| **P2** | Predictive Procurement | ML-based demand forecasting and optimal reorder point suggestions |
+| **P3** | Inventory Synchronization | Real-time stock level monitoring across warehouses and suppliers |
+| **P3** | Supplier Scorecards | Historical performance tracking — on-time delivery, quality, SLA compliance |
+| **Future** | Multi-currency Support | Cross-border procurement with automatic currency conversion |
+| **Future** | Mobile App | React Native companion for on-the-go procurement approvals |
 
 ---
 

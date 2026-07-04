@@ -57,12 +57,71 @@ interface DocSection {
    ════════════════════════════════════════════════════════════════ */
 
 const GENERAL_SECTIONS: DocSection[] = [
-  /* ── 1. BUSINESS TRANSFORMATION — leads with the "why" ── */
+  /* ── 0. EXECUTIVE SUMMARY — immediate "why" for visitors ── */
+  {
+    id: 'g-executive-summary',
+    title: 'Executive Summary — Why ProcureAI?',
+    icon: Zap,
+    badge: { label: 'Start here', tone: 'accent' },
+    content: (
+      <div className="space-y-5 text-sm text-ink-soft leading-relaxed">
+        {/* The Problem */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">The Problem</h4>
+          <p>
+            Businesses spend <strong className="text-ink">hours</strong> comparing suppliers across multiple marketplaces
+            and spreadsheets before making procurement decisions.
+          </p>
+        </div>
+
+        {/* The Solution */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">The Solution</h4>
+          <p>
+            ProcureAI <strong className="text-ink">automates</strong> supplier discovery, AI-powered comparison,
+            basket optimization, and procurement reporting.
+          </p>
+        </div>
+
+        {/* Business Impact */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">Business Impact</h4>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {[
+              { icon: '⭐', text: 'Up to 90% faster supplier comparison' },
+              { icon: '📉', text: 'Reduce manual procurement work' },
+              { icon: '🤖', text: 'AI-powered purchasing recommendations' },
+              { icon: '📊', text: 'Business Impact Dashboard' },
+              { icon: '💰', text: 'ROI Calculator' },
+              { icon: '🧠', text: 'Explainable AI' },
+            ].map((p) => (
+              <div key={p.text} className="flex items-start gap-2 rounded-md border border-line bg-bg p-3">
+                <span className="text-base">{p.icon}</span>
+                <p className="text-xs text-muted">{p.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Who is it for? */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">Who is it for?</h4>
+          <div className="grid gap-2 sm:grid-cols-5">
+            {['Manufacturers', 'Retailers', 'SMEs', 'Procurement Teams', 'Supply Chain Operations'].map((who) => (
+              <div key={who} className="rounded-md border border-line bg-accent-soft px-3 py-2 text-center text-xs font-medium text-accent">
+                {who}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  /* ── 1. BUSINESS TRANSFORMATION — detailed before/after ── */
   {
     id: 'g-transformation',
     title: 'Business Transformation',
     icon: Gauge,
-    badge: { label: 'Start here', tone: 'accent' },
     content: (
       <div className="space-y-5 text-sm text-ink-soft leading-relaxed">
         {/* The Problem */}
@@ -834,14 +893,14 @@ function DocSectionCard({ section, isOpen, onToggle }: { section: DocSection; is
 
 export function DocsPage() {
   const [mode, setMode] = useState<DocMode>('general');
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-transformation']));
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-executive-summary']));
 
   const sections = mode === 'general' ? GENERAL_SECTIONS : DEV_SECTIONS;
 
   const switchMode = (m: DocMode) => {
     try {
       setMode(m);
-      setOpenSections(new Set([m === 'general' ? 'g-transformation' : 'd-architecture']));
+      setOpenSections(new Set([m === 'general' ? 'g-executive-summary' : 'd-architecture']));
     } catch {
       // silent
     }
