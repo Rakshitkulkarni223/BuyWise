@@ -32,7 +32,6 @@ import {
   Eye,
   Download,
   Brain,
-  Radar,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -301,7 +300,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     id: 'g-export',
     title: 'Export Reports (CSV & PDF)',
     icon: Download,
-    badge: { label: 'New', tone: 'success' },
+
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
@@ -334,7 +333,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     id: 'g-ai-explanation',
     title: 'AI Explanation Panel',
     icon: Brain,
-    badge: { label: 'New', tone: 'success' },
+    
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
@@ -371,7 +370,6 @@ const GENERAL_SECTIONS: DocSection[] = [
     id: 'g-watchlist',
     title: 'Price Watchlist',
     icon: Eye,
-    badge: { label: 'New', tone: 'success' },
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
@@ -473,7 +471,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           <div className="rounded-md border border-line bg-bg p-4">
             <Globe size={20} className="text-accent" />
             <h4 className="mt-2 font-semibold text-ink">GitHub</h4>
-            <p className="mt-1 text-xs text-muted">Report issues or suggest features on our GitHub repository.</p>
+            <p className="mt-1 text-xs text-muted">Report issues or suggest features on our <a href="https://github.com/Rakshitkulkarni223/ProcureAI" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-accent-hover">GitHub repository</a>.</p>
           </div>
         </div>
       </div>
@@ -758,42 +756,6 @@ const DEV_SECTIONS: DocSection[] = [
             </div>
           ))}
         </div>
-      </div>
-    ),
-  },
-  {
-    id: 'd-bloom-filter',
-    title: 'Bloom Filter Search',
-    icon: Radar,
-    badge: { label: 'Algorithm', tone: 'accent' },
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          Search suggestions use a <strong className="text-ink">Bloom filter</strong> — a probabilistic data structure that enables
-          O(1) prefix membership tests before running word-boundary matching.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 font-semibold text-ink">How it works</h4>
-            <ol className="space-y-1.5 text-xs text-muted list-decimal list-inside">
-              <li>Each product's <strong className="text-ink">words are decomposed</strong> into prefixes.</li>
-              <li>Prefixes are hashed (FNV-1a) into a bit array.</li>
-              <li>On each keystroke, <strong className="text-ink">every query token</strong> is checked against the filter.</li>
-              <li>If all tokens pass, word-boundary matching runs on the candidate list.</li>
-            </ol>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 font-semibold text-ink">Why a Bloom filter?</h4>
-            <ul className="space-y-1 text-xs text-muted">
-              <li>• <strong className="text-ink">False positive OK</strong> — we do a real check after</li>
-              <li>• <strong className="text-ink">False negative impossible</strong> — valid matches never skipped</li>
-              <li>• <strong className="text-ink">Constant memory</strong> — bit array, not string storage</li>
-              <li>• <strong className="text-ink">Sub-millisecond</strong> — faster than scanning arrays</li>
-            </ul>
-          </div>
-        </div>
-        <CodeBlock title="Key files" code={`lib/bloomFilter.ts       — BloomFilter class (FNV-1a, addWithPrefixes, mightContain)\nhooks/useSearchSuggestions.ts — Hook that builds filter per category\ncomponents/SearchSuggestions.tsx — Input UI with dropdown`} />
-        <CodeBlock title="Bloom filter parameters" code={`const filter = new BloomFilter(\n  products.length * 10,  // expected elements\n  0.01                    // 1% false positive rate\n);\n// Optimal: size = ceil(-n·ln(p) / (ln2)²)\n//          k    = ceil(size/n · ln2)`} />
       </div>
     ),
   },
