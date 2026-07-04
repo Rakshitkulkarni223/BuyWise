@@ -1,0 +1,211 @@
+"""
+Configuration: environment variables, static catalog data, supplier profiles,
+weight profiles, and category mappings.
+"""
+import os
+from typing import Any
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+# ---------------------------------------------------------------------------
+# Environment helpers
+# ---------------------------------------------------------------------------
+
+def _required(key: str) -> str:
+    try:
+        val = os.environ.get(key)
+        if not val:
+            raise RuntimeError(f"Missing required environment variable: {key}")
+        return val
+    except Exception:
+        raise
+
+
+class Env:
+    try:
+        MONGO_URL: str = _required("MONGO_URL")
+        DB_NAME: str = _required("DB_NAME")
+        JWT_SECRET: str = _required("JWT_SECRET")
+    except Exception:
+        raise
+    JWT_EXPIRES_IN: str = os.getenv("JWT_EXPIRES_IN", "7d")
+    PORT: int = int(os.getenv("PORT", "8001"))
+    DEMO_EMAIL: str = os.getenv("DEMO_EMAIL", "demo@procureai.com")
+    DEMO_PASSWORD: str = os.getenv("DEMO_PASSWORD", "Demo@123")
+    DEMO_NAME: str = os.getenv("DEMO_NAME", "Demo User")
+    CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
+    NODE_ENV: str = os.getenv("NODE_ENV", "development")
+
+
+env = Env()
+
+
+# ---------------------------------------------------------------------------
+# Categories
+# ---------------------------------------------------------------------------
+
+CATEGORIES = [
+    {"slug": "electronics", "name": "Electronics", "icon": "Cpu", "description": "Laptops, phones, peripherals & gadgets"},
+    {"slug": "grocery", "name": "Grocery", "icon": "ShoppingBasket", "description": "Staples, pantry & fresh supplies"},
+    {"slug": "fashion", "name": "Fashion", "icon": "Shirt", "description": "Apparel, footwear & accessories"},
+    {"slug": "furniture", "name": "Furniture", "icon": "Armchair", "description": "Office & workspace furniture"},
+    {"slug": "office", "name": "Office Supplies", "icon": "Paperclip", "description": "Stationery, paper & office essentials"},
+    {"slug": "cleaning", "name": "Cleaning Supplies", "icon": "SprayCan", "description": "Sanitation & janitorial products"},
+    {"slug": "medical", "name": "Medical Supplies", "icon": "Stethoscope", "description": "PPE, devices & consumables"},
+    {"slug": "industrial", "name": "Industrial Equipment", "icon": "Wrench", "description": "Tools, safety & hardware"},
+]
+
+
+# ---------------------------------------------------------------------------
+# Supplier profiles
+# ---------------------------------------------------------------------------
+
+SUPPLIER_PROFILES: dict[str, dict[str, Any]] = {
+    "Amazon": {"name": "Amazon", "color": "#FF9900", "priceFactor": 1.02, "baseRating": 4.5, "deliveryDays": 2, "discountBias": 12, "warrantyMonths": 24, "returnDays": 10, "stockProbability": 0.95},
+    "Flipkart": {"name": "Flipkart", "color": "#2874F0", "priceFactor": 0.98, "baseRating": 4.3, "deliveryDays": 3, "discountBias": 18, "warrantyMonths": 18, "returnDays": 7, "stockProbability": 0.92},
+    "Croma": {"name": "Croma", "color": "#12B3A6", "priceFactor": 1.05, "baseRating": 4.2, "deliveryDays": 4, "discountBias": 8, "warrantyMonths": 24, "returnDays": 10, "stockProbability": 0.85},
+    "Reliance Digital": {"name": "Reliance Digital", "color": "#E5202E", "priceFactor": 1.03, "baseRating": 4.1, "deliveryDays": 5, "discountBias": 10, "warrantyMonths": 24, "returnDays": 7, "stockProbability": 0.85},
+    "Blinkit": {"name": "Blinkit", "color": "#F8CB46", "priceFactor": 1.0, "baseRating": 4.5, "deliveryDays": 0, "discountBias": 12, "warrantyMonths": 0, "returnDays": 2, "stockProbability": 0.9},
+    "Zepto": {"name": "Zepto", "color": "#7E3FF2", "priceFactor": 1.0, "baseRating": 4.4, "deliveryDays": 0, "discountBias": 12, "warrantyMonths": 0, "returnDays": 2, "stockProbability": 0.9},
+    "BigBasket": {"name": "BigBasket", "color": "#84C225", "priceFactor": 0.97, "baseRating": 4.5, "deliveryDays": 1, "discountBias": 16, "warrantyMonths": 0, "returnDays": 3, "stockProbability": 0.93},
+    "JioMart": {"name": "JioMart", "color": "#008ECC", "priceFactor": 0.97, "baseRating": 4.5, "deliveryDays": 1, "discountBias": 15, "warrantyMonths": 0, "returnDays": 5, "stockProbability": 0.93},
+    "Instamart": {"name": "Instamart", "color": "#FC8019", "priceFactor": 0.98, "baseRating": 4.4, "deliveryDays": 0, "discountBias": 13, "warrantyMonths": 0, "returnDays": 2, "stockProbability": 0.9},
+    "Myntra": {"name": "Myntra", "color": "#FF3F6C", "priceFactor": 1.0, "baseRating": 4.4, "deliveryDays": 4, "discountBias": 30, "warrantyMonths": 0, "returnDays": 14, "stockProbability": 0.9},
+    "Ajio": {"name": "Ajio", "color": "#2C4152", "priceFactor": 0.95, "baseRating": 4.2, "deliveryDays": 5, "discountBias": 35, "warrantyMonths": 0, "returnDays": 14, "stockProbability": 0.88},
+    "Tata CLiQ": {"name": "Tata CLiQ", "color": "#D4AF37", "priceFactor": 1.04, "baseRating": 4.3, "deliveryDays": 4, "discountBias": 22, "warrantyMonths": 12, "returnDays": 10, "stockProbability": 0.85},
+    "Pepperfry": {"name": "Pepperfry", "color": "#F16521", "priceFactor": 1.0, "baseRating": 4.1, "deliveryDays": 7, "discountBias": 25, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.8},
+    "Urban Ladder": {"name": "Urban Ladder", "color": "#1A1A1A", "priceFactor": 1.06, "baseRating": 4.3, "deliveryDays": 8, "discountBias": 15, "warrantyMonths": 36, "returnDays": 7, "stockProbability": 0.82},
+    "IKEA": {"name": "IKEA", "color": "#0058A3", "priceFactor": 0.97, "baseRating": 4.5, "deliveryDays": 6, "discountBias": 10, "warrantyMonths": 24, "returnDays": 14, "stockProbability": 0.85},
+    "Local Suppliers": {"name": "Local Suppliers", "color": "#64748B", "priceFactor": 0.9, "baseRating": 3.9, "deliveryDays": 3, "discountBias": 8, "warrantyMonths": 6, "returnDays": 5, "stockProbability": 0.8},
+    "Pharmacy Vendors": {"name": "Pharmacy Vendors", "color": "#16A34A", "priceFactor": 1.0, "baseRating": 4.2, "deliveryDays": 2, "discountBias": 10, "warrantyMonths": 0, "returnDays": 3, "stockProbability": 0.9},
+    "Medical Equipment Suppliers": {"name": "Medical Equipment Suppliers", "color": "#0EA5E9", "priceFactor": 1.08, "baseRating": 4.4, "deliveryDays": 5, "discountBias": 5, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.85},
+    "Apollo Pharmacy": {"name": "Apollo Pharmacy", "color": "#1AA34A", "priceFactor": 1.02, "baseRating": 4.5, "deliveryDays": 1, "discountBias": 12, "warrantyMonths": 0, "returnDays": 5, "stockProbability": 0.92},
+    "Netmeds": {"name": "Netmeds", "color": "#34A853", "priceFactor": 0.95, "baseRating": 4.3, "deliveryDays": 2, "discountBias": 18, "warrantyMonths": 0, "returnDays": 5, "stockProbability": 0.9},
+    "Industrial Tools Co": {"name": "Industrial Tools Co", "color": "#B45309", "priceFactor": 1.0, "baseRating": 4.2, "deliveryDays": 6, "discountBias": 8, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.82},
+    "Amazon Business": {"name": "Amazon Business", "color": "#146EB4", "priceFactor": 1.01, "baseRating": 4.5, "deliveryDays": 3, "discountBias": 12, "warrantyMonths": 24, "returnDays": 10, "stockProbability": 0.9},
+}
+
+CATEGORY_SUPPLIERS: dict[str, list[str]] = {
+    "electronics": ["Amazon", "Flipkart", "Croma", "Reliance Digital"],
+    "grocery": ["Blinkit", "Zepto", "BigBasket", "JioMart", "Instamart"],
+    "fashion": ["Myntra", "Ajio", "Amazon", "Flipkart", "Tata CLiQ"],
+    "furniture": ["Pepperfry", "Urban Ladder", "IKEA"],
+    "office": ["Amazon", "Flipkart", "Local Suppliers"],
+    "cleaning": ["Amazon", "BigBasket", "JioMart", "Local Suppliers"],
+    "medical": ["Apollo Pharmacy", "Netmeds", "Pharmacy Vendors", "Medical Equipment Suppliers"],
+    "industrial": ["Amazon Business", "Industrial Tools Co", "Local Suppliers"],
+}
+
+
+# ---------------------------------------------------------------------------
+# Weight profiles
+# ---------------------------------------------------------------------------
+
+WEIGHT_PROFILES: dict[str, dict] = {
+    "balanced": {
+        "key": "balanced", "label": "Balanced",
+        "description": "Even consideration of price, speed, reliability and value.",
+        "weights": {"price": 0.3, "delivery": 0.2, "rating": 0.2, "discount": 0.1, "availability": 0.1, "warranty": 0.05, "returnPolicy": 0.05},
+    },
+    "startup": {
+        "key": "startup", "label": "Startup",
+        "description": "Cost-first. Prioritises the lowest price with decent ratings.",
+        "weights": {"price": 0.6, "delivery": 0.2, "rating": 0.2, "discount": 0, "availability": 0, "warranty": 0, "returnPolicy": 0},
+    },
+    "hospital": {
+        "key": "hospital", "label": "Hospital",
+        "description": "Availability & speed critical. Stock and delivery dominate.",
+        "weights": {"price": 0.2, "delivery": 0.4, "rating": 0, "discount": 0, "availability": 0.4, "warranty": 0, "returnPolicy": 0},
+    },
+    "restaurant": {
+        "key": "restaurant", "label": "Restaurant",
+        "description": "Fast, reliable delivery for perishables; price secondary.",
+        "weights": {"price": 0.3, "delivery": 0.5, "rating": 0, "discount": 0, "availability": 0.2, "warranty": 0, "returnPolicy": 0},
+    },
+}
+
+DEFAULT_CATEGORY_BASE_PRICE: dict[str, int] = {
+    "electronics": 24000, "grocery": 600, "fashion": 2500, "furniture": 15000,
+    "office": 1500, "cleaning": 700, "medical": 900, "industrial": 3500,
+}
+
+
+# ---------------------------------------------------------------------------
+# Product catalog (embedded from mock-data/catalog.json)
+# ---------------------------------------------------------------------------
+
+CATALOG: dict[str, list[dict]] = {
+    "electronics": [
+        {"id": "elec-laptop-ultrabook", "title": "UltraBook Pro 14 Laptop (16GB/512GB)", "brand": "Dell", "basePrice": 78000, "image": "https://images.pexels.com/photos/6968164/pexels-photo-6968164.jpeg", "keywords": ["laptop", "ultrabook", "notebook", "computer", "dell", "macbook"]},
+        {"id": "elec-laptop-air", "title": "ProBook Air 13 Slim Laptop", "brand": "HP", "basePrice": 65000, "image": "https://images.pexels.com/photos/8533587/pexels-photo-8533587.jpeg", "keywords": ["laptop", "probook", "hp", "notebook", "air", "computer"]},
+        {"id": "elec-phone-galaxy", "title": "Galaxy S Smartphone 5G (256GB)", "brand": "Samsung", "basePrice": 62000, "image": "https://images.pexels.com/photos/215581/pexels-photo-215581.jpeg", "keywords": ["phone", "smartphone", "mobile", "galaxy", "samsung", "5g", "android"]},
+        {"id": "elec-phone-iphone", "title": "iPhone Pro Smartphone (256GB)", "brand": "Apple", "basePrice": 119000, "image": "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg", "keywords": ["phone", "iphone", "apple", "mobile", "smartphone", "ios"]},
+        {"id": "elec-headphones", "title": "Wireless Noise Cancelling Headphones", "brand": "Sony", "basePrice": 24000, "image": "", "keywords": ["headphones", "headphone", "earphones", "audio", "sony", "wireless"]},
+        {"id": "elec-monitor", "title": "27-inch 4K UHD Monitor", "brand": "LG", "basePrice": 32000, "image": "", "keywords": ["monitor", "display", "screen", "4k", "lg", "uhd"]},
+    ],
+    "grocery": [
+        {"id": "groc-rice", "title": "Premium Basmati Rice 10kg", "brand": "India Gate", "basePrice": 1100, "image": "https://images.pexels.com/photos/3737691/pexels-photo-3737691.jpeg", "keywords": ["rice", "basmati", "grain", "staple"]},
+        {"id": "groc-oil", "title": "Sunflower Cooking Oil 5L", "brand": "Fortune", "basePrice": 850, "image": "", "keywords": ["oil", "cooking oil", "sunflower", "fortune"]},
+        {"id": "groc-atta", "title": "Whole Wheat Atta 10kg", "brand": "Aashirvaad", "basePrice": 520, "image": "", "keywords": ["atta", "flour", "wheat", "aashirvaad"]},
+        {"id": "groc-sugar", "title": "Refined Sugar 5kg", "brand": "Madhur", "basePrice": 260, "image": "", "keywords": ["sugar", "madhur", "sweetener"]},
+        {"id": "groc-veg", "title": "Fresh Vegetables Combo 5kg", "brand": "Farm Fresh", "basePrice": 420, "image": "", "keywords": ["vegetables", "veggies", "fresh", "combo", "produce"]},
+    ],
+    "fashion": [
+        {"id": "fash-shoes-nike", "title": "Air Zoom Running Shoes", "brand": "Nike", "basePrice": 7500, "image": "https://images.pexels.com/photos/13525711/pexels-photo-13525711.jpeg", "keywords": ["nike", "shoes", "running", "sneakers", "footwear", "air", "zoom"]},
+        {"id": "fash-shoes-adidas", "title": "Ultraboost Running Shoes", "brand": "Adidas", "basePrice": 8200, "image": "", "keywords": ["adidas", "shoes", "running", "sneakers", "ultraboost", "footwear"]},
+        {"id": "fash-tshirt", "title": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "basePrice": 1200, "image": "https://images.pexels.com/photos/20458071/pexels-photo-20458071.jpeg", "keywords": ["tshirt", "t-shirt", "shirt", "cotton", "apparel", "tee"]},
+        {"id": "fash-jeans", "title": "Slim Fit Denim Jeans", "brand": "Levi's", "basePrice": 2800, "image": "", "keywords": ["jeans", "denim", "pants", "trousers"]},
+        {"id": "fash-jacket", "title": "Windcheater Jacket", "brand": "Puma", "basePrice": 3500, "image": "", "keywords": ["jacket", "windcheater", "puma", "outerwear", "coat"]},
+    ],
+    "furniture": [
+        {"id": "furn-chair", "title": "Ergonomic Office Chair", "brand": "Featherlite", "basePrice": 12000, "image": "https://images.pexels.com/photos/295480/pexels-photo-295480.jpeg", "keywords": ["chair", "office chair", "ergonomic", "seating"]},
+        {"id": "furn-desk", "title": "Height-Adjustable Standing Desk", "brand": "Urban", "basePrice": 18000, "image": "", "keywords": ["desk", "table", "standing desk", "work"]},
+        {"id": "furn-sofa", "title": "3-Seater Fabric Sofa", "brand": "HomeTown", "basePrice": 35000, "image": "", "keywords": ["sofa", "couch", "seater", "living"]},
+    ],
+    "office": [
+        {"id": "off-paper", "title": "A4 Copier Paper (5 Reams)", "brand": "JK Copier", "basePrice": 1400, "image": "", "keywords": ["paper", "a4", "copier", "reams", "stationery"]},
+        {"id": "off-pens", "title": "Ballpoint Pens (Pack of 50)", "brand": "Cello", "basePrice": 350, "image": "", "keywords": ["pen", "pens", "ballpoint", "stationery"]},
+        {"id": "off-printer", "title": "All-in-One Inkjet Printer", "brand": "Canon", "basePrice": 14000, "image": "", "keywords": ["printer", "inkjet", "canon", "office", "scanner"]},
+    ],
+    "cleaning": [
+        {"id": "clean-floor", "title": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "basePrice": 650, "image": "", "keywords": ["floor cleaner", "cleaner", "lizol", "disinfectant"]},
+        {"id": "clean-sanitizer", "title": "Hand Sanitizer 5L Refill", "brand": "Dettol", "basePrice": 900, "image": "", "keywords": ["sanitizer", "hand sanitizer", "dettol", "hygiene"]},
+        {"id": "clean-tissue", "title": "Tissue Rolls (Pack of 12)", "brand": "Origami", "basePrice": 480, "image": "", "keywords": ["tissue", "tissue rolls", "paper towels", "napkin"]},
+    ],
+    "medical": [
+        {"id": "med-mask", "title": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "basePrice": 300, "image": "", "keywords": ["mask", "surgical mask", "ppe", "3-ply", "face mask"]},
+        {"id": "med-gloves", "title": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "basePrice": 600, "image": "", "keywords": ["gloves", "nitrile", "examination", "ppe"]},
+        {"id": "med-oximeter", "title": "Fingertip Pulse Oximeter", "brand": "Dr Trust", "basePrice": 1500, "image": "", "keywords": ["oximeter", "pulse oximeter", "spo2", "device"]},
+        {"id": "med-thermometer", "title": "Infrared Thermometer", "brand": "Omron", "basePrice": 1800, "image": "", "keywords": ["thermometer", "infrared", "temperature", "device"]},
+    ],
+    "industrial": [
+        {"id": "ind-drill", "title": "Cordless Power Drill 20V", "brand": "Bosch", "basePrice": 6500, "image": "", "keywords": ["drill", "power drill", "cordless", "bosch", "tool"]},
+        {"id": "ind-helmet", "title": "Safety Helmets (Pack of 10)", "brand": "Karam", "basePrice": 1200, "image": "", "keywords": ["helmet", "safety helmet", "ppe", "hard hat"]},
+        {"id": "ind-wrench", "title": "Adjustable Wrench Set", "brand": "Taparia", "basePrice": 1800, "image": "", "keywords": ["wrench", "spanner", "tool set", "taparia"]},
+    ],
+}
+
+
+def format_inr(amount: float) -> str:
+    try:
+        rounded = round(amount)
+        s = f"{rounded:,}"
+        # Convert to Indian grouping (xx,xx,xxx)
+        parts = s.split(",")
+        if len(parts) > 2:
+            last = parts[-1]
+            rest = ",".join(parts[:-1])
+            s = rest + "," + last
+        return f"\u20b9{s}"
+    except Exception:
+        return f"\u20b9{round(amount)}"
+
+
+def clamp(n: float, mn: float, mx: float) -> float:
+    try:
+        return max(mn, min(mx, n))
+    except Exception:
+        return n
