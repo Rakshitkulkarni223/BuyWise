@@ -102,9 +102,13 @@ export function useSearchSuggestions(category: string): SuggestionEngine {
       const products = PRODUCT_CATALOG[category] || [];
       const filter = new BloomFilter(products.length * 10, 0.01);
 
-      // Insert every product and all its prefixes into the Bloom filter
+      // Insert every word's prefixes into the Bloom filter (not just the full string)
+      // This lets multi-word queries like "t shirt" pass the pre-check
       for (const product of products) {
-        filter.addWithPrefixes(product);
+        const words = product.toLowerCase().split(/[\s\-_/]+/);
+        for (const word of words) {
+          filter.addWithPrefixes(word);
+        }
       }
 
       /**
@@ -129,8 +133,9 @@ export function useSearchSuggestions(category: string): SuggestionEngine {
           const trimmed = input.trim().toLowerCase();
           if (!trimmed || trimmed.length < 1) return [];
 
-          // Fast Bloom filter pre-check — if definitely no match, return empty
-          if (!filter.mightContain(trimmed)) return [];
+          // Fast Bloom filter pre-check — every query token must pass
+          const tokens = trimmed.split(/[\s\-_/]+/).filter(Boolean);
+          if (!tokens.every((t) => filter.mightContain(t))) return [];
 
           // Bloom says "maybe" → do real word-boundary matching
           return products
@@ -149,7 +154,8 @@ export function useSearchSuggestions(category: string): SuggestionEngine {
 
       const mightHaveMatches = (input: string): boolean => {
         try {
-          return filter.mightContain(input.trim().toLowerCase());
+          const tokens = input.trim().toLowerCase().split(/[\s\-_/]+/).filter(Boolean);
+          return tokens.every((t) => filter.mightContain(t));
         } catch {
           return true;
         }
