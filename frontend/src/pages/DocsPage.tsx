@@ -95,8 +95,8 @@ const GENERAL_SECTIONS: DocSection[] = [
               { icon: '💰', text: 'ROI Calculator' },
               { icon: '🧠', text: 'Explainable AI' },
             ].map((p) => (
-              <div key={p.text} className="flex items-start gap-2 rounded-md border border-line bg-bg p-3">
-                <span className="text-base">{p.icon}</span>
+              <div key={p.text} className="flex items-center gap-2 rounded-md border border-line bg-bg p-3">
+                <span className="text-base leading-none">{p.icon}</span>
                 <p className="text-xs text-muted">{p.text}</p>
               </div>
             ))}
