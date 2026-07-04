@@ -9,12 +9,17 @@ import {
   Layers,
   Boxes,
   ArrowUpRight,
+  ArrowRight,
   TrendingUp,
   Award,
   Sparkles,
+  Clock,
+  Gauge,
+  Zap,
+  Target,
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import type { DashboardSummary, Insight } from '../types';
+import type { DashboardSummary, Insight, BusinessImpact } from '../types';
 import { api } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -32,6 +37,7 @@ export function DashboardPage() {
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [trend, setTrend] = useState<{ month: string; amount: number }[]>([]);
+  const [impact, setImpact] = useState<BusinessImpact | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>({});
 
   const load = useCallback((range: DateRange) => {
@@ -40,6 +46,7 @@ export function DashboardPage() {
       api.dashboard(from, to).then(setData).catch(() => {});
       api.insights(from, to).then((r) => setInsights(r.insights)).catch(() => {});
       api.savings(from, to).then((r) => setTrend(r.savingsTrend)).catch(() => {});
+      api.businessImpact(from, to).then(setImpact).catch(() => {});
     } catch {
       // silent
     }
@@ -230,8 +237,42 @@ export function DashboardPage() {
           </Card>
         </div>
 
-        {/* Right: AI insights */}
+        {/* Right: AI insights + Business Impact */}
         <div className="space-y-4">
+          {/* Business Impact Summary */}
+          {impact && (
+            <Card className="border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/30 dark:from-green-950/20 dark:to-emerald-950/10">
+              <CardHeader className="flex items-center justify-between border-green-500/20">
+                <div className="flex items-center gap-2">
+                  <Gauge size={15} className="text-green-600" />
+                  <h3 className="font-display text-base font-semibold tracking-tight text-green-700 dark:text-green-400">Business Impact</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-green-600' },
+                    { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-blue-600' },
+                    { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600' },
+                    { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600' },
+                  ].map((m) => (
+                    <div key={m.label} className="rounded-lg border border-line bg-surface p-2.5 text-center">
+                      <m.icon size={14} className={`mx-auto ${m.color}`} />
+                      <div className={`mt-1 text-lg font-bold ${m.color}`}>{m.value}</div>
+                      <div className="text-[10px] text-muted">{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => navigate('/impact')}
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+                >
+                  View Full Business Impact <ArrowRight size={14} />
+                </button>
+              </CardBody>
+            </Card>
+          )}
+
           <Card className="border-accent/30 bg-accent-soft/30">
             <CardHeader className="flex items-center gap-2 border-accent/20">
               <Sparkles size={15} className="text-accent" />
