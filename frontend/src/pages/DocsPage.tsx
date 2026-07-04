@@ -28,6 +28,7 @@ import {
   Star,
   LifeBuoy,
   Lightbulb,
+  PlayCircle,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -50,6 +51,33 @@ interface DocSection {
    ════════════════════════════════════════════════════════════════ */
 
 const GENERAL_SECTIONS: DocSection[] = [
+  {
+    id: 'g-demo-video',
+    title: 'Product Demo',
+    icon: PlayCircle,
+    badge: { label: 'Watch', tone: 'accent' },
+    content: (
+      <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Watch a <strong className="text-ink">90-second walkthrough</strong> covering every feature —
+          login, search, basket optimization, analytics, history, settings, documentation, and dark mode.
+        </p>
+        <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full"
+            poster=""
+          >
+            <source src="/procureai-demo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p className="text-xs text-muted">Tip: Click the fullscreen button for the best viewing experience.</p>
+      </div>
+    ),
+  },
   {
     id: 'g-what-is',
     title: 'What is ProcureAI?',
@@ -680,7 +708,7 @@ function DocSectionCard({ section, isOpen, onToggle }: { section: DocSection; is
 
 export function DocsPage() {
   const [mode, setMode] = useState<DocMode>('general');
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-what-is']));
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-demo-video']));
 
   const sections = mode === 'general' ? GENERAL_SECTIONS : DEV_SECTIONS;
 
