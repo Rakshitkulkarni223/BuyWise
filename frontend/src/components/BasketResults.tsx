@@ -18,12 +18,39 @@ export function BasketResults({
   const confidencePct = Math.round(result.confidence * 100);
   const saved = result.estimatedSavings > 0;
   const groups = Object.entries(result.groupedBySupplier);
+  const allUnfulfillable = result.items.every((i) => !i.availability);
 
   const headline = isSplit
     ? saved
       ? `Save ${formatINR(result.estimatedSavings)} by splitting across ${result.supplierCount} suppliers`
       : `Optimised across ${result.supplierCount} supplier${result.supplierCount > 1 ? 's' : ''}`
     : `Bundle everything at ${result.baseline.supplier} to save ${formatINR(result.estimatedSavings)}`;
+
+  if (allUnfulfillable) {
+    return (
+      <div className="space-y-6 animate-fade-up" data-testid="basket-results">
+        <div className="flex flex-col items-center gap-3 rounded-md border border-line bg-surface py-14 text-center shadow-card">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-danger">
+            <PackageX size={22} />
+          </span>
+          <h3 className="font-display text-lg font-semibold text-ink">
+            No matching products found
+          </h3>
+          <p className="max-w-md text-sm text-muted">
+            None of the items in your basket matched any products in our catalog.
+            Try using specific product names like "Laptop", "Rice", or "Office Chair".
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            {result.unfulfillable.map((item) => (
+              <span key={item} className="rounded-full border border-danger/30 bg-red-50 px-3 py-1 text-xs font-medium text-danger">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-up" data-testid="basket-results">
@@ -68,7 +95,7 @@ export function BasketResults({
 
             {result.unfulfillable.length > 0 && (
               <div className="mt-3 flex items-center gap-2 rounded-md bg-warning-bg px-3 py-2 text-xs text-amber-700">
-                <PackageX size={14} /> Out of stock everywhere: {result.unfulfillable.join(', ')}
+                <PackageX size={14} /> Not found in catalog: {result.unfulfillable.join(', ')}
               </div>
             )}
           </div>
@@ -165,7 +192,7 @@ export function BasketResults({
                     <span className="text-sm font-medium text-ink">{item.supplier}</span>
                   </span>
                 ) : (
-                  <Badge tone="danger">Out of stock</Badge>
+                  <Badge tone="danger">Not Found</Badge>
                 )}
                 <span className="data-num w-24 text-right text-sm font-semibold text-ink">
                   {item.availability ? formatINR(item.lineTotal) : '—'}

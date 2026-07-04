@@ -229,6 +229,7 @@ export function SearchPage() {
     setCategory(slug);
     setResult(null);
     setBasketResult(null);
+    setQuery('');
     if (BASKET_PRESETS[slug]) setBasketRows(BASKET_PRESETS[slug].map((p) => makeRow(p.query, p.quantity)));
     else setBasketRows([makeRow()]);
   };
@@ -501,7 +502,17 @@ export function SearchPage() {
           )}
           {!loading && result && result.results.length === 0 && (
             <Card>
-              <CardBody className="py-12 text-center text-muted">No results found. Try another query or supplier set.</CardBody>
+              <CardBody className="flex flex-col items-center gap-3 py-14 text-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-danger">
+                  <Search size={22} />
+                </span>
+                <h3 className="font-display text-lg font-semibold text-ink">
+                  No results found for "{result.query}"
+                </h3>
+                <p className="max-w-md text-sm text-muted">
+                  We couldn't find any matching products in our catalog. Try a different search term or check the suggested examples above.
+                </p>
+              </CardBody>
             </Card>
           )}
           {!loading && !result && <EmptyState mode="single" />}

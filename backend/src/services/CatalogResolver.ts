@@ -41,6 +41,32 @@ export class CatalogResolver {
     return CATALOG[category] || [];
   }
 
+  /**
+   * Like resolve(), but returns null when the query has no meaningful match
+   * in the catalog (score = 0). Used to avoid returning fake results for
+   * gibberish queries.
+   */
+  static resolveOrNull(category: string, query: string): ProductTemplate | null {
+    try {
+      const tokens = tokenize(query);
+      const templates = CATALOG[category] || [];
+
+      let best: ProductTemplate | null = null;
+      let bestScore = 0;
+      for (const tpl of templates) {
+        const s = scoreTemplate(tpl, tokens);
+        if (s > bestScore) {
+          bestScore = s;
+          best = tpl;
+        }
+      }
+
+      return best && bestScore > 0 ? best : null;
+    } catch {
+      return null;
+    }
+  }
+
   static resolve(category: string, query: string): ProductTemplate {
     const tokens = tokenize(query);
     const templates = CATALOG[category] || [];

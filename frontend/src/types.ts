@@ -90,6 +90,7 @@ export interface Preferences {
 
 export interface HistoryEntry {
   id: string;
+  type?: 'single' | 'basket';
   query: string;
   category: string;
   suppliers: string[];
@@ -99,6 +100,12 @@ export interface HistoryEntry {
   estimatedSavings: number;
   weightProfile: string;
   createdAt: string;
+  // Basket-specific fields
+  basketItems?: { query: string; quantity: number; supplier: string; price: number }[];
+  recommendedPlan?: 'split' | 'consolidate';
+  supplierCount?: number;
+  splitTotal?: number;
+  baselineTotal?: number;
 }
 
 export interface PaginatedResponse<T> {

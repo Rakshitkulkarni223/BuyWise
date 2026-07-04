@@ -21,47 +21,54 @@ export class MockProviderAdapter implements ProviderAdapter {
   }
 
   async search(query: string, category: string): Promise<Product[]> {
-    // Simulate network latency of an external provider call.
-    await new Promise((r) => setTimeout(r, 40 + Math.random() * 120));
+    try {
+      // Simulate network latency of an external provider call.
+      await new Promise((r) => setTimeout(r, 40 + Math.random() * 120));
 
-    const tpl = CatalogResolver.resolve(category, query);
-    const rng = new SeededRandom(`${query.toLowerCase().trim()}#${tpl.id}#${this.name}`);
-    const p = this.profile;
+      const tpl = CatalogResolver.resolveOrNull(category, query);
+      if (!tpl) return []; // No matching product in catalog for this query
 
-    const priceJitter = rng.range(0.8, 1.2);
-    const price = Math.round((tpl.basePrice * p.priceFactor * priceJitter) / 10) * 10;
+      const rng = new SeededRandom(`${query.toLowerCase().trim()}#${tpl.id}#${this.name}`);
+      const p = this.profile;
 
-    const discount = clamp(Math.round(p.discountBias + rng.range(-6, 8)), 0, 70);
-    const originalPrice = Math.round(price / (1 - discount / 100) / 10) * 10;
+      const priceJitter = rng.range(0.8, 1.2);
+      const price = Math.round((tpl.basePrice * p.priceFactor * priceJitter) / 10) * 10;
 
-    const rating = Math.round(clamp(p.baseRating + rng.range(-0.4, 0.3), 3, 5) * 10) / 10;
-    const reviews = rng.int(60, 9000);
-    const availability = rng.chance(p.stockProbability);
+      const discount = clamp(Math.round(p.discountBias + rng.range(-6, 8)), 0, 70);
+      const originalPrice = Math.round(price / (1 - discount / 100) / 10) * 10;
 
-    const deliveryDays = Math.max(0, p.deliveryDays + rng.int(-1, 1));
-    const deliveryDate = new Date();
-    deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
+      const rating = Math.round(clamp(p.baseRating + rng.range(-0.4, 0.3), 3, 5) * 10) / 10;
+      const reviews = rng.int(60, 9000);
+      const availability = rng.chance(p.stockProbability);
 
-    const product: Product = {
-      id: `${this.name.toLowerCase().replace(/\s+/g, '-')}-${tpl.id}`,
-      provider: this.name,
-      title: tpl.title,
-      brand: tpl.brand,
-      category,
-      image: tpl.image,
-      price,
-      originalPrice,
-      discount,
-      rating,
-      reviews,
-      availability,
-      deliveryDays,
-      deliveryDate: deliveryDate.toISOString(),
-      warrantyMonths: p.warrantyMonths || undefined,
-      returnPolicyDays: p.returnDays,
-      productUrl: `https://example.com/${this.name.toLowerCase().replace(/\s+/g, '')}/product/${tpl.id}`,
-    };
+      const deliveryDays = Math.max(0, p.deliveryDays + rng.int(-1, 1));
+      const deliveryDate = new Date();
+      deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
 
-    return [product];
+      const product: Product = {
+        id: `${this.name.toLowerCase().replace(/\s+/g, '-')}-${tpl.id}`,
+        provider: this.name,
+        title: tpl.title,
+        brand: tpl.brand,
+        category,
+        image: tpl.image,
+        price,
+        originalPrice,
+        discount,
+        rating,
+        reviews,
+        availability,
+        deliveryDays,
+        deliveryDate: deliveryDate.toISOString(),
+        warrantyMonths: p.warrantyMonths || undefined,
+        returnPolicyDays: p.returnDays,
+        productUrl: `https://example.com/${this.name.toLowerCase().replace(/\s+/g, '')}/product/${tpl.id}`,
+      };
+
+      return [product];
+    } catch (e) {
+      console.error(`MockProviderAdapter[${this.name}] search failed`, e);
+      return [];
+    }
   }
 }

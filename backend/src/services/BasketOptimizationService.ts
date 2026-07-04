@@ -121,7 +121,7 @@ export class BasketOptimizationService {
           lineTotal: 0,
           deliveryDays: 0,
           availability: false,
-          reasons: ['Out of stock across selected suppliers'],
+          reasons: ['Not found in catalog'],
         };
       }
       let product = a.best;

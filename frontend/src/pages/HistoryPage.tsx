@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, RotateCw, History as HistoryIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, RotateCw, History as HistoryIcon, ChevronLeft, ChevronRight, ShoppingBasket, ChevronDown, Search } from 'lucide-react';
 import type { HistoryEntry } from '../types';
 import { api } from '../lib/api';
 import { Card, CardBody } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { SupplierLogo } from '../components/SupplierLogo';
 import { formatINR, formatDate } from '../lib/format';
+import { cn } from '../lib/utils';
 
 const PAGE_SIZE = 20;
 
@@ -17,6 +18,19 @@ export function HistoryPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const toggleExpand = useCallback((id: string) => {
+    try {
+      setExpanded((prev) => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        return next;
+      });
+    } catch {
+      // silent
+    }
+  }, []);
 
   const load = useCallback(async (p: number) => {
     try {
@@ -89,51 +103,111 @@ export function HistoryPage() {
               </div>
             )}
             <div className="divide-y divide-line" data-testid="history-list">
-              {items.map((h) => (
-                <div
-                  key={h.id}
-                  data-testid={`history-item-${h.id}`}
-                  className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-bg"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-ink">{h.query}</span>
-                      <Badge tone="neutral">{h.category}</Badge>
-                      <Badge tone="accent">{h.weightProfile}</Badge>
+              {items.map((h) => {
+                const isBasket = h.type === 'basket';
+                const isOpen = expanded.has(h.id);
+                return (
+                  <div key={h.id} data-testid={`history-item-${h.id}`}>
+                    <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-bg">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="flex items-center gap-1.5 font-semibold text-ink">
+                            {isBasket ? <ShoppingBasket size={14} /> : <Search size={14} />}
+                            {h.query}
+                          </span>
+                          {isBasket && <Badge tone="warning">Basket</Badge>}
+                          <Badge tone="neutral">{h.category}</Badge>
+                          <Badge tone="accent">{h.weightProfile}</Badge>
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+                          <span>{h.suppliers.length} suppliers compared</span>
+                          <span>{formatDate(h.createdAt)}</span>
+                          {h.recommendedSupplier && (
+                            <span className="flex items-center gap-1.5">
+                              <SupplierLogo name={h.recommendedSupplier} size={16} /> {h.recommendedSupplier}
+                            </span>
+                          )}
+                          {isBasket && h.basketItems && (
+                            <button
+                              onClick={() => toggleExpand(h.id)}
+                              className="inline-flex items-center gap-1 font-medium text-accent hover:text-accent/80"
+                            >
+                              {h.basketItems.length} item{h.basketItems.length !== 1 ? 's' : ''}
+                              <ChevronDown size={12} className={cn('transition-transform', isOpen && 'rotate-180')} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {h.estimatedSavings > 0 && (
+                          <span className="data-num text-sm font-semibold text-success">+{formatINR(h.estimatedSavings)}</span>
+                        )}
+                        {!isBasket && (
+                          <button
+                            data-testid={`history-rerun-${h.id}`}
+                            onClick={() => navigate('/search', { state: { category: h.category, query: h.query } })}
+                            className="rounded-md border border-line p-2 text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                            title="Re-run search"
+                          >
+                            <RotateCw size={15} />
+                          </button>
+                        )}
+                        <button
+                          data-testid={`history-delete-${h.id}`}
+                          onClick={() => remove(h.id)}
+                          className="rounded-md border border-line p-2 text-muted transition-colors hover:border-danger/40 hover:text-danger"
+                          title="Delete"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-                      <span>{h.suppliers.length} suppliers compared</span>
-                      <span>{formatDate(h.createdAt)}</span>
-                      {h.recommendedSupplier && (
-                        <span className="flex items-center gap-1.5">
-                          <SupplierLogo name={h.recommendedSupplier} size={16} /> {h.recommendedSupplier}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {h.estimatedSavings > 0 && (
-                      <span className="data-num text-sm font-semibold text-success">+{formatINR(h.estimatedSavings)}</span>
+                    {/* Expandable basket items dropdown */}
+                    {isBasket && isOpen && h.basketItems && h.basketItems.length > 0 && (
+                      <div className="mx-5 mb-4 overflow-hidden rounded-md border border-line">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-line bg-slate-50 text-xs text-muted">
+                              <th className="px-3 py-2 text-left font-medium">Item</th>
+                              <th className="px-3 py-2 text-center font-medium">Qty</th>
+                              <th className="px-3 py-2 text-left font-medium">Supplier</th>
+                              <th className="px-3 py-2 text-right font-medium">Price</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-line">
+                            {h.basketItems.map((bi, i) => (
+                              <tr key={`${bi.query}-${i}`} className="bg-white">
+                                <td className="px-3 py-2 font-medium text-ink">{bi.query}</td>
+                                <td className="px-3 py-2 text-center text-muted">{bi.quantity}</td>
+                                <td className="px-3 py-2">
+                                  {bi.supplier ? (
+                                    <span className="flex items-center gap-1.5 text-ink-soft">
+                                      <SupplierLogo name={bi.supplier} size={16} /> {bi.supplier}
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted">—</span>
+                                  )}
+                                </td>
+                                <td className="data-num px-3 py-2 text-right font-medium text-ink">
+                                  {bi.price > 0 ? formatINR(bi.price) : '—'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          {h.splitTotal != null && (
+                            <tfoot>
+                              <tr className="border-t border-line bg-slate-50">
+                                <td colSpan={3} className="px-3 py-2 text-xs font-medium text-muted">Optimised total</td>
+                                <td className="data-num px-3 py-2 text-right font-bold text-ink">{formatINR(h.splitTotal)}</td>
+                              </tr>
+                            </tfoot>
+                          )}
+                        </table>
+                      </div>
                     )}
-                    <button
-                      data-testid={`history-rerun-${h.id}`}
-                      onClick={() => navigate('/search', { state: { category: h.category, query: h.query } })}
-                      className="rounded-md border border-line p-2 text-muted transition-colors hover:border-ink/40 hover:text-ink"
-                      title="Re-run search"
-                    >
-                      <RotateCw size={15} />
-                    </button>
-                    <button
-                      data-testid={`history-delete-${h.id}`}
-                      onClick={() => remove(h.id)}
-                      className="rounded-md border border-line p-2 text-muted transition-colors hover:border-danger/40 hover:text-danger"
-                      title="Delete"
-                    >
-                      <Trash2 size={15} />
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {totalPages > 1 && (
