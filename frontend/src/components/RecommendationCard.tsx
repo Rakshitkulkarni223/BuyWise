@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Check, ExternalLink, TrendingDown, Gauge } from 'lucide-react';
+import { Sparkles, Check, ExternalLink, TrendingDown, Gauge, ChevronDown, Brain } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+} from 'recharts';
 import type { Recommendation } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
@@ -21,8 +29,16 @@ export function RecommendationCard({
   rec: Recommendation;
   supplierColors: Record<string, string>;
 }) {
+  const [showExplanation, setShowExplanation] = useState(false);
   const confidencePct = Math.round(rec.confidence * 100);
   const confTone = rec.confidence >= 0.6 ? 'success' : rec.confidence >= 0.3 ? 'accent' : 'warning';
+
+  // Radar chart data from factors
+  const radarData = rec.factors.map((f) => ({
+    factor: f.label,
+    score: Math.round(f.score * 100),
+    fullMark: 100,
+  }));
 
   return (
     <motion.div
@@ -138,6 +154,130 @@ export function RecommendationCard({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* AI Explanation Toggle */}
+      <div className="border-t border-accent/20">
+        <button
+          onClick={() => { try { setShowExplanation((v) => !v); } catch { /* silent */ } }}
+          className="flex w-full items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/5"
+        >
+          <Brain size={13} />
+          {showExplanation ? 'Hide' : 'Why this recommendation?'}
+          <ChevronDown
+            size={13}
+            className={cn('transition-transform', showExplanation && 'rotate-180')}
+          />
+        </button>
+
+        {showExplanation && (
+          <div className="border-t border-accent/20 px-5 py-5 animate-fade-up">
+            <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+              {/* Radar Chart */}
+              <div>
+                <div className="label-eyebrow mb-3 flex items-center gap-1.5">
+                  <Sparkles size={11} /> Factor Performance
+                </div>
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="75%">
+                      <PolarGrid stroke="var(--color-line)" />
+                      <PolarAngleAxis
+                        dataKey="factor"
+                        tick={{ fill: 'var(--color-muted)', fontSize: 11 }}
+                      />
+                      <PolarRadiusAxis
+                        angle={90}
+                        domain={[0, 100]}
+                        tick={{ fill: 'var(--color-muted)', fontSize: 10 }}
+                        axisLine={false}
+                      />
+                      <Radar
+                        name={rec.supplier}
+                        dataKey="score"
+                        stroke="var(--color-accent)"
+                        fill="var(--color-accent)"
+                        fillOpacity={0.25}
+                        strokeWidth={2}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Scoreboard */}
+              <div>
+                <div className="label-eyebrow mb-3 flex items-center gap-1.5">
+                  <Gauge size={11} /> Supplier Scoreboard
+                </div>
+                <div className="overflow-hidden rounded-md border border-line bg-surface">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-line bg-bg text-left">
+                        <th className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted">Rank</th>
+                        <th className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted">Supplier</th>
+                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">Score</th>
+                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rec.scoreboard
+                        .sort((a, b) => b.score - a.score)
+                        .map((s, i) => (
+                          <tr
+                            key={s.supplier}
+                            className={cn(
+                              'border-b border-line last:border-0',
+                              s.supplier === rec.supplier ? 'bg-accent/5' : '',
+                            )}
+                          >
+                            <td className="px-3 py-2 text-xs font-bold text-muted">#{i + 1}</td>
+                            <td className="px-3 py-2">
+                              <div className="flex items-center gap-2">
+                                <SupplierLogo name={s.supplier} color={supplierColors[s.supplier]} size={22} />
+                                <span className={cn(
+                                  'text-sm font-medium',
+                                  s.supplier === rec.supplier ? 'text-accent' : 'text-ink',
+                                )}>
+                                  {s.supplier}
+                                  {s.supplier === rec.supplier && (
+                                    <Badge tone="accent" className="ml-1.5 text-[9px]">Best</Badge>
+                                  )}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <div className="h-1.5 w-16 overflow-hidden rounded-full bg-bg">
+                                  <div
+                                    className={cn(
+                                      'h-full rounded-full',
+                                      s.supplier === rec.supplier ? 'bg-accent' : 'bg-ink/30',
+                                    )}
+                                    style={{ width: `${Math.round(s.score * 100)}%` }}
+                                  />
+                                </div>
+                                <span className="data-num w-10 text-right text-xs font-semibold text-ink">
+                                  {Math.round(s.score * 100)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="data-num px-3 py-2 text-right text-xs font-medium text-ink">
+                              {formatINR(s.price)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-2.5 text-[11px] text-muted">
+                  Scores computed using the <strong>{PROFILE_LABEL[rec.weightProfile] || rec.weightProfile}</strong> weight profile.
+                  Factors include price, delivery speed, rating, discount, and stock availability.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

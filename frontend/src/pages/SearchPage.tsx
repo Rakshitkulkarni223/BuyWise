@@ -503,6 +503,9 @@ export function SearchPage() {
                 supplierColors={supplierColors}
                 categoryIcon={categoryIcon}
                 initialSort={sortPref}
+                query={query}
+                category={category}
+                recommendation={result.recommendation}
               />
             </div>
           )}

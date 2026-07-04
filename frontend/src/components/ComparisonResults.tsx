@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ExternalLink, Crown, ArrowUpDown, PackageX } from 'lucide-react';
+import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff } from 'lucide-react';
 import type { Product, SortOption } from '../types';
 import { Badge } from './ui/Badge';
 import { Switch } from './ui/Switch';
@@ -8,6 +8,8 @@ import { ProductImage } from './ProductImage';
 import { RatingStars } from './RatingStars';
 import { formatINR, formatNumber, deliveryLabel } from '../lib/format';
 import { cn } from '../lib/utils';
+import { exportToCSV, exportToPDF } from '../lib/exportUtils';
+import { useWatchlist } from '../hooks/useWatchlist';
 
 const SORTS: { value: SortOption; label: string }[] = [
   { value: 'lowest_price', label: 'Lowest Price' },
@@ -29,16 +31,23 @@ export function ComparisonResults({
   supplierColors,
   categoryIcon,
   initialSort = 'lowest_price',
+  query = '',
+  category = '',
+  recommendation,
 }: {
   products: Product[];
   recommendedSupplier?: string;
   supplierColors: Record<string, string>;
   categoryIcon?: string;
   initialSort?: SortOption;
+  query?: string;
+  category?: string;
+  recommendation?: { supplier: string; estimatedSavings: number; confidence: number } | null;
 }) {
   const [sortBy, setSortBy] = useState<SortOption>(initialSort);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [minRating, setMinRating] = useState(0);
+  const watchlist = useWatchlist();
 
   const view = useMemo(() => {
     let list = [...products];
@@ -63,6 +72,20 @@ export function ComparisonResults({
           </Badge>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => exportToCSV(view, query)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink"
+            title="Export as CSV"
+          >
+            <Download size={13} /> CSV
+          </button>
+          <button
+            onClick={() => exportToPDF(view, query, category, recommendation)}
+            className="inline-flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1.5 text-xs font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink"
+            title="Export as PDF report"
+          >
+            <FileText size={13} /> PDF
+          </button>
           <label className="flex items-center gap-2 text-xs text-muted">
             <span>In stock only</span>
             <Switch checked={inStockOnly} onCheckedChange={setInStockOnly} data-testid="filter-instock" />
@@ -194,14 +217,41 @@ export function ComparisonResults({
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <a
-                          href={p.productUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-                        >
-                          View <ExternalLink size={12} />
-                        </a>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => {
+                              try {
+                                if (watchlist.isWatching(p.title, p.provider)) return;
+                                watchlist.addItem({
+                                  title: p.title,
+                                  category: category,
+                                  supplier: p.provider,
+                                  price: p.price,
+                                  targetPrice: Math.round(p.price * 0.9),
+                                  image: p.image,
+                                  productUrl: p.productUrl,
+                                });
+                              } catch { /* silent */ }
+                            }}
+                            className={cn(
+                              'flex h-7 w-7 items-center justify-center rounded transition-colors',
+                              watchlist.isWatching(p.title, p.provider)
+                                ? 'bg-accent/10 text-accent'
+                                : 'text-muted hover:bg-bg hover:text-accent',
+                            )}
+                            title={watchlist.isWatching(p.title, p.provider) ? 'Watching' : 'Add to watchlist'}
+                          >
+                            {watchlist.isWatching(p.title, p.provider) ? <Eye size={13} /> : <EyeOff size={13} />}
+                          </button>
+                          <a
+                            href={p.productUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+                          >
+                            View <ExternalLink size={12} />
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   );

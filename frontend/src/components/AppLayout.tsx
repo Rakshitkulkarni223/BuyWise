@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   FileText,
+  Eye,
   Moon,
   Sun,
 } from 'lucide-react';
@@ -23,6 +24,7 @@ const NAV = [
   { to: '/search', label: 'Search & Compare', icon: Search, testid: 'nav-search' },
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
+  { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
