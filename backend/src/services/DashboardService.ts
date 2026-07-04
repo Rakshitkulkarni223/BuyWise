@@ -34,17 +34,28 @@ export class DashboardService {
   static async summary(userId: string, range?: DateRange) {
     const history = await historyRepository.allByUser(userId, range?.from, range?.to);
     const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
-
-    const monthlySavings = history
-      .filter((h) => {
-        const d = new Date((h as any).createdAt);
-        return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
-      })
-      .reduce((sum, h) => sum + (h.estimatedSavings || 0), 0);
-
     const totalSavings = history.reduce((sum, h) => sum + (h.estimatedSavings || 0), 0);
+
+    let monthlySavings: number;
+    if (range?.from || range?.to) {
+      // Date range selected: compute average monthly savings over the span
+      const earliest = range.from || (history.length ? new Date((history[history.length - 1] as any).createdAt) : now);
+      const latest = range.to || now;
+      const diffMs = Math.max(latest.getTime() - earliest.getTime(), 1);
+      const months = Math.max(diffMs / (1000 * 60 * 60 * 24 * 30), 1);
+      monthlySavings = totalSavings / months;
+    } else {
+      // No range: use current calendar month
+      const thisMonth = now.getMonth();
+      const thisYear = now.getFullYear();
+      monthlySavings = history
+        .filter((h) => {
+          const d = new Date((h as any).createdAt);
+          return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+        })
+        .reduce((sum, h) => sum + (h.estimatedSavings || 0), 0);
+    }
+
     const supplier = topByCount(history.map((h) => h.recommendedSupplier).filter(Boolean) as string[]);
     const category = topByCount(history.map((h) => h.category).filter(Boolean) as string[]);
     const activeCategories = new Set(history.map((h) => h.category)).size;
@@ -128,23 +139,38 @@ export class DashboardService {
       };
     }
 
-    const monthSavings = history
-      .filter((h) => {
-        const d = new Date((h as any).createdAt);
-        const now = new Date();
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-      })
-      .reduce((s, h) => s + (h.estimatedSavings || 0), 0);
+    const totalSavings = history.reduce((s, h) => s + (h.estimatedSavings || 0), 0);
+    let periodSavings: number;
+    let periodLabel: string;
 
-    if (monthSavings > 0) {
+    if (range?.from || range?.to) {
+      const now = new Date();
+      const earliest = range.from || (history.length ? new Date((history[history.length - 1] as any).createdAt) : now);
+      const latest = range.to || now;
+      const diffMs = Math.max(latest.getTime() - earliest.getTime(), 1);
+      const months = Math.max(diffMs / (1000 * 60 * 60 * 24 * 30), 1);
+      periodSavings = totalSavings / months;
+      periodLabel = 'per month in this period';
+    } else {
+      const now = new Date();
+      periodSavings = history
+        .filter((h) => {
+          const d = new Date((h as any).createdAt);
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        })
+        .reduce((s, h) => s + (h.estimatedSavings || 0), 0);
+      periodLabel = 'this month';
+    }
+
+    if (periodSavings > 0) {
       insights.push({
         icon: 'TrendingUp',
-        text: `You saved ${formatINR(monthSavings)} this month by following AI recommendations.`,
+        text: `You saved ${formatINR(periodSavings)} ${periodLabel} by following AI recommendations.`,
         tone: 'success',
       });
       insights.push({
         icon: 'PiggyBank',
-        text: `At this rate your business could save approximately ${formatINR(monthSavings * 12)} annually by switching to recommended suppliers.`,
+        text: `At this rate your business could save approximately ${formatINR(periodSavings * 12)} annually by switching to recommended suppliers.`,
         tone: 'success',
       });
     }

@@ -29,10 +29,14 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
 | **Single Product Search** | Search any product across all configured suppliers in one click. Results are normalized and ranked by an AI recommendation engine. |
 | **Basket Optimization** | Add multiple items to a basket. The split-cart optimizer finds the cheapest combination across suppliers while factoring in consolidation penalties (shipping). |
 | **Weight Profiles** | Choose from predefined profiles (Balanced, Cost Saver, Speed Priority, Quality First) that adjust how price, delivery, rating, discount, warranty, and return policy are weighted. |
-| **Dashboard & Analytics** | Real-time KPIs: total searches, estimated savings, top categories, supplier usage, monthly spend trends, and savings trends. |
-| **Search History** | Paginated, per-user log of every comparison. Re-run or delete past searches. |
+| **AI Explanation Panel** | "Why this recommendation?" — interactive radar chart comparing top suppliers + color-coded scoreboard with scores out of 100. |
+| **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
+| **Price Watchlist** | Add products to a persistent watchlist (localStorage) to track prices across sessions. |
+| **Autocomplete Search** | Bloom filter–based prefix search suggestions for faster product discovery. |
+| **Dashboard & Analytics** | Real-time KPIs with **date range filtering** — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. All charts, insights, and KPIs update based on the selected period. Default: All Time. |
+| **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. Re-run or delete past searches. |
 | **User Preferences** | Persist default category, currency, and notification settings. |
-| **Auth** | JWT-based registration and login with bcrypt password hashing. |
+| **Auth** | JWT-based registration and login with bcrypt password hashing. Single unified user role (no admin/buyer distinction). |
 
 ---
 
@@ -80,7 +84,7 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Axios, Recharts, Framer Motion, Lucide Icons |
+| **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Axios, Recharts, Framer Motion, Lucide Icons, Bloom Filter |
 | **Backend** | Node.js, Express 4, TypeScript, Zod (validation), Swagger UI |
 | **Database** | MongoDB with Mongoose ODM |
 | **Auth** | JWT (jsonwebtoken) + bcryptjs |
@@ -108,10 +112,11 @@ ProcureAI/
 │
 ├── frontend/
 │   └── src/
-│       ├── components/         # Reusable UI (AppLayout, Card, Badge, ComparisonResults, BasketResults, etc.)
+│       ├── components/         # Reusable UI (AppLayout, Card, Badge, ComparisonResults, BasketResults, DateRangeFilter, etc.)
 │       ├── context/            # AuthContext (React Context + Provider)
-│       ├── lib/                # api client, formatters, icons, utils
-│       ├── pages/              # Route-level pages (Dashboard, Search, Analytics, History, Settings, Login, Register)
+│       ├── hooks/              # Custom hooks (useSearchSuggestions, useWatchlist)
+│       ├── lib/                # api client, formatters, icons, utils, exportUtils
+│       ├── pages/              # Route-level pages (Dashboard, Search, Analytics, History, Settings, Watchlist, Login, Register)
 │       └── types.ts            # Shared frontend type definitions
 │
 └── README.md
@@ -193,7 +198,7 @@ User Action          Frontend                     Backend                       
 | **`ComparisonService`** | Deduplicates products, applies filters, sorts by chosen strategy |
 | **`RecommendationService`** | AI scoring engine — normalizes price/delivery/rating/discount/warranty/returns to 0–1, multiplies by weight profile, sums to a final score. Generates human-readable reasons. |
 | **`BasketOptimizationService`** | Split-cart optimizer. Builds a SPLIT plan (best supplier per item) vs. CONSOLIDATED baseline (single supplier). Applies consolidation penalty for shipping. |
-| **`DashboardService`** | Aggregates KPIs from search/basket history |
+| **`DashboardService`** | Aggregates KPIs from search/basket history with optional date range filtering |
 | **`CatalogService`** | Returns categories and suppliers per category |
 | **`HistoryService`** | Paginated listing and deletion of search history |
 | **`PreferenceService`** | CRUD for user preferences |
@@ -202,7 +207,7 @@ User Action          Frontend                     Backend                       
 
 | Model | Key Fields |
 |---|---|
-| **User** | name, email, password (hashed), role |
+| **User** | name, email, password (hashed), role (default: `user`) |
 | **SearchHistory** | userId, query, category, suppliers, resultCount, recommendedSupplier, bestPrice, estimatedSavings, weightProfile |
 | **BasketHistory** | userId, category, suppliers, items[], splitTotal, baselineTotal, estimatedSavings, recommendedPlan |
 | **Category** | name, slug, icon |
@@ -221,10 +226,11 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 |---|---|---|
 | **LoginPage** | `/login` | Email + password login form |
 | **RegisterPage** | `/register` | New user registration |
-| **DashboardPage** | `/` | KPIs, recent searches, spend & savings charts |
-| **SearchPage** | `/search` | Single search + basket optimization, supplier selection, weight profiles |
-| **AnalyticsPage** | `/analytics` | Spend by month/category, supplier usage, savings trend |
-| **HistoryPage** | `/history` | Paginated search history with Prev/Next, re-run, delete |
+| **DashboardPage** | `/` | KPIs, recent searches, spend & savings charts — with date range filter |
+| **SearchPage** | `/search` | Single search + basket optimization, supplier selection, weight profiles, export, AI explanation |
+| **AnalyticsPage** | `/analytics` | Spend by month/category, supplier usage, savings trend — with date range filter |
+| **HistoryPage** | `/history` | Paginated search history (15/page) with Prev/Next, re-run, delete |
+| **WatchlistPage** | `/watchlist` | Price watchlist with localStorage persistence |
 | **SettingsPage** | `/settings` | User preferences |
 
 #### Key Components
@@ -232,10 +238,11 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 | Component | Purpose |
 |---|---|
 | **AppLayout** | Sidebar navigation + responsive mobile menu |
-| **ComparisonResults** | Renders the supplier comparison table for single search |
+| **ComparisonResults** | Renders the supplier comparison table with export and watchlist actions |
 | **BasketResults** | Renders the split-cart optimization results |
-| **RecommendationCard** | Displays the AI recommendation with score, confidence, and reasons |
+| **RecommendationCard** | AI recommendation with radar chart, color-coded scoreboard, and explanation panel |
 | **WeightProfileSelector** | UI for selecting weight profiles (Balanced, Cost Saver, etc.) |
+| **DateRangeFilter** | Preset + custom date range picker used on Dashboard and Analytics |
 | **SupplierLogo** | Renders supplier avatar with brand color |
 | **AuthShell** | Layout wrapper for login/register pages |
 | **ProtectedRoute** | Route guard that redirects unauthenticated users to `/login` |
@@ -291,10 +298,10 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/dashboard` | Dashboard KPIs |
-| GET | `/api/analytics/spend` | Spend analytics (monthly, category, supplier) |
-| GET | `/api/analytics/savings` | Savings trend + total savings |
-| GET | `/api/insights` | AI-generated procurement insights |
+| GET | `/api/dashboard?from=YYYY-MM-DD&to=YYYY-MM-DD` | Dashboard KPIs (date range optional, default: all time) |
+| GET | `/api/analytics/spend?from=YYYY-MM-DD&to=YYYY-MM-DD` | Spend analytics with optional date filter |
+| GET | `/api/analytics/savings?from=YYYY-MM-DD&to=YYYY-MM-DD` | Savings trend + total savings with optional date filter |
+| GET | `/api/insights?from=YYYY-MM-DD&to=YYYY-MM-DD` | AI-generated procurement insights with optional date filter |
 
 ---
 
@@ -391,7 +398,9 @@ The demo user is automatically created via the seed script on first startup.
 - **Adapter Pattern** — Supplier integrations use an adapter interface so mock data can be swapped for real APIs without touching business logic.
 - **Repository Pattern** — All database access goes through repositories, keeping Mongoose out of services and controllers.
 - **Promise.allSettled** — Individual supplier failures don't block the entire search. Failed providers are logged and skipped.
-- **Fire-and-forget history** — Search history is persisted asynchronously so it never slows down the response.
+- **Fire-and-forget history** — Search history is persisted asynchronously so it never slows down the response. Only successful searches (with results) are saved.
+- **Date range filtering** — Dashboard and Analytics endpoints accept optional `from`/`to` query params, enabling period-based analysis without separate aggregation pipelines.
+- **Single user role** — No admin/buyer distinction. All users share the same role (`user`) and feature set, keeping the auth model simple.
 - **Compound indexes** — `{ userId: 1, createdAt: -1 }` on both history collections for efficient user-scoped, time-sorted pagination.
 - **Weight profiles** — The recommendation engine is fully configurable via weight profiles, making it easy to add new scoring strategies.
 
