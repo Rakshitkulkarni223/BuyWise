@@ -13,6 +13,7 @@ import { HistoryPage } from './pages/HistoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { DocsPage } from './pages/DocsPage';
 import { WatchlistPage } from './pages/WatchlistPage';
+import { BusinessImpactPage } from './pages/BusinessImpactPage';
 import { SplashScreen } from './components/SplashScreen';
 
 const protectedRoute = (el: React.ReactNode) => (
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/history" element={protectedRoute(<HistoryPage />)} />
           <Route path="/settings" element={protectedRoute(<SettingsPage />)} />
           <Route path="/watchlist" element={protectedRoute(<WatchlistPage />)} />
+          <Route path="/impact" element={protectedRoute(<BusinessImpactPage />)} />
           <Route path="/docs" element={protectedRoute(<DocsPage />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

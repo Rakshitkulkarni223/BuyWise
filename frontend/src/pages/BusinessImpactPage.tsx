@@ -1,0 +1,351 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  PiggyBank,
+  Clock,
+  Target,
+  TrendingUp,
+  BarChart3,
+  Users,
+  Zap,
+  CheckCircle2,
+  ArrowRight,
+  Calculator,
+  Gauge,
+  ShoppingCart,
+  Search,
+  ArrowDown,
+} from 'lucide-react';
+import type { BusinessImpact } from '../types';
+import { api } from '../lib/api';
+import { Card, CardBody, CardHeader } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { formatINR, formatNumber } from '../lib/format';
+import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
+
+/* ═══════════════════════════════════════════════
+   Section 1: KPI Metrics
+   ═══════════════════════════════════════════════ */
+
+function ImpactMetrics({ data }: { data: BusinessImpact }) {
+  try {
+    const metrics = [
+      { label: 'Total Procurement Savings', value: formatINR(data.totalSavings), icon: PiggyBank, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
+      { label: 'Monthly Savings', value: formatINR(data.monthlySavings), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' },
+      { label: 'Hours Saved', value: `${formatNumber(data.hoursSaved)} hrs`, icon: Clock, color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/30' },
+      { label: 'Purchases Optimized', value: formatNumber(data.optimizedPurchases), icon: ShoppingCart, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30' },
+      { label: 'Products Compared', value: formatNumber(data.productsCompared), icon: Search, color: 'text-pink-600', bg: 'bg-pink-50 dark:bg-pink-950/30' },
+      { label: 'Avg Saving / Purchase', value: formatINR(data.avgSavingPerPurchase), icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-950/30' },
+      { label: 'Suppliers Compared', value: formatNumber(data.suppliersCompared), icon: Users, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+      { label: 'AI Accuracy', value: `${data.aiAccuracyPct}%`, icon: Zap, color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-950/30' },
+      { label: 'Manual Work Eliminated', value: `${data.manualEliminatedPct}%`, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30' },
+    ];
+
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
+          <BarChart3 size={20} className="text-accent" />
+          <h2 className="font-display text-xl font-bold text-ink">Business Impact</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {metrics.map((m, i) => (
+            <motion.div key={m.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+              <Card className="transition-transform duration-200 hover:-translate-y-px hover:shadow-lift">
+                <CardBody>
+                  <div className="flex items-start gap-3">
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${m.bg}`}>
+                      <m.icon size={18} className={m.color} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-muted">{m.label}</p>
+                      <p className={`mt-0.5 text-2xl font-bold tracking-tight ${m.color}`}>{m.value}</p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Efficiency Score gauge */}
+        <Card className="border-accent/30 bg-gradient-to-r from-accent-soft/40 to-transparent">
+          <CardBody className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-accent bg-accent-soft">
+                <Gauge size={28} className="text-accent" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted">Procurement Efficiency Score</p>
+                <p className="text-4xl font-bold text-accent">{data.efficiencyScore}<span className="text-lg text-muted">/100</span></p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted">Projected Annual Savings</p>
+              <p className="text-2xl font-bold text-success">{formatINR(data.annualProjection)}</p>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  } catch {
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Section 2: Before vs After Workflow
+   ═══════════════════════════════════════════════ */
+
+const BEFORE_STEPS = [
+  { step: 'Employee identifies need', time: '5 min' },
+  { step: 'Open Amazon', time: '3 min' },
+  { step: 'Open Flipkart', time: '3 min' },
+  { step: 'Open IndiaMART', time: '3 min' },
+  { step: 'Copy prices to Excel', time: '10 min' },
+  { step: 'Compare manually', time: '10 min' },
+  { step: 'Manager approval', time: '5 min' },
+  { step: 'Purchase', time: '5 min' },
+];
+
+const AFTER_STEPS = [
+  { step: 'Employee searches product', time: '1 min' },
+  { step: 'AI compares all suppliers', time: '10 sec' },
+  { step: 'Review AI recommendation', time: '1 min' },
+  { step: 'Export report', time: '30 sec' },
+  { step: 'Purchase', time: '1 min' },
+];
+
+function BeforeAfterWorkflow() {
+  try {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
+          <Zap size={20} className="text-accent" />
+          <h2 className="font-display text-xl font-bold text-ink">Before vs After ProcureAI</h2>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* BEFORE */}
+          <Card className="border-red-200 dark:border-red-900/40">
+            <CardHeader className="border-red-100 dark:border-red-900/30">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-base font-semibold text-red-600">Before ProcureAI</h3>
+                <Badge tone="danger">45–60 min</Badge>
+              </div>
+            </CardHeader>
+            <CardBody className="space-y-0 p-0">
+              {BEFORE_STEPS.map((s, i) => (
+                <div key={i} className="flex items-center justify-between border-b border-line px-5 py-3 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600 dark:bg-red-950 dark:text-red-400">{i + 1}</span>
+                    <span className="text-sm text-ink">{s.step}</span>
+                  </div>
+                  <span className="text-xs font-medium text-muted">{s.time}</span>
+                </div>
+              ))}
+            </CardBody>
+          </Card>
+
+          {/* AFTER */}
+          <Card className="border-green-200 dark:border-green-900/40">
+            <CardHeader className="border-green-100 dark:border-green-900/30">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-base font-semibold text-green-600">After ProcureAI</h3>
+                <Badge tone="success">3–5 min</Badge>
+              </div>
+            </CardHeader>
+            <CardBody className="space-y-0 p-0">
+              {AFTER_STEPS.map((s, i) => (
+                <div key={i} className="flex items-center justify-between border-b border-line px-5 py-3 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-600 dark:bg-green-950 dark:text-green-400">{i + 1}</span>
+                    <span className="text-sm text-ink">{s.step}</span>
+                  </div>
+                  <span className="text-xs font-medium text-muted">{s.time}</span>
+                </div>
+              ))}
+            </CardBody>
+          </Card>
+        </div>
+
+        {/* Impact summary bar */}
+        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
+          <CardBody className="flex flex-wrap items-center justify-center gap-6 text-center">
+            {[
+              { label: 'Time Reduction', value: '93%', icon: Clock },
+              { label: 'Manual Steps Eliminated', value: '3 of 8', icon: CheckCircle2 },
+              { label: 'Suppliers Covered', value: 'All at once', icon: Users },
+            ].map((s) => (
+              <div key={s.label} className="flex items-center gap-2">
+                <s.icon size={16} className="text-green-600" />
+                <span className="text-sm font-semibold text-green-700 dark:text-green-400">{s.value}</span>
+                <span className="text-xs text-muted">{s.label}</span>
+              </div>
+            ))}
+          </CardBody>
+        </Card>
+      </div>
+    );
+  } catch {
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Section 3: ROI Calculator
+   ═══════════════════════════════════════════════ */
+
+function ROICalculator() {
+  const [purchasesPerMonth, setPurchasesPerMonth] = useState(50);
+  const [hourlyCost, setHourlyCost] = useState(600);
+  const [manualTime, setManualTime] = useState(45);
+  const [aiTime, setAiTime] = useState(3);
+
+  const roi = useMemo(() => {
+    try {
+      const monthlyMinutesSaved = purchasesPerMonth * (manualTime - aiTime);
+      const monthlyHoursSaved = monthlyMinutesSaved / 60;
+      const monthlySalarySavings = Math.round(monthlyHoursSaved * hourlyCost);
+      const annualSavings = monthlySalarySavings * 12;
+      const costReduction = manualTime > 0 ? Math.round(((manualTime - aiTime) / manualTime) * 100) : 0;
+      return { monthlyHoursSaved: Math.round(monthlyHoursSaved), monthlySalarySavings, annualSavings, costReduction };
+    } catch {
+      return { monthlyHoursSaved: 0, monthlySalarySavings: 0, annualSavings: 0, costReduction: 0 };
+    }
+  }, [purchasesPerMonth, hourlyCost, manualTime, aiTime]);
+
+  try {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
+          <Calculator size={20} className="text-accent" />
+          <h2 className="font-display text-xl font-bold text-ink">ROI Calculator</h2>
+        </div>
+        <p className="text-sm text-muted">Estimate how much your business saves by switching to ProcureAI.</p>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Inputs */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-display text-base font-semibold text-ink">Your Numbers</h3>
+            </CardHeader>
+            <CardBody className="space-y-5">
+              {[
+                { label: 'Purchases per Month', value: purchasesPerMonth, set: setPurchasesPerMonth, min: 1, max: 500, unit: '' },
+                { label: 'Employee Cost (₹/hr)', value: hourlyCost, set: setHourlyCost, min: 100, max: 5000, unit: '₹' },
+                { label: 'Manual Comparison Time (min)', value: manualTime, set: setManualTime, min: 10, max: 120, unit: 'min' },
+                { label: 'ProcureAI Time (min)', value: aiTime, set: setAiTime, min: 1, max: 30, unit: 'min' },
+              ].map((input) => (
+                <div key={input.label}>
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-xs font-medium text-muted">{input.label}</label>
+                    <span className="text-sm font-bold text-ink">{input.value} {input.unit}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={input.min}
+                    max={input.max}
+                    value={input.value}
+                    onChange={(e) => input.set(Number(e.target.value))}
+                    className="w-full accent-accent"
+                  />
+                </div>
+              ))}
+            </CardBody>
+          </Card>
+
+          {/* Outputs */}
+          <Card className="border-accent/30 bg-accent-soft/20">
+            <CardHeader className="border-accent/20">
+              <h3 className="font-display text-base font-semibold text-accent">Estimated Savings</h3>
+            </CardHeader>
+            <CardBody className="space-y-4">
+              {[
+                { label: 'Monthly Time Saved', value: `${roi.monthlyHoursSaved} Hours`, icon: Clock, color: 'text-violet-600' },
+                { label: 'Monthly Salary Savings', value: formatINR(roi.monthlySalarySavings), icon: PiggyBank, color: 'text-emerald-600' },
+                { label: 'Annual Savings', value: formatINR(roi.annualSavings), icon: TrendingUp, color: 'text-blue-600' },
+                { label: 'Procurement Cost Reduction', value: `${roi.costReduction}%`, icon: ArrowDown, color: 'text-green-600' },
+              ].map((o) => (
+                <div key={o.label} className="flex items-center gap-4 rounded-lg border border-line bg-surface p-4">
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-bg ${o.color}`}>
+                    <o.icon size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted">{o.label}</p>
+                    <p className={`text-xl font-bold ${o.color}`}>{o.value}</p>
+                  </div>
+                </div>
+              ))}
+            </CardBody>
+          </Card>
+        </div>
+      </div>
+    );
+  } catch {
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Page Component
+   ═══════════════════════════════════════════════ */
+
+export function BusinessImpactPage() {
+  const [data, setData] = useState<BusinessImpact | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>({});
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback((range: DateRange) => {
+    try {
+      setLoading(true);
+      api.businessImpact(range.from, range.to)
+        .then((d) => { setData(d); setLoading(false); })
+        .catch(() => setLoading(false));
+    } catch {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(dateRange); }, [dateRange, load]);
+
+  const handleDateChange = useCallback((range: DateRange) => {
+    try {
+      setDateRange(range);
+    } catch {
+      // silent
+    }
+  }, []);
+
+  return (
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <div className="label-eyebrow">Intelligence</div>
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Business Impact</h1>
+          <p className="mt-1 text-sm text-muted">
+            See how ProcureAI transforms your procurement — measurable savings, time freed, and smarter decisions.
+          </p>
+          <div className="mt-3">
+            <DateRangeFilter value={dateRange} onChange={handleDateChange} />
+          </div>
+        </div>
+      </div>
+
+      {/* Priority 1: Impact Metrics */}
+      {loading ? (
+        <div className="py-20 text-center text-sm text-muted">Loading impact data…</div>
+      ) : data ? (
+        <ImpactMetrics data={data} />
+      ) : (
+        <div className="py-20 text-center text-sm text-muted">No data available yet. Run some searches first!</div>
+      )}
+
+      {/* Priority 2: Before vs After */}
+      <BeforeAfterWorkflow />
+
+      {/* Priority 3: ROI Calculator */}
+      <ROICalculator />
+    </div>
+  );
+}

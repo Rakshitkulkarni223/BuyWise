@@ -196,4 +196,66 @@ export class DashboardService {
 
     return { insights };
   }
+
+  static async businessImpact(userId: string, range?: DateRange) {
+    try {
+      const history = await historyRepository.allByUser(userId, range?.from, range?.to);
+      const now = new Date();
+
+      const totalSearches = history.length;
+      const totalSavings = history.reduce((s, h) => s + (h.estimatedSavings || 0), 0);
+      const optimizedPurchases = history.filter((h) => h.recommendedSupplier).length;
+      const uniqueSuppliers = new Set(history.map((h) => h.recommendedSupplier).filter(Boolean)).size;
+      const totalProductsCompared = history.reduce((s, h) => s + (h.suppliers?.length || 0), 0);
+
+      // Avg time per manual comparison: ~45 min; ProcureAI: ~3 min => 42 min saved each
+      const MANUAL_MINUTES = 45;
+      const AI_MINUTES = 3;
+      const minutesSaved = totalSearches * (MANUAL_MINUTES - AI_MINUTES);
+      const hoursSaved = Math.round(minutesSaved / 60);
+
+      const avgSavingPerPurchase = optimizedPurchases > 0 ? Math.round(totalSavings / optimizedPurchases) : 0;
+
+      // Monthly savings
+      let monthlySavings: number;
+      if (range?.from || range?.to) {
+        const earliest = range!.from || (history.length ? new Date((history[history.length - 1] as any).createdAt) : now);
+        const latest = range!.to || now;
+        const months = Math.max((latest.getTime() - earliest.getTime()) / (1000 * 60 * 60 * 24 * 30), 1);
+        monthlySavings = totalSavings / months;
+      } else {
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+        monthlySavings = history
+          .filter((h) => {
+            const d = new Date((h as any).createdAt);
+            return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+          })
+          .reduce((s, h) => s + (h.estimatedSavings || 0), 0);
+      }
+
+      // AI recommendation accuracy (% searches that had a recommendation)
+      const accuracyPct = totalSearches > 0 ? Math.round((optimizedPurchases / totalSearches) * 100) : 0;
+
+      // Procurement efficiency = manual work eliminated %
+      const manualEliminatedPct = totalSearches > 0 ? Math.round(((MANUAL_MINUTES - AI_MINUTES) / MANUAL_MINUTES) * 100) : 0;
+
+      return {
+        totalSavings: Math.round(totalSavings),
+        monthlySavings: Math.round(monthlySavings),
+        annualProjection: Math.round(monthlySavings * 12),
+        totalSearches,
+        optimizedPurchases,
+        hoursSaved,
+        avgSavingPerPurchase,
+        suppliersCompared: uniqueSuppliers,
+        productsCompared: totalProductsCompared,
+        aiAccuracyPct: accuracyPct,
+        manualEliminatedPct,
+        efficiencyScore: Math.min(100, Math.round((accuracyPct * 0.4) + (manualEliminatedPct * 0.3) + (Math.min(totalSearches, 100) * 0.3))),
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
 }

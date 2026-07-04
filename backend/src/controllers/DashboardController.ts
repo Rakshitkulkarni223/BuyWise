@@ -34,4 +34,9 @@ export const DashboardController = {
     const range = parseDateRange(req.query);
     return ok(res, await DashboardService.insights(req.user!.sub, range));
   }),
+
+  businessImpact: asyncHandler(async (req: Request, res: Response) => {
+    const range = parseDateRange(req.query);
+    return ok(res, await DashboardService.businessImpact(req.user!.sub, range));
+  }),
 };

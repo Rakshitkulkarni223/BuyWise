@@ -14,6 +14,7 @@ import {
   Eye,
   Moon,
   Sun,
+  TrendingUp,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -25,6 +26,7 @@ const NAV = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
+  { to: '/impact', label: 'Business Impact', icon: TrendingUp, testid: 'nav-impact' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];

@@ -3,6 +3,7 @@ import type {
   BasketHistoryEntry,
   BasketOptimizeResponse,
   Category,
+  BusinessImpact,
   DashboardSummary,
   HistoryEntry,
   Insight,
@@ -115,4 +116,6 @@ export const api = {
     ),
   insights: (from?: string, to?: string) =>
     unwrap<{ insights: Insight[] }>(API.get('/insights', { params: { from, to } })),
+  businessImpact: (from?: string, to?: string) =>
+    unwrap<BusinessImpact>(API.get('/business-impact', { params: { from, to } })),
 };

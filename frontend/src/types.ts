@@ -139,6 +139,21 @@ export interface DashboardSummary {
   }[];
 }
 
+export interface BusinessImpact {
+  totalSavings: number;
+  monthlySavings: number;
+  annualProjection: number;
+  totalSearches: number;
+  optimizedPurchases: number;
+  hoursSaved: number;
+  avgSavingPerPurchase: number;
+  suppliersCompared: number;
+  productsCompared: number;
+  aiAccuracyPct: number;
+  manualEliminatedPct: number;
+  efficiencyScore: number;
+}
+
 export interface Insight {
   icon: string;
   text: string;
