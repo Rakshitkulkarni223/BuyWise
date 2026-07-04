@@ -71,13 +71,13 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
       console.log('✅ basket-optimization.png');
     } catch { console.warn('skipped basket'); }
 
-    // 5. Business Impact
+    // 5. Business Impact (matches nav order: Dashboard → Search → Business Impact)
     await page.click('[data-testid="nav-impact"]');
     await wait(3000);
     await page.screenshot({ path: path.join(__dirname, 'business-impact.png'), fullPage: false });
     console.log('✅ business-impact.png');
 
-    // 6. ROI Calculator (scroll down)
+    // 6. ROI Calculator (scroll down on Business Impact page)
     await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'smooth' }));
     await wait(2000);
     await page.screenshot({ path: path.join(__dirname, 'roi-calculator.png'), fullPage: false });
@@ -88,6 +88,30 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
     await wait(3000);
     await page.screenshot({ path: path.join(__dirname, 'analytics.png'), fullPage: false });
     console.log('✅ analytics.png');
+
+    // 8. Search History
+    await page.click('[data-testid="nav-history"]');
+    await wait(3000);
+    await page.screenshot({ path: path.join(__dirname, 'history.png'), fullPage: false });
+    console.log('✅ history.png');
+
+    // 9. Watchlist
+    await page.click('[data-testid="nav-watchlist"]');
+    await wait(3000);
+    await page.screenshot({ path: path.join(__dirname, 'watchlist.png'), fullPage: false });
+    console.log('✅ watchlist.png');
+
+    // 10. Settings
+    await page.click('[data-testid="nav-settings"]');
+    await wait(3000);
+    await page.screenshot({ path: path.join(__dirname, 'settings.png'), fullPage: false });
+    console.log('✅ settings.png');
+
+    // 11. Documentation
+    await page.click('[data-testid="nav-docs"]');
+    await wait(3000);
+    await page.screenshot({ path: path.join(__dirname, 'docs.png'), fullPage: false });
+    console.log('✅ docs.png');
 
   } catch (e) {
     console.error('Error:', e.message);

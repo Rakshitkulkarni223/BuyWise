@@ -8,6 +8,7 @@
 
 import { chromium } from 'playwright';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -103,10 +104,66 @@ async function nav(page, testid) {
       await wait(2000);
     } catch { /* skip */ }
 
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(1000);
+    // Scroll to Business Impact summary on Dashboard
+    await page.evaluate(() => window.scrollTo({ top: 600, behavior: 'smooth' }));
+    await wait(2000);
+    await caption(page, '💰 Business Impact Summary — Total Saved, Hours Saved, Efficiency & AI Accuracy right on the Dashboard', 5500);
+    await wait(2500);
 
-    /* ── 3. SEARCH & COMPARE ── */
+    /* ── 3. BUSINESS IMPACT (via Dashboard button) ── */
+    try {
+      const impactBtn = page.locator('button:has-text("View Full Business Impact")');
+      if (await impactBtn.isVisible({ timeout: 3000 })) {
+        await caption(page, '👆 Click "View Full Business Impact" for the detailed drill-down', 3500);
+        await impactBtn.click();
+        await wait(3000);
+      } else {
+        await nav(page, 'nav-impact');
+        await wait(2500);
+      }
+    } catch {
+      await nav(page, 'nav-impact');
+      await wait(2500);
+    }
+
+    await caption(page, '📊 Six key metrics: Total Savings, Hours Saved, AI Accuracy, Efficiency Score & more', 5500);
+    await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'smooth' }));
+    await wait(2500);
+
+    // Date range on impact page
+    try {
+      await page.locator('button:has-text("Last 30 days")').click({ timeout: 3000 });
+      await wait(3000);
+      await caption(page, '📅 Filter by date — See business impact for any period at a glance', 4000);
+      await page.locator('button:has-text("All Time")').click({ timeout: 3000 });
+      await wait(2000);
+    } catch { /* skip */ }
+
+    // Scroll to Before vs After
+    await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'smooth' }));
+    await wait(2000);
+    await caption(page, '⚡ Before vs After — 8-step manual process (45 min) → 5-step AI workflow (3 min) = 93% faster', 5500);
+    await wait(3000);
+
+    // Scroll to ROI Calculator
+    await page.evaluate(() => window.scrollTo({ top: 1100, behavior: 'smooth' }));
+    await wait(2000);
+    await caption(page, '🧮 ROI Calculator — Input your team size, hourly cost, and purchases to project savings', 5500);
+
+    // Interact with a slider
+    try {
+      const slider = page.locator('input[type="range"]').first();
+      if (await slider.isVisible({ timeout: 2000 })) {
+        await slider.fill('500');
+        await wait(2000);
+        await caption(page, '💵 Real-time projections: Monthly hours saved, salary savings, and annual cost reduction', 5000);
+        await wait(2000);
+      }
+    } catch { /* skip */ }
+
+    await wait(1500);
+
+    /* ── 4. SEARCH & COMPARE ── */
     await caption(page, '🔍 Search & Compare — The core of ProcureAI', 3000);
     await nav(page, 'nav-search');
     await wait(1500);
@@ -158,7 +215,7 @@ async function nav(page, testid) {
     // Scroll to comparison table & watchlist
     await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'smooth' }));
     await wait(2000);
-    await caption(page, '� Full comparison table — Sort by price, rating, delivery. Export as CSV or PDF', 5000);
+    await caption(page, '📋 Full comparison table — Sort by price, rating, delivery. Export as CSV or PDF', 5000);
     await wait(2000);
 
     // Add first product to watchlist
@@ -174,7 +231,7 @@ async function nav(page, testid) {
 
     await wait(1000);
 
-    /* ── 4. BASKET OPTIMISER ── */
+    /* ── 5. BASKET OPTIMISER ── */
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     await wait(1000);
     try {
@@ -184,50 +241,9 @@ async function nav(page, testid) {
       await wait(1500);
       await caption(page, '🛒 Basket Optimiser — Buy multiple items? AI finds the cheapest way to split across suppliers', 5500);
       await wait(3000);
-      await caption(page, '� Split Plan vs Consolidate — AI decides: buy from multiple vendors or one for best value', 5000);
+      await caption(page, '💡 Split Plan vs Consolidate — AI decides: buy from multiple vendors or one for best value', 5000);
       await wait(2500);
     } catch { /* skip */ }
-
-    /* ── 5. BUSINESS IMPACT ── */
-    await caption(page, '� Business Impact — Measuring real procurement transformation', 3500);
-    await nav(page, 'nav-impact');
-    await wait(2500);
-    await caption(page, '� Six key metrics: Total Savings, Hours Saved, AI Accuracy, Efficiency Score & more', 5500);
-    await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'smooth' }));
-    await wait(2500);
-
-    // Date range on impact page
-    try {
-      await page.locator('button:has-text("Last 30 days")').click({ timeout: 3000 });
-      await wait(3000);
-      await caption(page, '📅 Filter by date — See business impact for any period at a glance', 4000);
-      await page.locator('button:has-text("All Time")').click({ timeout: 3000 });
-      await wait(2000);
-    } catch { /* skip */ }
-
-    // Scroll to Before vs After
-    await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '⚡ Before vs After — 8-step manual process (45 min) → 5-step AI workflow (3 min) = 93% faster', 5500);
-    await wait(3000);
-
-    // Scroll to ROI Calculator
-    await page.evaluate(() => window.scrollTo({ top: 1100, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '🧮 ROI Calculator — Input your team size, hourly cost, and purchases to project savings', 5500);
-
-    // Interact with a slider
-    try {
-      const slider = page.locator('input[type="range"]').first();
-      if (await slider.isVisible({ timeout: 2000 })) {
-        await slider.fill('500');
-        await wait(2000);
-        await caption(page, '� Real-time projections: Monthly hours saved, salary savings, and annual cost reduction', 5000);
-        await wait(2000);
-      }
-    } catch { /* skip */ }
-
-    await wait(1500);
 
     /* ── 6. ANALYTICS ── */
     await caption(page, '📈 Analytics — Deep-dive into spending patterns and supplier performance', 3500);

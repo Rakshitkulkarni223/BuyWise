@@ -114,6 +114,45 @@ across 5–10 websites              search + AI scoring           explainable re
 
 ![Analytics](screenshots/analytics.png)
 
+### Search History
+
+> Every successful procurement search, automatically logged and paginated.
+
+![Search History](screenshots/history.png)
+
+### Price Watchlist
+
+> Track products and set target price alerts — persists across sessions.
+
+![Watchlist](screenshots/watchlist.png)
+
+### Settings & Weight Profiles
+
+> Customize AI priorities per business type — Balanced, Startup, Hospital, Restaurant.
+
+![Settings](screenshots/settings.png)
+
+### Built-in Documentation
+
+> General guide for business users + Developer API reference with code examples.
+
+![Documentation](screenshots/docs.png)
+
+---
+
+## 🎬 Product Demo
+
+> Full walkthrough: Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → Analytics → History → Watchlist → Settings → Docs → Dark Mode
+
+https://github.com/user-attachments/assets/procureai-demo.webm
+
+<details>
+<summary>Can't see the video above? Click to expand.</summary>
+
+The demo video is located at [`demo/procureai-demo.webm`](demo/procureai-demo.webm). Download and play locally, or run `node demo/record-demo.mjs` to re-record.
+
+</details>
+
 ---
 
 ## 🔄 How It Works
@@ -180,10 +219,10 @@ across 5–10 websites              search + AI scoring           explainable re
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                      Browser (React SPA)                │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐  │
-│  │Dashboard │ │ Search & │ │Analytics │ │  Business  │  │
-│  │  Page    │ │ Compare  │ │  Page    │ │  Impact    │  │
-│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └─────┬─────┘  │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐  │
+│  │Dashboard │ │ Search & │ │  Business │ │Analytics │  │
+│  │  Page    │ │ Compare  │ │  Impact   │ │  Page    │  │
+│  └────┬─────┘ └────┬─────┘ └─────┬─────┘ └────┬─────┘  │
 │       │             │            │              │        │
 │       └─────────────┴─────┬──────┴──────────────┘        │
 │                           │  Axios API Client            │
@@ -236,7 +275,7 @@ ProcureAI/
 │       ├── context/            # AuthContext, ThemeContext
 │       ├── hooks/              # useSearchSuggestions, useWatchlist
 │       ├── lib/                # api client, formatters, exportUtils
-│       ├── pages/              # Dashboard, Search, Analytics, History, BusinessImpact, Watchlist, Settings, Docs
+│       ├── pages/              # Dashboard, Search, BusinessImpact, Analytics, History, Watchlist, Settings, Docs
 │       └── types.ts            # Shared TypeScript interfaces
 │
 ├── demo/                      # Playwright demo recorder script
