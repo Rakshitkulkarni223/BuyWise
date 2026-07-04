@@ -8,26 +8,20 @@
 
 Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
 
-⭐ Up to **93% faster** supplier comparison
-&nbsp;&nbsp;·&nbsp;&nbsp;
-💰 **Business Impact** Dashboard
-&nbsp;&nbsp;·&nbsp;&nbsp;
-📊 **ROI Calculator**
-&nbsp;&nbsp;·&nbsp;&nbsp;
-🤖 **Explainable AI** Recommendations
+⭐ Up to **93% faster** supplier comparison &nbsp;·&nbsp; 💰 **Business Impact** Dashboard &nbsp;·&nbsp; 📊 **ROI Calculator** &nbsp;·&nbsp; 🤖 **Explainable AI** Recommendations
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
 ---
 
-## � Live Demo
+## 🌐 Live Demo
 
 > Try ProcureAI right now — no setup required.
 
 | | |
 |---|---|
-| **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
-| **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
+| **Production** | <a href="https://buywise-compare-1.emergent.host" target="_blank">https://buywise-compare-1.emergent.host</a> |
+| **Preview** | <a href="https://buywise-compare-1.preview.emergentagent.com" target="_blank">https://buywise-compare-1.preview.emergentagent.com</a> |
 
 ### Demo Account
 
