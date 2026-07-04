@@ -9,7 +9,7 @@ import { SupplierLogo } from '../components/SupplierLogo';
 import { formatINR, formatDate } from '../lib/format';
 import { cn } from '../lib/utils';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 15;
 
 export function HistoryPage() {
   const navigate = useNavigate();
