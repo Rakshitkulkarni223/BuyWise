@@ -28,7 +28,7 @@ export function WeightProfileSelector({
             )}
           >
             <div className="text-sm font-semibold tracking-tight">{p.label}</div>
-            <div className={cn('mt-0.5 text-[11px] leading-snug', active ? 'text-white/70' : 'text-muted')}>
+            <div className={cn('mt-0.5 text-[11px] leading-snug', active ? 'text-white/70' : 'text-ink-soft')}>
               {p.description}
             </div>
           </button>
