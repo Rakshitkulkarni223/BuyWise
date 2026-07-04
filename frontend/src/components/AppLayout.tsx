@@ -23,10 +23,10 @@ import { cn } from '../lib/utils';
 const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true, testid: 'nav-dashboard' },
   { to: '/search', label: 'Search & Compare', icon: Search, testid: 'nav-search' },
+  { to: '/impact', label: 'Business Impact', icon: TrendingUp, testid: 'nav-impact' },
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
-  { to: '/impact', label: 'Business Impact', icon: TrendingUp, testid: 'nav-impact' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
