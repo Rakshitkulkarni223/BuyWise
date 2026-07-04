@@ -10,7 +10,6 @@ import {
   Boxes,
   Menu,
   X,
-  BookOpen,
   FileText,
   Moon,
   Sun,
@@ -25,7 +24,6 @@ const NAV = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
-  { to: '/walkthrough', label: 'Walkthrough', icon: BookOpen, testid: 'nav-walkthrough' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
 

@@ -323,8 +323,8 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <Package size={20} className="text-accent" />
-            <h4 className="mt-2 font-semibold text-ink">Walkthrough</h4>
-            <p className="mt-1 text-xs text-muted">Follow the step-by-step product walkthrough to learn every feature.</p>
+            <h4 className="mt-2 font-semibold text-ink">Documentation</h4>
+            <p className="mt-1 text-xs text-muted">Browse the General and Developer guides above to learn every feature.</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <Globe size={20} className="text-accent" />

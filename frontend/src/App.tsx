@@ -11,7 +11,6 @@ import { SearchPage } from './pages/SearchPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { WalkthroughPage } from './pages/WalkthroughPage';
 import { DocsPage } from './pages/DocsPage';
 
 const protectedRoute = (el: React.ReactNode) => (
@@ -33,7 +32,6 @@ export default function App() {
           <Route path="/analytics" element={protectedRoute(<AnalyticsPage />)} />
           <Route path="/history" element={protectedRoute(<HistoryPage />)} />
           <Route path="/settings" element={protectedRoute(<SettingsPage />)} />
-          <Route path="/walkthrough" element={protectedRoute(<WalkthroughPage />)} />
           <Route path="/docs" element={protectedRoute(<DocsPage />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
