@@ -209,10 +209,10 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 | Layer | Technology |
 |---|---|
 | **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Axios, Recharts, Framer Motion, Lucide Icons |
-| **Backend** | Node.js, Express 4, TypeScript, Zod (validation), Swagger UI |
-| **Database** | MongoDB with Mongoose ODM |
-| **Auth** | JWT (jsonwebtoken) + bcryptjs |
-| **Dev Tools** | tsx (dev server), react-scripts, PostCSS, Autoprefixer |
+| **Backend** | Python 3.13, FastAPI, Pydantic (validation), Uvicorn |
+| **Database** | MongoDB with Motor (async driver) |
+| **Auth** | JWT (PyJWT) + bcrypt |
+| **Dev Tools** | react-scripts, PostCSS, Autoprefixer |
 
 ### High-Level Architecture
 
@@ -229,10 +229,10 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 └───────────────────────────┼──────────────────────────────┘
                             │ HTTP / JSON
 ┌───────────────────────────┼──────────────────────────────┐
-│                    Express API Server                    │
+│                   FastAPI Backend (Python)                │
 │  ┌─────────┐  ┌───────────────┐  ┌────────────────────┐ │
 │  │  Auth   │  │   Search &    │  │  Basket Optimizer  │ │
-│  │Middleware│  │  Comparison   │  │  (Split-Cart)      │ │
+│  │  (JWT)  │  │  Comparison   │  │  (Split-Cart)      │ │
 │  └────┬────┘  └───────┬───────┘  └─────────┬──────────┘ │
 │       │               │                    │             │
 │       │        ┌──────┴───────┐            │             │
@@ -241,7 +241,7 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 │       │        │ (Mock Data)  │            │             │
 │       │        └──────────────┘            │             │
 │  ┌────┴────────────────────────────────────┴──────────┐  │
-│  │              Repositories (Mongoose)               │  │
+│  │             Services (Motor async MongoDB)         │  │
 │  └────────────────────────┬───────────────────────────┘  │
 └───────────────────────────┼──────────────────────────────┘
                             │
@@ -257,17 +257,19 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 ```
 ProcureAI/
 ├── backend/
-│   └── src/
-│       ├── adapters/           # Provider adapters (MockProviderAdapter, ProviderFactory)
-│       ├── config/             # env, db, seed data, swagger spec
-│       ├── controllers/        # Request handlers (Auth, Search, Basket, History, Dashboard)
-│       ├── middleware/         # auth (JWT verify), error handler
-│       ├── models/             # Mongoose schemas
-│       ├── repositories/       # Data access layer (CRUD + pagination)
-│       ├── routes/             # Express routers
-│       ├── services/           # Business logic (Search, Comparison, Recommendation, Basket, Dashboard)
-│       ├── utils/              # http helpers, logger, currency
-│       └── validators/         # Zod schemas
+│   ├── server.py               # FastAPI entry point (Uvicorn)
+│   ├── requirements.txt        # Python dependencies
+│   └── app/
+│       ├── config.py           # Env vars, categories, suppliers, weight profiles, catalog
+│       ├── database.py         # Motor async MongoDB client
+│       ├── auth.py             # JWT (PyJWT), bcrypt password hashing, auth dependency
+│       ├── schemas.py          # Pydantic validation models
+│       ├── routes.py           # All API routes under /api prefix
+│       ├── seed.py             # DB seeder (categories, suppliers, demo user, sample history)
+│       └── services/
+│           ├── core.py         # PRNG, CatalogResolver, MockProviderAdapter, Search, Comparison, Recommendation
+│           ├── basket.py       # Basket optimization (split-cart)
+│           └── analytics.py    # Dashboard, History, Preference, Catalog services
 │
 ├── frontend/
 │   └── src/
@@ -289,8 +291,8 @@ ProcureAI/
 
 ### Prerequisites
 
-- **Node.js** >= 18.x
-- **npm** or **yarn**
+- **Python** >= 3.11
+- **Node.js** >= 18.x (frontend only)
 - **MongoDB** (local or Atlas connection string)
 
 ### 1. Clone the Repository
@@ -304,7 +306,7 @@ cd ProcureAI
 
 ```bash
 cd backend
-npm install
+pip install -r requirements.txt
 ```
 
 Create a `.env` file in `backend/`:
@@ -314,7 +316,7 @@ MONGO_URL=mongodb+srv://<user>:<pass>@cluster.mongodb.net
 DB_NAME=procureai
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
-PORT=8002
+PORT=8001
 DEMO_EMAIL=demo@procureai.com
 DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
@@ -325,12 +327,11 @@ NODE_ENV=development
 Start the backend:
 
 ```bash
-npm run dev        # Development (hot-reload)
-npm run build      # Compile TypeScript
-npm start          # Production
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload   # Development
+uvicorn server:app --host 0.0.0.0 --port 8001             # Production
 ```
 
-The API will be available at `http://localhost:8002`. Swagger docs at `http://localhost:8002/api/docs`.
+The API will be available at `http://localhost:8001`.
 
 ### 3. Frontend Setup
 
@@ -342,7 +343,7 @@ npm install
 Create a `.env` file in `frontend/`:
 
 ```env
-REACT_APP_BACKEND_URL=http://localhost:8002
+REACT_APP_BACKEND_URL=http://localhost:8001
 ```
 
 Start the frontend:
@@ -415,8 +416,8 @@ The demo user is automatically created via the seed script on first startup.
 ### Design Decisions
 
 - **Adapter Pattern** — Supplier integrations use an adapter interface so mock data can be swapped for real APIs without touching business logic.
-- **Repository Pattern** — All database access goes through repositories, keeping Mongoose out of services and controllers.
-- **Promise.allSettled** — Individual supplier failures don't block the entire search.
+- **Service Layer** — All database access goes through service classes, keeping Motor queries out of routes.
+- **Async concurrency** — Individual supplier failures don't block the entire search (asyncio gather with error handling).
 - **Fire-and-forget history** — Search history is persisted asynchronously. Only successful searches (with results) are saved.
 - **Date range filtering** — Dashboard, Analytics, and Business Impact endpoints accept optional `from`/`to` query params.
 - **Business impact metrics** — Derived from search history: hours saved (manual 45 min vs AI 3 min), efficiency score (composite of accuracy + automation + volume), projected annual savings.
@@ -424,17 +425,16 @@ The demo user is automatically created via the seed script on first startup.
 
 ### Conventions
 
-- **Backend**: Controller → Service → Repository layering. All async handlers wrapped in `asyncHandler`. Responses use `ok(res, data)`.
+- **Backend**: FastAPI routes → Service layer → MongoDB (Motor). All functions wrapped in try-catch. Responses use `{"success": true, "data": ...}`.
 - **Frontend**: Functional components with hooks. State collocated in page components. `api.ts` centralizes all HTTP calls. TailwindCSS utility classes for styling.
-- **Error handling**: All functions wrapped in try-catch blocks. Backend uses `ApiError` class. Frontend uses `apiError()` helper.
-- **TypeScript**: Strict types shared between layers. Zod for runtime request validation on the backend.
+- **Error handling**: All functions wrapped in try-catch blocks. Backend raises `HTTPException`. Frontend uses `apiError()` helper.
+- **Validation**: Pydantic models for backend request validation. TypeScript interfaces on the frontend.
 
 ### Running Tests
 
 ```bash
 cd backend
-npm run test:unit 
-npm run typecheck    # TypeScript type checking
+python -m pytest tests/backend_test.py -v
 ```
 
 ---

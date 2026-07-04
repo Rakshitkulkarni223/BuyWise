@@ -494,7 +494,7 @@ const DEV_SECTIONS: DocSection[] = [
     badge: { label: 'Overview', tone: 'accent' },
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>ProcureAI is a full-stack TypeScript application with a clear separation of concerns.</p>
+        <p>ProcureAI is a full-stack application with a React/TypeScript frontend and Python/FastAPI backend.</p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <div className="mb-2 flex items-center gap-2"><Globe size={16} className="text-accent" /><h4 className="font-semibold text-ink">Frontend</h4></div>
@@ -514,11 +514,11 @@ const DEV_SECTIONS: DocSection[] = [
           <div className="rounded-md border border-line bg-bg p-4">
             <div className="mb-2 flex items-center gap-2"><Terminal size={16} className="text-accent" /><h4 className="font-semibold text-ink">Backend</h4></div>
             <ul className="space-y-1 text-xs text-muted">
-              <li>• Node.js + Express + TypeScript</li>
-              <li>• MongoDB / Mongoose ODM</li>
-              <li>• JWT authentication (bcrypt)</li>
-              <li>• Zod schema validation</li>
-              <li>• Multi-provider scraping adapters</li>
+              <li>• Python 3.13 + FastAPI + Uvicorn</li>
+              <li>• MongoDB / Motor (async driver)</li>
+              <li>• JWT authentication (PyJWT + bcrypt)</li>
+              <li>• Pydantic schema validation</li>
+              <li>• Multi-provider mock adapters</li>
               <li>• Weighted decision engine</li>
               <li>• Date-filtered analytics (from/to query params)</li>
               <li>• Business impact API (hours saved, efficiency, ROI)</li>
@@ -528,7 +528,7 @@ const DEV_SECTIONS: DocSection[] = [
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-2 font-semibold text-ink">Request flow</h4>
           <div className="flex items-center gap-2 overflow-x-auto text-xs text-muted">
-            {['Client', 'API Gateway', 'Controllers', 'Services', 'Provider Adapters', 'Response'].map((s, i, arr) => (
+            {['Client', 'FastAPI Router', 'Route Handlers', 'Services', 'Provider Adapters', 'Response'].map((s, i, arr) => (
               <React.Fragment key={s}>
                 <span className="whitespace-nowrap rounded bg-accent-soft px-2 py-1 font-medium text-accent">{s}</span>
                 {i < arr.length - 1 && <ArrowRight size={12} className="shrink-0" />}
@@ -547,13 +547,13 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <h4 className="font-semibold text-ink">Prerequisites</h4>
-        <ul className="space-y-1 text-muted"><li>• Node.js 18+</li><li>• MongoDB 6+ (local or Atlas)</li><li>• Git</li></ul>
+        <ul className="space-y-1 text-muted"><li>• Python 3.11+</li><li>• Node.js 18+ (frontend only)</li><li>• MongoDB 6+ (local or Atlas)</li><li>• Git</li></ul>
         <div className="space-y-3">
-          <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/ProcureAI.git\ncd ProcureAI\n\n# Backend\ncd backend && npm install\n\n# Frontend\ncd ../frontend && npm install`} />
-          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URI=mongodb://localhost:27017/procureai\nJWT_SECRET=your-secret-key\nPORT=8002\n\n# frontend/.env (optional)\nREACT_APP_API_URL=http://localhost:8002/api`} />
-          <CodeBlock title="3. Run" code={`# Terminal 1 — Backend\ncd backend && npm run dev\n\n# Terminal 2 — Frontend\ncd frontend && npm start`} />
+          <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/ProcureAI.git\ncd ProcureAI\n\n# Backend\ncd backend && pip install -r requirements.txt\n\n# Frontend\ncd ../frontend && npm install`} />
+          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
+          <CodeBlock title="3. Run" code={`# Terminal 1 — Backend\ncd backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload\n\n# Terminal 2 — Frontend\ncd frontend && npm start`} />
         </div>
-        <p className="text-xs text-muted">Backend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:8002</code> · Frontend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:3000</code></p>
+        <p className="text-xs text-muted">Backend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:8001</code> · Frontend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:3000</code></p>
       </div>
     ),
   },
@@ -564,7 +564,7 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`src/\n  ├── config/        # env, DB connection\n  ├── controllers/   # route handlers\n  ├── middleware/     # auth, validation\n  ├── models/         # Mongoose schemas\n  ├── routes/         # Express routers\n  ├── services/       # business logic\n  ├── providers/      # supplier adapters\n  ├── validators/     # Zod schemas\n  └── app.ts          # Express app entry`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Comparison\n      ├── basket.py    # Basket optimization\n      └── analytics.py # Dashboard, History, Preferences`} />
           <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
@@ -591,10 +591,9 @@ const DEV_SECTIONS: DocSection[] = [
           <h4 className="mb-2 font-semibold text-ink">Security</h4>
           <ul className="space-y-1 text-xs text-muted">
             <li>• bcrypt (12 salt rounds)</li>
-            <li>• Configurable JWT expiry</li>
-            <li>• Rate limiting on auth routes</li>
-            <li>• CORS per environment</li>
-            <li>• Zod input validation</li>
+            <li>• Configurable JWT expiry (PyJWT)</li>
+            <li>• CORS per environment (FastAPI CORSMiddleware)</li>
+            <li>• Pydantic input validation</li>
           </ul>
         </div>
       </div>
@@ -753,8 +752,8 @@ const DEV_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-3">
           {[
             { category: 'Frontend', items: ['React 18', 'TypeScript', 'Tailwind CSS', 'React Router v6', 'Recharts (Radar)', 'Bloom Filter', 'Framer Motion', 'Lucide Icons'] },
-            { category: 'Backend', items: ['Node.js', 'Express', 'TypeScript', 'Mongoose', 'Zod', 'JWT / bcrypt'] },
-            { category: 'Infrastructure', items: ['MongoDB', 'npm', 'ESLint', 'Prettier', 'Pytest (E2E)', 'Git / GitHub'] },
+            { category: 'Backend', items: ['Python 3.13', 'FastAPI', 'Uvicorn', 'Motor (async MongoDB)', 'Pydantic', 'PyJWT / bcrypt'] },
+            { category: 'Infrastructure', items: ['MongoDB', 'pip', 'npm', 'Pytest (E2E)', 'Git / GitHub'] },
           ].map((group) => (
             <div key={group.category} className="rounded-md border border-line bg-bg p-4">
               <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">{group.category}</h4>
