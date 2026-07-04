@@ -144,7 +144,7 @@ across 5–10 websites              search + AI scoring           explainable re
 
 > Full walkthrough: Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → Analytics → History → Watchlist → Settings → Docs → Dark Mode
 
-https://github.com/user-attachments/assets/procureai-demo.webm
+[Demo Video](https://github.com/user-attachments/assets/80705382-ff09-4438-9ee8-7c09f00f426b)
 
 <details>
 <summary>Can't see the video above? Click to expand.</summary>
