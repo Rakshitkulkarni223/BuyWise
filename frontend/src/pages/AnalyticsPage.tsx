@@ -53,13 +53,15 @@ export function AnalyticsPage() {
             <ChartOrEmpty empty={!monthly.length}>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={monthly} margin={{ left: -8, right: 8, top: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false}
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false}
                     tickFormatter={(v) => `₹${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} />
                   <Tooltip formatter={(v: number) => [formatINR(v), 'Value']}
-                    contentStyle={{ borderRadius: 6, border: '1px solid #E2E8F0', fontSize: 12 }} />
-                  <Bar dataKey="amount" fill="#0F172A" radius={[4, 4, 0, 0]} maxBarSize={42} />
+                    contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
+                    labelStyle={{ color: 'var(--color-ink)' }}
+                    itemStyle={{ color: 'var(--color-ink)' }} />
+                  <Bar dataKey="amount" fill="var(--color-accent)" radius={[4, 4, 0, 0]} maxBarSize={42} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartOrEmpty>
@@ -74,12 +76,14 @@ export function AnalyticsPage() {
             <ChartOrEmpty empty={!trend.length}>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={trend} margin={{ left: -8, right: 8, top: 8 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false}
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false}
                     tickFormatter={(v) => `₹${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} />
                   <Tooltip formatter={(v: number) => [formatINR(v), 'Savings']}
-                    contentStyle={{ borderRadius: 6, border: '1px solid #E2E8F0', fontSize: 12 }} />
+                    contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
+                    labelStyle={{ color: 'var(--color-ink)' }}
+                    itemStyle={{ color: 'var(--color-ink)' }} />
                   <Line type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2.5} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
@@ -109,7 +113,9 @@ export function AnalyticsPage() {
                       ))}
                     </Pie>
                     <Tooltip formatter={(v: number) => formatINR(v)}
-                      contentStyle={{ borderRadius: 6, border: '1px solid #E2E8F0', fontSize: 12 }} />
+                      contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
+                      labelStyle={{ color: 'var(--color-ink)' }}
+                      itemStyle={{ color: 'var(--color-ink)' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>

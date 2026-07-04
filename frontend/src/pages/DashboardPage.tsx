@@ -146,13 +146,15 @@ export function DashboardPage() {
                         <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} width={56}
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false} width={56}
                       tickFormatter={(v) => `₹${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} />
                     <Tooltip
                       formatter={(v: number) => [formatINR(v), 'Savings']}
-                      contentStyle={{ borderRadius: 6, border: '1px solid #E2E8F0', fontSize: 12 }}
+                      contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
+                      labelStyle={{ color: 'var(--color-ink)' }}
+                      itemStyle={{ color: 'var(--color-ink)' }}
                     />
                     <Area type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2} fill="url(#savings)" />
                   </AreaChart>
