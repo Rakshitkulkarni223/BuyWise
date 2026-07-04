@@ -8,7 +8,10 @@
 
 Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
 
-⭐ Up to **93% faster** supplier comparison &nbsp;·&nbsp; 💰 **Business Impact** Dashboard &nbsp;·&nbsp; 📊 **ROI Calculator** &nbsp;·&nbsp; 🤖 **Explainable AI** Recommendations
+⭐ Up to **93% faster** supplier comparison  
+💰 **Business Impact** Dashboard  
+📊 **ROI Calculator**  
+🤖 **Explainable AI** Recommendations
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
