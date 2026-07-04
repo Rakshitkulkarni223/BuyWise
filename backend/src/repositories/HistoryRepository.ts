@@ -46,9 +46,16 @@ export class HistoryRepository {
     }
   }
 
-  allByUser(userId: string) {
+  allByUser(userId: string, from?: Date, to?: Date) {
     try {
-      return SearchHistory.find({ userId }).sort({ createdAt: -1 });
+      const filter: Record<string, unknown> = { userId };
+      if (from || to) {
+        const dateFilter: Record<string, Date> = {};
+        if (from) dateFilter.$gte = from;
+        if (to) dateFilter.$lte = to;
+        filter.createdAt = dateFilter;
+      }
+      return SearchHistory.find(filter).sort({ createdAt: -1 });
     } catch (e) {
       throw e;
     }

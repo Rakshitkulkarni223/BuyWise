@@ -101,16 +101,18 @@ export const api = {
   deleteHistory: (id: string) => API.delete(`/history/${id}`),
 
   // Dashboard / analytics
-  dashboard: () => unwrap<DashboardSummary>(API.get('/dashboard')),
-  spend: () =>
+  dashboard: (from?: string, to?: string) =>
+    unwrap<DashboardSummary>(API.get('/dashboard', { params: { from, to } })),
+  spend: (from?: string, to?: string) =>
     unwrap<{
       monthlySpend: { month: string; amount: number }[];
       categorySpend: { category: string; amount: number }[];
       supplierUsage: { supplier: string; count: number }[];
-    }>(API.get('/analytics/spend')),
-  savings: () =>
+    }>(API.get('/analytics/spend', { params: { from, to } })),
+  savings: (from?: string, to?: string) =>
     unwrap<{ savingsTrend: { month: string; amount: number }[]; totalSavings: number }>(
-      API.get('/analytics/savings'),
+      API.get('/analytics/savings', { params: { from, to } }),
     ),
-  insights: () => unwrap<{ insights: Insight[] }>(API.get('/insights')),
+  insights: (from?: string, to?: string) =>
+    unwrap<{ insights: Insight[] }>(API.get('/insights', { params: { from, to } })),
 };

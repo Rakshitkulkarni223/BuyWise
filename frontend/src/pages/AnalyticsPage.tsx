@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -17,6 +17,7 @@ import { api } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { formatINR } from '../lib/format';
+import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 
 const PIE_COLORS = ['#0F172A', '#2563EB', '#10B981', '#F59E0B', '#7E3FF2', '#EF4444', '#0EA5E9', '#84C225'];
 
@@ -27,10 +28,28 @@ export function AnalyticsPage() {
     supplierUsage: { supplier: string; count: number }[];
   } | null>(null);
   const [savings, setSavings] = useState<{ savingsTrend: { month: string; amount: number }[]; totalSavings: number } | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>({});
+
+  const load = useCallback((range: DateRange) => {
+    try {
+      const { from, to } = range;
+      api.spend(from, to).then(setSpend).catch(() => {});
+      api.savings(from, to).then(setSavings).catch(() => {});
+    } catch {
+      // silent
+    }
+  }, []);
 
   useEffect(() => {
-    api.spend().then(setSpend).catch(() => {});
-    api.savings().then(setSavings).catch(() => {});
+    load(dateRange);
+  }, [dateRange, load]);
+
+  const handleDateChange = useCallback((range: DateRange) => {
+    try {
+      setDateRange(range);
+    } catch {
+      // silent
+    }
   }, []);
 
   const monthly = spend ? [...spend.monthlySpend].reverse() : [];
@@ -42,6 +61,9 @@ export function AnalyticsPage() {
         <div className="label-eyebrow">Analytics</div>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Procurement Analytics</h1>
         <p className="mt-1 text-sm text-muted">Spend, savings and supplier activity across your comparisons.</p>
+        <div className="mt-3">
+          <DateRangeFilter value={dateRange} onChange={handleDateChange} />
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

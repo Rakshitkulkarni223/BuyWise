@@ -25,9 +25,14 @@ function monthKey(d: Date): string {
 
 const categoryName = (slug: string) => CATEGORIES.find((c) => c.slug === slug)?.name || slug;
 
+export interface DateRange {
+  from?: Date;
+  to?: Date;
+}
+
 export class DashboardService {
-  static async summary(userId: string) {
-    const history = await historyRepository.allByUser(userId);
+  static async summary(userId: string, range?: DateRange) {
+    const history = await historyRepository.allByUser(userId, range?.from, range?.to);
     const now = new Date();
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
@@ -68,8 +73,8 @@ export class DashboardService {
     };
   }
 
-  static async spend(userId: string) {
-    const history = await historyRepository.allByUser(userId);
+  static async spend(userId: string, range?: DateRange) {
+    const history = await historyRepository.allByUser(userId, range?.from, range?.to);
 
     const byMonth: Record<string, number> = {};
     const byCategory: Record<string, number> = {};
@@ -97,8 +102,8 @@ export class DashboardService {
     };
   }
 
-  static async savings(userId: string) {
-    const history = await historyRepository.allByUser(userId);
+  static async savings(userId: string, range?: DateRange) {
+    const history = await historyRepository.allByUser(userId, range?.from, range?.to);
     const byMonth: Record<string, number> = {};
     for (const h of history) {
       const d = new Date((h as any).createdAt);
@@ -111,8 +116,8 @@ export class DashboardService {
     };
   }
 
-  static async insights(userId: string) {
-    const history = await historyRepository.allByUser(userId);
+  static async insights(userId: string, range?: DateRange) {
+    const history = await historyRepository.allByUser(userId, range?.from, range?.to);
     const insights: { icon: string; text: string; tone: 'success' | 'info' | 'warning' }[] = [];
 
     if (!history.length) {

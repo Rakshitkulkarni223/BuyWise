@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -22,6 +22,7 @@ import { SupplierLogo } from '../components/SupplierLogo';
 import { useAuth } from '../context/AuthContext';
 import { formatINR, formatNumber, relativeTime } from '../lib/format';
 import { getIcon } from '../lib/icons';
+import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 
 const insightIcon: Record<string, any> = { TrendingUp, Award, Layers, PiggyBank, Sparkles };
 
@@ -31,11 +32,29 @@ export function DashboardPage() {
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [trend, setTrend] = useState<{ month: string; amount: number }[]>([]);
+  const [dateRange, setDateRange] = useState<DateRange>({});
+
+  const load = useCallback((range: DateRange) => {
+    try {
+      const { from, to } = range;
+      api.dashboard(from, to).then(setData).catch(() => {});
+      api.insights(from, to).then((r) => setInsights(r.insights)).catch(() => {});
+      api.savings(from, to).then((r) => setTrend(r.savingsTrend)).catch(() => {});
+    } catch {
+      // silent
+    }
+  }, []);
 
   useEffect(() => {
-    api.dashboard().then(setData).catch(() => {});
-    api.insights().then((r) => setInsights(r.insights)).catch(() => {});
-    api.savings().then((r) => setTrend(r.savingsTrend)).catch(() => {});
+    load(dateRange);
+  }, [dateRange, load]);
+
+  const handleDateChange = useCallback((range: DateRange) => {
+    try {
+      setDateRange(range);
+    } catch {
+      // silent
+    }
   }, []);
 
   const stats = data
@@ -56,6 +75,9 @@ export function DashboardPage() {
             Welcome back, {user?.name?.split(' ')[0]}
           </h1>
           <p className="mt-1 text-sm text-muted">Your procurement intelligence at a glance.</p>
+          <div className="mt-3">
+            <DateRangeFilter value={dateRange} onChange={handleDateChange} />
+          </div>
         </div>
         <button
           onClick={() => navigate('/search')}
