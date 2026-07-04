@@ -57,6 +57,94 @@ interface DocSection {
    ════════════════════════════════════════════════════════════════ */
 
 const GENERAL_SECTIONS: DocSection[] = [
+  /* ── 1. BUSINESS TRANSFORMATION — leads with the "why" ── */
+  {
+    id: 'g-transformation',
+    title: 'Business Transformation',
+    icon: Gauge,
+    badge: { label: 'Start here', tone: 'accent' },
+    content: (
+      <div className="space-y-5 text-sm text-ink-soft leading-relaxed">
+        {/* The Problem */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">The Problem</h4>
+          <p>
+            Small and medium businesses spend <strong className="text-ink">hours</strong> manually comparing suppliers
+            across Amazon, Flipkart, IndiaMART, and other marketplaces.
+          </p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            {[
+              { icon: '🔍', text: 'Opening 5–10 supplier websites one by one' },
+              { icon: '📋', text: 'Copying prices into Excel spreadsheets' },
+              { icon: '⏱️', text: 'Comparing delivery timelines manually' },
+              { icon: '🧮', text: 'Running calculations for the best deal' },
+              { icon: '📝', text: 'Preparing reports for approvals' },
+              { icon: '🔁', text: 'Repeating for every single purchase' },
+            ].map((p) => (
+              <div key={p.text} className="flex items-start gap-2 rounded-md border border-line bg-bg p-3">
+                <span className="text-base">{p.icon}</span>
+                <p className="text-xs text-muted">{p.text}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted">This process is <strong className="text-ink">repetitive, error-prone, and expensive</strong> — leading to suboptimal purchasing decisions.</p>
+        </div>
+
+        {/* Our Solution */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">Our Solution</h4>
+          <p>
+            ProcureAI uses <strong className="text-ink">AI to automate</strong> supplier discovery, comparison, and procurement optimization.
+            Instead of spending nearly an hour comparing suppliers manually, users receive an <strong className="text-ink">AI-optimized recommendation in seconds</strong>.
+          </p>
+        </div>
+
+        {/* Before vs After table */}
+        <div className="overflow-x-auto rounded-md border border-line">
+          <table className="w-full text-xs">
+            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Metric</th><th className="px-3 py-2 font-semibold text-danger/80">Before (Manual)</th><th className="px-3 py-2 font-semibold text-green-600">After (ProcureAI)</th></tr></thead>
+            <tbody className="divide-y divide-line">
+              {[
+                ['Supplier comparison', 'Manual across multiple websites', 'Automated — one click'],
+                ['Time per procurement', '45–60 minutes', '3–5 minutes'],
+                ['Websites visited', '5–10 per purchase', '1 (ProcureAI)'],
+                ['Manual calculations', 'Required (Excel/paper)', 'Eliminated — AI handles it'],
+                ['AI recommendations', '❌ Not available', '✅ Weighted scoring + explanation'],
+                ['Procurement reports', 'Manual preparation', 'One-click CSV & PDF'],
+                ['Multi-item optimization', 'Not feasible', '✅ Split-cart optimizer'],
+                ['Savings tracking', 'No visibility', '✅ Real-time dashboard'],
+              ].map(([metric, before, after]) => (
+                <tr key={metric}><td className="px-3 py-2 font-medium text-ink">{metric}</td><td className="px-3 py-2 text-muted">{before}</td><td className="px-3 py-2 text-muted">{after}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Value Delivered */}
+        <div>
+          <h4 className="mb-2 font-semibold text-ink text-base">Value Delivered</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {[
+              { icon: DollarSign, title: '93% Time Reduction', desc: 'From 45 min to 3 min per procurement cycle.' },
+              { icon: Star, title: 'Explainable AI', desc: 'Every recommendation includes a "Why?" panel with radar chart.' },
+              { icon: Clock, title: 'Track & Maximize Savings', desc: 'Business Impact dashboard with ROI calculator.' },
+              { icon: Package, title: 'One-Click Reports', desc: 'Export comparisons as professional PDF or CSV.' },
+            ].map((v) => (
+              <div key={v.title} className="flex gap-3 rounded-md border border-line bg-bg p-3">
+                <v.icon size={18} className="mt-0.5 shrink-0 text-accent" />
+                <div>
+                  <h5 className="text-xs font-semibold text-ink">{v.title}</h5>
+                  <p className="mt-0.5 text-[11px] text-muted">{v.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 2. PRODUCT DEMO ── */
   {
     id: 'g-demo-video',
     title: 'Product Demo',
@@ -66,16 +154,10 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
         <p>
           Watch a <strong className="text-ink">full walkthrough</strong> covering every feature —
-          login, smart search suggestions, export reports, AI explanation panel, watchlist, basket optimization, analytics, and dark mode.
+          login, AI search, basket optimization, business impact dashboard, analytics, and dark mode.
         </p>
         <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
-          <video
-            controls
-            playsInline
-            preload="metadata"
-            className="w-full"
-            poster=""
-          >
+          <video controls playsInline preload="metadata" className="w-full" poster="">
             <source src="/procureai-demo.webm" type="video/webm" />
             <source src="/procureai-demo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -85,52 +167,34 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
-  {
-    id: 'g-what-is',
-    title: 'What is ProcureAI?',
-    icon: Lightbulb,
-    badge: { label: 'Start here', tone: 'accent' },
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          <strong className="text-ink">ProcureAI</strong> is a smart procurement platform that helps your business find
-          the best deals across multiple suppliers — automatically. Instead of manually comparing prices on different
-          websites, ProcureAI does it all for you in seconds.
-        </p>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { icon: DollarSign, title: 'Save Money', desc: 'AI finds the cheapest supplier or the optimal split across vendors.' },
-            { icon: Clock, title: 'Save Time', desc: 'Compare dozens of suppliers in one click instead of hours of manual work.' },
-            { icon: Star, title: 'Better Decisions', desc: 'Factor in ratings, delivery speed, warranty — not just price.' },
-          ].map((f) => (
-            <div key={f.title} className="rounded-md border border-line bg-bg p-4 text-center">
-              <f.icon size={24} className="mx-auto text-accent" />
-              <h4 className="mt-2 font-semibold text-ink">{f.title}</h4>
-              <p className="mt-1 text-xs text-muted">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  },
+
+  /* ── 3. HOW IT WORKS ── */
   {
     id: 'g-how-it-works',
     title: 'How It Works',
     icon: Zap,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>ProcureAI follows a simple 4-step process:</p>
+        {/* Visual workflow */}
+        <div className="flex flex-wrap items-center justify-center gap-2 rounded-md border border-line bg-bg p-4 text-xs font-medium">
+          {['🏢 Business Need', '🤖 ProcureAI', '📊 AI Recommendation', '💰 Business Impact'].map((s, i, arr) => (
+            <React.Fragment key={s}>
+              <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
+              {i < arr.length - 1 && <ArrowRight size={14} className="text-muted shrink-0" />}
+            </React.Fragment>
+          ))}
+        </div>
         <div className="space-y-3">
           {[
-            { step: 1, title: 'Tell us what you need', desc: 'Type a product name (e.g., "Laptop", "Basmati Rice") and pick a category.' },
-            { step: 2, title: 'We search everywhere', desc: 'ProcureAI queries Amazon, Flipkart, and other suppliers simultaneously.' },
-            { step: 3, title: 'AI picks the best option', desc: 'Our algorithm scores every option on price, delivery, rating, and more.' },
-            { step: 4, title: 'You save money', desc: 'See the recommended supplier, estimated savings, and make a confident decision.' },
+            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all suppliers simultaneously.' },
+            { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table.' },
+            { step: 3, title: 'Recommend', desc: 'AI scores every option on price, delivery, rating, discount, warranty, and returns.' },
+            { step: 4, title: 'Explain', desc: 'Click "Why this recommendation?" for a radar chart and supplier scoreboard.' },
+            { step: 5, title: 'Optimize', desc: 'Add multiple items to a basket for split-cart optimization across suppliers.' },
+            { step: 6, title: 'Export & Track', desc: 'Download CSV/PDF reports. Track savings on the Business Impact dashboard.' },
           ].map((s) => (
             <div key={s.step} className="flex gap-4 rounded-md border border-line bg-bg p-4">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white text-sm font-bold">
-                {s.step}
-              </span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white text-sm font-bold">{s.step}</span>
               <div>
                 <h4 className="font-semibold text-ink">{s.title}</h4>
                 <p className="mt-0.5 text-xs text-muted">{s.desc}</p>
@@ -141,23 +205,35 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
+
+  /* ── 4. SEARCH & COMPARE ── */
   {
     id: 'g-single-search',
-    title: 'Searching for a Product',
+    title: 'Search & Compare',
     icon: Search,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>The simplest way to use ProcureAI — search for one product and compare all suppliers instantly.</p>
+        <p>Search for any product and compare all suppliers instantly. The AI-recommended option is highlighted with a confidence score.</p>
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-3 font-semibold text-ink">Step-by-step</h4>
           <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
             <li>Go to <strong className="text-ink">Search & Compare</strong> from the sidebar.</li>
-            <li>Make sure <strong className="text-ink">Single Search</strong> mode is selected (top toggle).</li>
             <li>Pick a <strong className="text-ink">category</strong> — Electronics, Fashion, Grocery, etc.</li>
-            <li>Choose which <strong className="text-ink">suppliers</strong> you want to compare (or leave all selected).</li>
+            <li>Choose which <strong className="text-ink">suppliers</strong> to compare (or leave all selected).</li>
             <li>Type your product in the search box and click <strong className="text-ink">Search</strong>.</li>
             <li>Review the comparison table — the AI-recommended option is highlighted.</li>
+            <li>Click <strong className="text-ink">"Why this recommendation?"</strong> for the AI explanation panel.</li>
           </ol>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Export Options</h5>
+            <p className="mt-1 text-[11px] text-muted">Download results as <strong className="text-ink">CSV</strong> (for Excel/Sheets) or <strong className="text-ink">PDF</strong> (styled report with AI summary).</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Price Watchlist</h5>
+            <p className="mt-1 text-[11px] text-muted">Click the <strong className="text-ink">eye icon</strong> to track any product. Set target prices and monitor across sessions.</p>
+          </div>
         </div>
         <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
           <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
@@ -166,16 +242,45 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
+
+  /* ── 5. AI EXPLANATION ── */
+  {
+    id: 'g-ai-explanation',
+    title: 'AI Explanation Panel',
+    icon: Brain,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Every AI recommendation is <strong className="text-ink">transparent and auditable</strong>. See exactly why a supplier was chosen.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">Radar Chart</h4>
+            <p className="text-xs text-muted">Visualizes how the recommended supplier performs across price, delivery, rating, discount, and availability — all factors at a glance.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">Supplier Scoreboard</h4>
+            <p className="text-xs text-muted">A ranked table of all suppliers with color-coded progress bars, weighted scores out of 100, and prices so you can verify the AI's choice.</p>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
+          <p className="text-xs text-ink-soft">Use this panel when presenting procurement decisions to your team — it provides the evidence behind each recommendation.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 6. BASKET OPTIMIZATION ── */
   {
     id: 'g-basket',
     title: 'Basket Optimization',
     icon: ShoppingCart,
-    badge: { label: 'Popular', tone: 'success' },
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          Need to buy multiple items? Basket Optimization finds the smartest way to split your order across
-          suppliers — or tells you if buying everything from one place is actually cheaper.
+          Need to buy multiple items? Basket Optimization finds the smartest way to <strong className="text-ink">split your order across
+          suppliers</strong> — or tells you if buying everything from one place is actually cheaper.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
@@ -184,7 +289,6 @@ const GENERAL_SECTIONS: DocSection[] = [
             <li>Add items one by one — enter the product name and quantity.</li>
             <li>Click <strong className="text-ink">Optimise Basket</strong>.</li>
             <li>Review the recommendation: <strong className="text-ink">Split</strong> (buy from different suppliers) or <strong className="text-ink">Consolidate</strong> (buy all from one).</li>
-            <li>See the per-item breakdown showing which supplier each item should come from.</li>
           </ol>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -200,219 +304,12 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
-  {
-    id: 'g-weight-profiles',
-    title: 'Choosing a Weight Profile',
-    icon: Settings,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          Weight profiles tell the AI what matters most to <em>your</em> business. Different industries have different priorities.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            { name: 'Balanced', desc: 'Equal importance to price, speed, and quality. Good default for most businesses.', icon: '⚖️' },
-            { name: 'Startup', desc: 'Maximises cost savings. Best when budget is the #1 priority.', icon: '💰' },
-            { name: 'Hospital', desc: 'Prioritises availability and fast delivery. Critical for medical supplies.', icon: '🏥' },
-            { name: 'Restaurant', desc: 'Fast, reliable delivery for perishables. Freshness and speed first.', icon: '🍽️' },
-          ].map((p) => (
-            <div key={p.name} className="rounded-md border border-line bg-bg p-4">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{p.icon}</span>
-                <h4 className="font-semibold text-ink">{p.name}</h4>
-              </div>
-              <p className="mt-1 text-xs text-muted">{p.desc}</p>
-            </div>
-          ))}
-        </div>
-        <p className="text-xs text-muted">
-          You can change your default profile in <strong className="text-ink">Settings → Procurement Preferences</strong>.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: 'g-dashboard',
-    title: 'Understanding the Dashboard',
-    icon: BarChart3,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Your Dashboard is the home screen — a snapshot of your procurement activity at a glance. Use the <strong className="text-ink">date range filter</strong> at the top to view data for a specific period (last 7/30/90 days, this month, or custom). All KPIs, charts, and AI insights update accordingly. Default: All Time.</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            { title: 'Total Searches', desc: 'How many product comparisons you\'ve run.' },
-            { title: 'Est. Monthly Savings', desc: 'Average monthly savings — adjusts dynamically based on the selected date range.' },
-            { title: 'Top Category', desc: 'The product category you search for most often.' },
-            { title: 'Preferred Supplier', desc: 'The supplier recommended to you most frequently.' },
-            { title: 'Recent Searches', desc: 'Your latest comparisons with quick re-run capability.' },
-            { title: 'AI Insights', desc: 'Smart suggestions based on your procurement patterns.' },
-          ].map((m) => (
-            <div key={m.title} className="rounded-md border border-line bg-bg p-3">
-              <h5 className="text-xs font-semibold text-ink">{m.title}</h5>
-              <p className="mt-0.5 text-[11px] text-muted">{m.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'g-analytics',
-    title: 'Reading Your Analytics',
-    icon: TrendingUp,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>The Analytics page shows visual charts that help you understand your spending patterns over time. Like the Dashboard, it includes a <strong className="text-ink">date range filter</strong> so you can focus on any time period.</p>
-        <div className="space-y-3">
-          {[
-            { title: 'Spend Trend', desc: 'A line chart showing how your total procurement spend changes month by month. Look for upward trends — they might mean it\'s time to renegotiate with suppliers.' },
-            { title: 'Category Breakdown', desc: 'A pie chart showing where your budget goes. If 80% goes to one category, you might benefit from bulk deals there.' },
-            { title: 'Supplier Usage', desc: 'A bar chart showing which suppliers the AI recommends most. Useful for building long-term relationships with top vendors.' },
-            { title: 'Savings Trend', desc: 'Shows your cumulative savings from using AI recommendations. Great for reporting ROI to management.' },
-          ].map((c) => (
-            <div key={c.title} className="rounded-md border border-line bg-bg p-4">
-              <h4 className="font-semibold text-ink">{c.title}</h4>
-              <p className="mt-1 text-xs text-muted">{c.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'g-history',
-    title: 'Search History',
-    icon: History,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Successful searches are automatically saved. Failed or empty searches (no results found) are excluded to keep your history clean. You can browse, review, and delete past searches.</p>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-2 font-semibold text-ink">What you can do</h4>
-          <ul className="space-y-1.5 text-xs text-muted">
-            <li><CheckCircle2 size={12} className="mr-1 inline text-success" /> View all past searches with timestamps</li>
-            <li><CheckCircle2 size={12} className="mr-1 inline text-success" /> See the category and query for each search</li>
-            <li><CheckCircle2 size={12} className="mr-1 inline text-success" /> Expand basket searches to see item-by-item breakdown</li>
-            <li><CheckCircle2 size={12} className="mr-1 inline text-success" /> Delete searches you no longer need</li>
-            <li><CheckCircle2 size={12} className="mr-1 inline text-success" /> Navigate through pages if you have many searches</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'g-export',
-    title: 'Export Reports (CSV & PDF)',
-    icon: Download,
 
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          After running a search, you can <strong className="text-ink">export the comparison results</strong> as a CSV spreadsheet
-          or a professional PDF report — perfect for sharing with your team or archiving procurement decisions.
-        </p>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">How to export</h4>
-          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
-            <li>Run a product search from the <strong className="text-ink">Search & Compare</strong> page.</li>
-            <li>In the comparison table toolbar, click <strong className="text-ink">CSV</strong> to download a spreadsheet.</li>
-            <li>Or click <strong className="text-ink">PDF</strong> to open a styled, print-ready report in a new tab.</li>
-            <li>Use your browser's <strong className="text-ink">Print → Save as PDF</strong> to save permanently.</li>
-          </ol>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-line bg-bg p-3">
-            <h5 className="text-xs font-semibold text-ink">CSV Export</h5>
-            <p className="mt-1 text-[11px] text-muted">Includes supplier, product, price, discount, rating, delivery, and stock status. Open in Excel or Google Sheets.</p>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-3">
-            <h5 className="text-xs font-semibold text-ink">PDF Report</h5>
-            <p className="mt-1 text-[11px] text-muted">Beautifully formatted report with AI recommendation summary, comparison table, and generation timestamp.</p>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'g-ai-explanation',
-    title: 'AI Explanation Panel',
-    icon: Brain,
-    
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          Ever wonder <strong className="text-ink">why the AI recommended a particular supplier</strong>? The Explanation Panel
-          makes every AI decision transparent and auditable.
-        </p>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
-          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
-            <li>Run a product search — the AI Recommendation card appears at the top.</li>
-            <li>Click <strong className="text-ink">"Why this recommendation?"</strong> at the bottom of the card.</li>
-            <li>A panel expands showing a <strong className="text-ink">radar chart</strong> of the winning supplier's factor scores.</li>
-            <li>A <strong className="text-ink">scoreboard table</strong> ranks every supplier with their weighted score and price.</li>
-          </ol>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-line bg-bg p-3">
-            <h5 className="text-xs font-semibold text-ink">Radar Chart</h5>
-            <p className="mt-1 text-[11px] text-muted">Visualises how the recommended supplier performs across price, delivery, rating, discount, and availability.</p>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-3">
-            <h5 className="text-xs font-semibold text-ink">Supplier Scoreboard</h5>
-            <p className="mt-1 text-[11px] text-muted">A ranked table of all suppliers with progress bars and prices so you can verify the AI's choice.</p>
-          </div>
-        </div>
-        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
-          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
-          <p className="text-xs text-ink-soft">Use this panel when presenting procurement decisions to your team — it provides the evidence behind each recommendation.</p>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'g-watchlist',
-    title: 'Price Watchlist',
-    icon: Eye,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          Track products you're interested in and set <strong className="text-ink">target prices</strong>. The watchlist
-          persists across sessions and tells you when products hit your desired price point.
-        </p>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
-          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
-            <li>Run a product search from the <strong className="text-ink">Search & Compare</strong> page.</li>
-            <li>In the comparison table, click the <strong className="text-ink">eye icon</strong> next to any product to add it to your watchlist.</li>
-            <li>A target price (10% below current) is automatically set — click it to edit.</li>
-            <li>Navigate to <strong className="text-ink">Watchlist</strong> from the sidebar to see all tracked products.</li>
-            <li>Products at or below your target are highlighted in green with a "At target" badge.</li>
-          </ol>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-md border border-line bg-bg p-3 text-center">
-            <Eye size={20} className="mx-auto text-accent" />
-            <h5 className="mt-2 text-xs font-semibold text-ink">Track</h5>
-            <p className="mt-1 text-[11px] text-muted">Add products from any search result with one click.</p>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-3 text-center">
-            <DollarSign size={20} className="mx-auto text-accent" />
-            <h5 className="mt-2 text-xs font-semibold text-ink">Target</h5>
-            <p className="mt-1 text-[11px] text-muted">Set your desired price — editable inline anytime.</p>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-3 text-center">
-            <TrendingUp size={20} className="mx-auto text-accent" />
-            <h5 className="mt-2 text-xs font-semibold text-ink">Monitor</h5>
-            <p className="mt-1 text-[11px] text-muted">Summary cards show how many items are at or above target.</p>
-          </div>
-        </div>
-      </div>
-    ),
-  },
+  /* ── 7. BUSINESS IMPACT DASHBOARD ── */
   {
     id: 'g-business-impact',
-    title: 'Business Impact',
-    icon: Gauge,
+    title: 'Business Impact Dashboard',
+    icon: TrendingUp,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
@@ -454,67 +351,125 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
+
+  /* ── 8. DASHBOARD & ANALYTICS ── */
   {
-    id: 'g-account',
-    title: 'Account & Settings',
-    icon: Users,
+    id: 'g-dashboard',
+    title: 'Dashboard & Analytics',
+    icon: BarChart3,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Manage your profile and procurement preferences from the Settings page.</p>
+        <p>Your <strong className="text-ink">Dashboard</strong> is the home screen — a snapshot of procurement activity at a glance. The <strong className="text-ink">Analytics</strong> page provides deeper visual insights. Both include a <strong className="text-ink">date range filter</strong> (last 7/30/90 days, this month, or custom).</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 font-semibold text-ink">Profile</h4>
+            <h4 className="mb-2 font-semibold text-ink">Dashboard KPIs</h4>
             <ul className="space-y-1 text-xs text-muted">
-              <li>• View your name and email</li>
-              <li>• All users share the same feature set</li>
+              <li>• <strong className="text-ink">Total Searches</strong> — comparisons you've run</li>
+              <li>• <strong className="text-ink">Est. Monthly Savings</strong> — adjusts with date range</li>
+              <li>• <strong className="text-ink">Top Category</strong> — most searched category</li>
+              <li>• <strong className="text-ink">Preferred Supplier</strong> — most recommended</li>
+              <li>• <strong className="text-ink">AI Insights</strong> — smart suggestions</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 font-semibold text-ink">Preferences</h4>
+            <h4 className="mb-2 font-semibold text-ink">Analytics Charts</h4>
             <ul className="space-y-1 text-xs text-muted">
-              <li>• Set default product category</li>
-              <li>• Choose default sort order</li>
-              <li>• Select preferred weight profile</li>
+              <li>• <strong className="text-ink">Spend Trend</strong> — monthly spend over time</li>
+              <li>• <strong className="text-ink">Category Breakdown</strong> — where budget goes</li>
+              <li>• <strong className="text-ink">Supplier Usage</strong> — most recommended vendors</li>
+              <li>• <strong className="text-ink">Savings Trend</strong> — cumulative savings for ROI</li>
             </ul>
           </div>
         </div>
       </div>
     ),
   },
+
+  /* ── 9. WATCHLIST & HISTORY ── */
+  {
+    id: 'g-watchlist-history',
+    title: 'Watchlist & History',
+    icon: Eye,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Eye size={14} className="text-accent" /> Price Watchlist</h4>
+            <p className="text-xs text-muted mb-2">Track products and set target prices. Persists across sessions.</p>
+            <ul className="space-y-1 text-xs text-muted">
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Add products from search results with one click</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Set target prices — editable inline</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Products at target are highlighted green</li>
+            </ul>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><History size={14} className="text-accent" /> Search History</h4>
+            <p className="text-xs text-muted mb-2">Only successful searches are saved (15 per page). Failed/empty searches are excluded.</p>
+            <ul className="space-y-1 text-xs text-muted">
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> View past searches with timestamps</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Expand basket searches for item breakdown</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Delete old entries you no longer need</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 10. SETTINGS & WEIGHT PROFILES ── */
+  {
+    id: 'g-settings',
+    title: 'Settings & Weight Profiles',
+    icon: Settings,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>Manage your profile and tell the AI what matters most to <em>your</em> business with weight profiles.</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            { name: 'Balanced', desc: 'Equal importance to price, speed, and quality. Good default for most businesses.', icon: '⚖️' },
+            { name: 'Startup', desc: 'Maximizes cost savings. Best when budget is the #1 priority.', icon: '💰' },
+            { name: 'Hospital', desc: 'Prioritizes availability and fast delivery. Critical for medical supplies.', icon: '🏥' },
+            { name: 'Restaurant', desc: 'Fast, reliable delivery for perishables. Freshness and speed first.', icon: '🍽️' },
+          ].map((p) => (
+            <div key={p.name} className="rounded-md border border-line bg-bg p-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{p.icon}</span>
+                <h4 className="font-semibold text-ink">{p.name}</h4>
+              </div>
+              <p className="mt-1 text-xs text-muted">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-muted">Change your default profile in <strong className="text-ink">Settings → Procurement Preferences</strong>.</p>
+      </div>
+    ),
+  },
+
+  /* ── 11. FAQ & SUPPORT ── */
   {
     id: 'g-faq',
-    title: 'Frequently Asked Questions',
+    title: 'FAQ & Support',
     icon: HelpCircle,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {[
-          { q: 'Is my data private?', a: 'Yes. All your searches, history, and preferences are tied to your account and are not shared with anyone.' },
-          { q: 'How accurate are the prices?', a: 'Prices are fetched in real-time from supplier websites. They reflect the current listed price at the time of your search.' },
-          { q: 'Can I add my own suppliers?', a: 'The platform currently supports pre-configured supplier adapters. Contact your admin to request new supplier integrations.' },
-          { q: 'How is "estimated savings" calculated?', a: 'Savings = the difference between the most expensive option and the AI-recommended option for the same product.' },
+          { q: 'Is my data private?', a: 'Yes. All searches, history, and preferences are tied to your account and not shared.' },
+          { q: 'How accurate are the prices?', a: 'Prices are fetched in real-time from supplier websites at the time of your search.' },
+          { q: 'Can I add my own suppliers?', a: 'The platform supports pre-configured supplier adapters. New ones can be added via the adapter pattern.' },
+          { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
           { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
-          { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is about its recommendation. Higher confidence (80%+) means the recommended option is significantly better than alternatives.' },
+          { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
         ].map((faq) => (
           <div key={faq.q} className="rounded-md border border-line bg-bg p-4">
             <h4 className="font-semibold text-ink">{faq.q}</h4>
             <p className="mt-1 text-xs text-muted">{faq.a}</p>
           </div>
         ))}
-      </div>
-    ),
-  },
-  {
-    id: 'g-support',
-    title: 'Getting Help',
-    icon: LifeBuoy,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Need help? Here are your options:</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <Package size={20} className="text-accent" />
             <h4 className="mt-2 font-semibold text-ink">Documentation</h4>
-            <p className="mt-1 text-xs text-muted">Browse the General and Developer guides above to learn every feature.</p>
+            <p className="mt-1 text-xs text-muted">Browse General and Developer guides to learn every feature.</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <Globe size={20} className="text-accent" />
@@ -880,14 +835,14 @@ function DocSectionCard({ section, isOpen, onToggle }: { section: DocSection; is
 
 export function DocsPage() {
   const [mode, setMode] = useState<DocMode>('general');
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-demo-video']));
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set(['g-transformation']));
 
   const sections = mode === 'general' ? GENERAL_SECTIONS : DEV_SECTIONS;
 
   const switchMode = (m: DocMode) => {
     try {
       setMode(m);
-      setOpenSections(new Set([m === 'general' ? 'g-what-is' : 'd-architecture']));
+      setOpenSections(new Set([m === 'general' ? 'g-transformation' : 'd-architecture']));
     } catch {
       // silent
     }
@@ -911,7 +866,7 @@ export function DocsPage() {
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Documentation</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
             {mode === 'general'
-              ? 'Learn how to use ProcureAI to compare suppliers and save money on every purchase.'
+              ? 'Discover how ProcureAI transforms procurement — from the business problem we solve to every feature you can use.'
               : 'Technical reference for developers — architecture, APIs, data models, and setup.'}
           </p>
         </div>

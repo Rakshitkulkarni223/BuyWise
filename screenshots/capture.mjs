@@ -65,6 +65,7 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
     await wait(800);
     try {
       await page.click('[data-testid="mode-basket"]', { timeout: 3000 });
+      await page.click('[data-testid="category-grocery"]', { timeout: 3000 });
       await wait(2000);
       await page.screenshot({ path: path.join(__dirname, 'basket-optimization.png'), fullPage: false });
       console.log('✅ basket-optimization.png');
