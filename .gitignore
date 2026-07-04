@@ -4,12 +4,10 @@ credentials.json
 .credentials
 memory/test_credentials.md
 
-backend/node_modules
-frontend/node_modules
-backend/__pycache__
-frontend/__pycache__
-
 node_modules
+__pycache__
+*.pyc
+backend/dist
 .env
 .env.*
 *.env
