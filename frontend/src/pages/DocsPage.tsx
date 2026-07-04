@@ -124,39 +124,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     icon: Gauge,
     content: (
       <div className="space-y-5 text-sm text-ink-soft leading-relaxed">
-        {/* The Problem */}
-        <div>
-          <h4 className="mb-2 font-semibold text-ink text-base">The Problem</h4>
-          <p>
-            Small and medium businesses spend <strong className="text-ink">hours</strong> manually comparing suppliers
-            across Amazon, Flipkart, IndiaMART, and other marketplaces.
-          </p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-3">
-            {[
-              { icon: '🔍', text: 'Opening 5–10 supplier websites one by one' },
-              { icon: '📋', text: 'Copying prices into Excel spreadsheets' },
-              { icon: '⏱️', text: 'Comparing delivery timelines manually' },
-              { icon: '🧮', text: 'Running calculations for the best deal' },
-              { icon: '📝', text: 'Preparing reports for approvals' },
-              { icon: '🔁', text: 'Repeating for every single purchase' },
-            ].map((p) => (
-              <div key={p.text} className="flex items-start gap-2 rounded-md border border-line bg-bg p-3">
-                <span className="text-base">{p.icon}</span>
-                <p className="text-xs text-muted">{p.text}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted">This process is <strong className="text-ink">repetitive, error-prone, and expensive</strong> — leading to suboptimal purchasing decisions.</p>
-        </div>
-
-        {/* Our Solution */}
-        <div>
-          <h4 className="mb-2 font-semibold text-ink text-base">Our Solution</h4>
-          <p>
-            ProcureAI uses <strong className="text-ink">AI to automate</strong> supplier discovery, comparison, and procurement optimization.
-            Instead of spending nearly an hour comparing suppliers manually, users receive an <strong className="text-ink">AI-optimized recommendation in seconds</strong>.
-          </p>
-        </div>
+        <p>See how ProcureAI transforms manual procurement into an <strong className="text-ink">AI-powered workflow</strong> — measurable gains across every metric.</p>
 
         {/* Before vs After table */}
         <div className="overflow-x-auto rounded-md border border-line">
@@ -184,7 +152,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           <h4 className="mb-2 font-semibold text-ink text-base">Value Delivered</h4>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { icon: DollarSign, title: '93% Time Reduction', desc: 'From 45 min to 3 min per procurement cycle.' },
+              { icon: DollarSign, title: '~93% Time Reduction', desc: 'Estimated: from 45 min to 3 min per procurement cycle (illustrative scenario).' },
               { icon: Star, title: 'Explainable AI', desc: 'Every recommendation includes a "Why?" panel with radar chart.' },
               { icon: Clock, title: 'Track & Maximize Savings', desc: 'Business Impact dashboard with ROI calculator.' },
               { icon: Package, title: 'One-Click Reports', desc: 'Export comparisons as professional PDF or CSV.' },
@@ -396,7 +364,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><ArrowDown size={14} className="text-green-600" /> Before vs After</h4>
-            <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with ProcureAI's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — a 93% time reduction.</p>
+            <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with ProcureAI's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — an estimated ~93% time reduction (illustrative scenario).</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Calculator size={14} className="text-accent" /> ROI Calculator</h4>

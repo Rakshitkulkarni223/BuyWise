@@ -8,7 +8,7 @@
 
 Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
 
-⭐ Up to **93% faster** supplier comparison  
+⭐ **~93% faster** supplier comparison *(estimated based on typical procurement workflow)*  
 💰 **Business Impact** Dashboard  
 📊 **ROI Calculator**  
 🤖 **Explainable AI** Recommendations
@@ -113,7 +113,7 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
 | **Business Impact Dashboard** | Total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
-| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) showing 93% time reduction. |
+| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) — estimated ~93% time reduction based on a sample business scenario. |
 | **ROI Calculator** | Interactive calculator with sliders — estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
 | **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
 | **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. |
