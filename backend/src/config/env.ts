@@ -17,9 +17,9 @@ export const env = {
   jwtSecret: required('JWT_SECRET'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   port: parseInt(process.env.PORT || '8002', 10),
-  adminEmail: process.env.ADMIN_EMAIL || 'demo@procureai.com',
-  adminPassword: process.env.ADMIN_PASSWORD || 'Demo@123',
-  adminName: process.env.ADMIN_NAME || 'Demo User',
+  demoEmail: process.env.DEMO_EMAIL || 'demo@procureai.com',
+  demoPassword: process.env.DEMO_PASSWORD || 'Demo@123',
+  demoName: process.env.DEMO_NAME || 'Demo User',
   corsOrigins: process.env.CORS_ORIGINS || '*',
   nodeEnv: process.env.NODE_ENV || 'development',
 };
