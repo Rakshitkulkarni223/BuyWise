@@ -20,8 +20,8 @@ Compare suppliers, optimize purchases, reduce procurement costs, and measure bus
 
 | | |
 |---|---|
-| **Production** | <a href="https://buywise-compare-1.emergent.host" target="_blank">https://buywise-compare-1.emergent.host</a> |
-| **Preview** | <a href="https://buywise-compare-1.preview.emergentagent.com" target="_blank">https://buywise-compare-1.preview.emergentagent.com</a> |
+| **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
+| **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
 
 ### Demo Account
 
