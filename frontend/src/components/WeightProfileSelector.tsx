@@ -24,7 +24,7 @@ export function WeightProfileSelector({
             title={p.description}
             className={cn(
               'rounded-md border px-3 py-2.5 text-left transition-colors duration-200',
-              active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-ink hover:border-ink/40',
+              active ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink hover:border-accent/40',
             )}
           >
             <div className="text-sm font-semibold tracking-tight">{p.label}</div>

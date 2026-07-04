@@ -129,7 +129,7 @@ export function AnalyticsPage() {
                   return (
                     <div key={s.supplier} className="flex items-center gap-3">
                       <span className="w-28 shrink-0 truncate text-sm text-ink-soft">{s.supplier}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded-md bg-slate-100">
+                      <div className="h-6 flex-1 overflow-hidden rounded-md bg-bg">
                         <div
                           className="flex h-full items-center justify-end rounded-md px-2 text-[11px] font-semibold text-white"
                           style={{ width: `${(s.count / max) * 100}%`, background: PIE_COLORS[i % PIE_COLORS.length] }}

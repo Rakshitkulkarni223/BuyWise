@@ -264,17 +264,185 @@ class TestHistory:
         time.sleep(0.5)
         r = s.get(f"{API}/history", headers=admin_headers, timeout=20)
         assert r.status_code == 200, r.text
-        history = _ok(r)
-        assert isinstance(history, list) and len(history) > 0
-        item = history[0]
+        history_resp = _ok(r)
+        # Unified history returns paginated envelope
+        items = history_resp.get("items") if isinstance(history_resp, dict) else history_resp
+        assert isinstance(items, list) and len(items) > 0
+        item = items[0]
         hid = item.get("id") or item.get("_id")
         assert hid
         r2 = s.delete(f"{API}/history/{hid}", headers=admin_headers, timeout=20)
         assert r2.status_code in (200, 204), r2.text
         # verify removed
         r3 = s.get(f"{API}/history", headers=admin_headers, timeout=20)
-        remaining_ids = {(h.get("id") or h.get("_id")) for h in _ok(r3)}
+        resp3 = _ok(r3)
+        items3 = resp3.get("items") if isinstance(resp3, dict) else resp3
+        remaining_ids = {(h.get("id") or h.get("_id")) for h in items3}
         assert hid not in remaining_ids
+
+
+# -------------------- Basket Optimization --------------------
+
+def _do_basket(s, headers, items=None, category="grocery", weight="balanced"):
+    payload = {
+        "category": category,
+        "items": items or [
+            {"query": "Basmati Rice", "quantity": 2},
+            {"query": "Cooking Oil", "quantity": 1},
+            {"query": "Fresh Vegetables", "quantity": 3},
+        ],
+        "weightProfile": weight,
+    }
+    r = s.post(f"{API}/basket/optimize", headers=headers, json=payload, timeout=60)
+    assert r.status_code == 200, r.text
+    return _ok(r)
+
+
+class TestBasketOptimization:
+    def test_basket_returns_valid_structure(self, s, admin_headers):
+        data = _do_basket(s, admin_headers)
+        # Must have items, totals, and plan fields
+        assert "items" in data, f"Missing 'items' in basket response: {list(data.keys())}"
+        assert isinstance(data["items"], list) and len(data["items"]) > 0
+        assert "splitTotal" in data
+        assert "baseline" in data or "baselineTotal" in data
+        assert "estimatedSavings" in data
+        assert isinstance(data["estimatedSavings"], (int, float))
+        assert data["estimatedSavings"] >= 0
+        assert "recommendedPlan" in data
+        assert data["recommendedPlan"] in ("split", "consolidate")
+
+    def test_basket_item_shape(self, s, admin_headers):
+        data = _do_basket(s, admin_headers)
+        for item in data["items"]:
+            assert "query" in item, f"Missing 'query' in basket item: {item}"
+            assert "price" in item, f"Missing 'price' in basket item: {item}"
+            assert "quantity" in item, f"Missing 'quantity' in basket item: {item}"
+            # Fulfilled items have a non-null supplier
+            if item.get("supplier"):
+                assert "title" in item
+                assert item["price"] > 0
+
+    def test_basket_unfulfillable_items(self, s, admin_headers):
+        """Gibberish items should be marked as unfulfillable, not matched."""
+        data = _do_basket(s, admin_headers, items=[
+            {"query": "xyzzyplugh999", "quantity": 1},
+            {"query": "Basmati Rice", "quantity": 1},
+        ])
+        unfulfillable = data.get("unfulfillable", [])
+        # The gibberish query should appear in unfulfillable
+        assert "xyzzyplugh999" in unfulfillable, f"Expected gibberish in unfulfillable: {unfulfillable}"
+        # Real item should still be fulfilled (supplier is not null)
+        fulfilled_queries = [it["query"] for it in data["items"] if it.get("supplier")]
+        assert any("rice" in q.lower() for q in fulfilled_queries), f"Rice not found in: {fulfilled_queries}"
+
+    def test_basket_all_unfulfillable(self, s, admin_headers):
+        """All gibberish items → everything unfulfillable."""
+        data = _do_basket(s, admin_headers, items=[
+            {"query": "zzznonsense111", "quantity": 1},
+            {"query": "aaafakeitem222", "quantity": 1},
+        ])
+        unfulfillable = data.get("unfulfillable", [])
+        assert len(unfulfillable) == 2, f"Expected 2 unfulfillable, got {unfulfillable}"
+
+    def test_basket_validation_empty_items(self, s, admin_headers):
+        """Empty items list should be rejected."""
+        r = s.post(
+            f"{API}/basket/optimize",
+            headers=admin_headers,
+            json={"category": "grocery", "items": []},
+            timeout=20,
+        )
+        assert r.status_code in (400, 422), f"Expected validation error, got {r.status_code}: {r.text}"
+
+    def test_basket_without_auth(self, s):
+        r = s.post(
+            f"{API}/basket/optimize",
+            json={"category": "grocery", "items": [{"query": "Rice", "quantity": 1}]},
+            timeout=20,
+        )
+        assert r.status_code == 401
+
+
+# -------------------- Basket History --------------------
+
+class TestBasketHistory:
+    def test_basket_history_populated_after_optimize(self, s, admin_headers):
+        """After running a basket optimization, it should appear in basket history."""
+        _do_basket(s, admin_headers)
+        time.sleep(0.5)
+        r = s.get(f"{API}/basket/history", headers=admin_headers, timeout=20)
+        assert r.status_code == 200, r.text
+        data = _ok(r)
+        items = data.get("items", data) if isinstance(data, dict) else data
+        assert isinstance(items, list) and len(items) > 0, f"Basket history empty: {data}"
+        entry = items[0]
+        assert "category" in entry
+        assert "items" in entry or "itemCount" in entry
+
+    def test_basket_history_without_auth(self, s):
+        r = s.get(f"{API}/basket/history", timeout=20)
+        assert r.status_code == 401
+
+
+# -------------------- Unified History (single + basket) --------------------
+
+class TestUnifiedHistory:
+    def test_unified_history_contains_both_types(self, s, admin_headers):
+        """After running both a single search and a basket, unified /history returns both."""
+        _do_search(s, admin_headers, query=f"UH_single_{uuid.uuid4().hex[:6]}")
+        _do_basket(s, admin_headers)
+        time.sleep(0.5)
+        r = s.get(f"{API}/history", headers=admin_headers, timeout=20)
+        assert r.status_code == 200, r.text
+        data = _ok(r)
+        items = data.get("items", data) if isinstance(data, dict) else data
+        assert isinstance(items, list) and len(items) > 0
+        types_seen = {it.get("type") for it in items}
+        assert "single" in types_seen, f"No single search in history types: {types_seen}"
+        assert "basket" in types_seen, f"No basket search in history types: {types_seen}"
+
+    def test_basket_history_entry_has_basket_items(self, s, admin_headers):
+        """Basket entries in unified history should include basketItems array."""
+        r = s.get(f"{API}/history", headers=admin_headers, timeout=20)
+        data = _ok(r)
+        items = data.get("items", data) if isinstance(data, dict) else data
+        basket_entries = [it for it in items if it.get("type") == "basket"]
+        assert len(basket_entries) > 0, "No basket entries found in unified history"
+        entry = basket_entries[0]
+        assert "basketItems" in entry, f"Basket entry missing basketItems: {list(entry.keys())}"
+        assert isinstance(entry["basketItems"], list)
+        if entry["basketItems"]:
+            bi = entry["basketItems"][0]
+            assert "query" in bi, f"basketItem missing 'query': {bi}"
+
+    def test_unified_history_delete_basket_entry(self, s, admin_headers):
+        """Should be able to delete a basket entry via /history/:id."""
+        r = s.get(f"{API}/history", headers=admin_headers, timeout=20)
+        data = _ok(r)
+        items = data.get("items", data) if isinstance(data, dict) else data
+        basket_entries = [it for it in items if it.get("type") == "basket"]
+        if not basket_entries:
+            _do_basket(s, admin_headers)
+            time.sleep(0.5)
+            r = s.get(f"{API}/history", headers=admin_headers, timeout=20)
+            data = _ok(r)
+            items = data.get("items", data) if isinstance(data, dict) else data
+            basket_entries = [it for it in items if it.get("type") == "basket"]
+        assert basket_entries, "Still no basket entries after running basket optimization"
+        hid = basket_entries[0].get("id") or basket_entries[0].get("_id")
+        r2 = s.delete(f"{API}/history/{hid}", headers=admin_headers, timeout=20)
+        assert r2.status_code in (200, 204), r2.text
+
+
+# -------------------- No Results (single search) --------------------
+
+class TestNoResults:
+    def test_single_search_gibberish_returns_empty(self, s, admin_headers):
+        """Gibberish query should return 0 results, not fake matches."""
+        data = _do_search(s, admin_headers, query="xyzzyplugh_gibberish_999")
+        results = data.get("results") or data.get("comparisons") or []
+        assert len(results) == 0, f"Expected 0 results for gibberish, got {len(results)}"
 
 
 # -------------------- Dashboard / analytics --------------------

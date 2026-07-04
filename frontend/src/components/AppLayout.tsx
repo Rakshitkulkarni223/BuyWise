@@ -11,8 +11,11 @@ import {
   Menu,
   X,
   BookOpen,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { cn } from '../lib/utils';
 
 const NAV = [
@@ -26,13 +29,14 @@ const NAV = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2.5 px-5 h-16 border-b border-line">
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-ink text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={18} />
         </span>
         <div className="leading-none">
@@ -53,7 +57,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             className={({ isActive }) =>
               cn(
                 'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-200',
-                isActive ? 'bg-ink text-white' : 'text-muted hover:bg-bg hover:text-ink',
+                isActive ? 'bg-accent text-white' : 'text-muted hover:bg-bg hover:text-ink',
               )
             }
           >
@@ -74,12 +78,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <button
+          data-testid="theme-toggle"
+          onClick={toggleTheme}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-ink"
+        >
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
+        <button
           data-testid="logout-button"
           onClick={() => {
             logout();
             navigate('/login');
           }}
-          className="mt-1 flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-red-50 hover:text-danger"
+          className="mt-1 flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-danger"
         >
           <LogOut size={17} />
           Sign out

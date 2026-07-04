@@ -261,7 +261,7 @@ export function SearchPage() {
             onClick={() => switchMode('single')}
             className={cn(
               'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
-              mode === 'single' ? 'bg-ink text-white' : 'text-muted hover:text-ink',
+              mode === 'single' ? 'bg-accent text-white' : 'text-muted hover:text-ink',
             )}
           >
             <Search size={15} /> Single Search
@@ -271,7 +271,7 @@ export function SearchPage() {
             onClick={() => switchMode('basket')}
             className={cn(
               'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
-              mode === 'basket' ? 'bg-ink text-white' : 'text-muted hover:text-ink',
+              mode === 'basket' ? 'bg-accent text-white' : 'text-muted hover:text-ink',
             )}
           >
             <ShoppingBasket size={15} /> Basket Optimiser
@@ -297,7 +297,7 @@ export function SearchPage() {
                     aria-pressed={active}
                     className={cn(
                       'inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors duration-200',
-                      active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-ink-soft hover:border-ink/40',
+                      active ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-soft hover:border-accent/40',
                     )}
                   >
                     <Icon size={15} />
@@ -475,7 +475,7 @@ export function SearchPage() {
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-danger" data-testid="search-error">
+            <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger" data-testid="search-error">
               {error}
             </div>
           )}
@@ -503,7 +503,7 @@ export function SearchPage() {
           {!loading && result && result.results.length === 0 && (
             <Card>
               <CardBody className="flex flex-col items-center gap-3 py-14 text-center">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-danger">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
                   <Search size={22} />
                 </span>
                 <h3 className="font-display text-lg font-semibold text-ink">
@@ -566,7 +566,7 @@ function SearchLoader({ basket }: { basket?: boolean }) {
   return (
     <Card data-testid="search-loader">
       <CardBody className="font-mono text-xs text-muted">
-        <div className="mb-3 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+        <div className="mb-3 h-1 w-full overflow-hidden rounded-full bg-bg">
           <div className="h-full w-1/3 bg-accent animate-scan" />
         </div>
         {lines.map((l, i) => (

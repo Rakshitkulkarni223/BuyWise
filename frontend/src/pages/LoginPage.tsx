@@ -32,7 +32,7 @@ export function LoginPage() {
   return (
     <AuthShell>
       <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-        <span className="flex h-9 w-9 items-center justify-center rounded-md bg-ink text-white">
+        <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={20} />
         </span>
         <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
@@ -65,7 +65,7 @@ export function LoginPage() {
           required
         />
         {error && (
-          <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-danger" data-testid="login-error">
+          <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger" data-testid="login-error">
             {error}
           </div>
         )}

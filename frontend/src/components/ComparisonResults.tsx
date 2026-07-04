@@ -108,7 +108,7 @@ export function ComparisonResults({
           <div className="hidden overflow-hidden rounded-md border border-line bg-surface lg:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-line bg-slate-50 text-left">
+                <tr className="border-b border-line bg-bg text-left">
                   <th className="px-4 py-2.5 label-eyebrow">Supplier</th>
                   <th className="px-4 py-2.5 label-eyebrow">Product</th>
                   <th className="px-4 py-2.5 label-eyebrow text-right">Price</th>
@@ -128,7 +128,7 @@ export function ComparisonResults({
                       data-testid={`comparison-row-${p.provider}`}
                       className={cn(
                         'border-b border-line last:border-0 transition-colors',
-                        isBest ? 'bg-accent-soft/50' : idx % 2 ? 'bg-slate-50/40' : 'bg-surface',
+                        isBest ? 'bg-accent-soft/50' : idx % 2 ? 'bg-bg/40' : 'bg-surface',
                       )}
                     >
                       <td className="px-4 py-3">

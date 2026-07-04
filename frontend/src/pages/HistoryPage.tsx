@@ -96,8 +96,8 @@ export function HistoryPage() {
         <Card>
           <CardBody className="p-0">
             {loading && items.length > 0 && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
-                <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-xs font-medium text-muted shadow-sm">
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-xs font-medium text-muted shadow-sm">
                   <RotateCw size={14} className="animate-spin" /> Refreshing…
                 </span>
               </div>
@@ -167,7 +167,7 @@ export function HistoryPage() {
                       <div className="mx-5 mb-4 overflow-hidden rounded-md border border-line">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="border-b border-line bg-slate-50 text-xs text-muted">
+                            <tr className="border-b border-line bg-bg text-xs text-muted">
                               <th className="px-3 py-2 text-left font-medium">Item</th>
                               <th className="px-3 py-2 text-center font-medium">Qty</th>
                               <th className="px-3 py-2 text-left font-medium">Supplier</th>
@@ -176,7 +176,7 @@ export function HistoryPage() {
                           </thead>
                           <tbody className="divide-y divide-line">
                             {h.basketItems.map((bi, i) => (
-                              <tr key={`${bi.query}-${i}`} className="bg-white">
+                              <tr key={`${bi.query}-${i}`} className="bg-surface">
                                 <td className="px-3 py-2 font-medium text-ink">{bi.query}</td>
                                 <td className="px-3 py-2 text-center text-muted">{bi.quantity}</td>
                                 <td className="px-3 py-2">
@@ -196,7 +196,7 @@ export function HistoryPage() {
                           </tbody>
                           {h.splitTotal != null && (
                             <tfoot>
-                              <tr className="border-t border-line bg-slate-50">
+                              <tr className="border-t border-line bg-bg">
                                 <td colSpan={3} className="px-3 py-2 text-xs font-medium text-muted">Optimised total</td>
                                 <td className="data-num px-3 py-2 text-right font-bold text-ink">{formatINR(h.splitTotal)}</td>
                               </tr>

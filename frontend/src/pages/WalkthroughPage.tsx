@@ -164,7 +164,7 @@ function StepCard({ step, isOpen, onToggle, onNavigate }: {
           onClick={onToggle}
           className="flex w-full items-center gap-4 rounded-xl border border-line bg-surface px-5 py-4 text-left transition-all hover:border-ink/30 hover:shadow-sm"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-ink text-white">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-white">
             <Icon size={20} />
           </span>
           <div className="min-w-0 flex-1">
@@ -193,7 +193,7 @@ function StepCard({ step, isOpen, onToggle, onNavigate }: {
             {step.route && (
               <button
                 onClick={() => onNavigate(step.route!)}
-                className="mt-4 inline-flex items-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink/80"
+                className="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
               >
                 Try it now <ArrowRight size={14} />
               </button>

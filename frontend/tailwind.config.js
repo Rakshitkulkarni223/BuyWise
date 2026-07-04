@@ -1,23 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        bg: '#F4F5F7',
-        surface: '#FFFFFF',
-        ink: '#0F172A',
-        'ink-soft': '#1E293B',
-        muted: '#64748B',
-        accent: '#2563EB',
-        'accent-hover': '#1D4ED8',
-        'accent-soft': '#EFF4FF',
-        success: '#10B981',
-        'success-bg': '#D1FAE5',
-        warning: '#F59E0B',
-        'warning-bg': '#FEF3C7',
-        danger: '#EF4444',
-        line: '#E2E8F0',
+        bg: 'var(--color-bg)',
+        surface: 'var(--color-surface)',
+        ink: 'var(--color-ink)',
+        'ink-soft': 'var(--color-ink-soft)',
+        muted: 'var(--color-muted)',
+        accent: 'var(--color-accent)',
+        'accent-hover': 'var(--color-accent-hover)',
+        'accent-soft': 'var(--color-accent-soft)',
+        success: 'var(--color-success)',
+        'success-bg': 'var(--color-success-bg)',
+        warning: 'var(--color-warning)',
+        'warning-bg': 'var(--color-warning-bg)',
+        danger: 'var(--color-danger)',
+        line: 'var(--color-line)',
       },
       fontFamily: {
         display: ['Cabinet Grotesk', 'IBM Plex Sans', 'system-ui', 'sans-serif'],

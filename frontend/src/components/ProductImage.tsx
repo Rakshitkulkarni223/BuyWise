@@ -18,7 +18,7 @@ export function ProductImage({
 
   if (!src || failed) {
     return (
-      <div className={cn('flex items-center justify-center bg-slate-50 text-slate-300', className)}>
+      <div className={cn('flex items-center justify-center bg-bg text-muted', className)}>
         <Icon size={28} />
       </div>
     );
@@ -30,7 +30,7 @@ export function ProductImage({
       alt={alt}
       loading="lazy"
       onError={() => setFailed(true)}
-      className={cn('object-cover bg-slate-50', className)}
+      className={cn('object-cover bg-bg', className)}
     />
   );
 }

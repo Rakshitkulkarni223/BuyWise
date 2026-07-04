@@ -30,7 +30,7 @@ export function BasketResults({
     return (
       <div className="space-y-6 animate-fade-up" data-testid="basket-results">
         <div className="flex flex-col items-center gap-3 rounded-md border border-line bg-surface py-14 text-center shadow-card">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-danger">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
             <PackageX size={22} />
           </span>
           <h3 className="font-display text-lg font-semibold text-ink">
@@ -42,7 +42,7 @@ export function BasketResults({
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             {result.unfulfillable.map((item) => (
-              <span key={item} className="rounded-full border border-danger/30 bg-red-50 px-3 py-1 text-xs font-medium text-danger">
+              <span key={item} className="rounded-full border border-danger/30 bg-danger/10 px-3 py-1 text-xs font-medium text-danger">
                 {item}
               </span>
             ))}
@@ -162,7 +162,7 @@ export function BasketResults({
 
       {/* Per-item breakdown */}
       <div className="overflow-hidden rounded-md border border-line bg-surface">
-        <div className="border-b border-line bg-slate-50 px-4 py-2.5">
+        <div className="border-b border-line bg-bg px-4 py-2.5">
           <span className="label-eyebrow">Item-by-item assignment</span>
         </div>
         <div className="divide-y divide-line">

@@ -106,7 +106,7 @@ export function RecommendationCard({
               <div className="data-num mt-1.5 text-2xl font-bold text-ink" data-testid="recommendation-confidence">
                 {confidencePct}%
               </div>
-              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-bg">
                 <div
                   className={cn(
                     'h-full rounded-full transition-all',
@@ -124,7 +124,7 @@ export function RecommendationCard({
               {rec.factors.map((f) => (
                 <div key={f.label} className="flex items-center gap-2.5">
                   <span className="w-20 shrink-0 text-xs text-muted">{f.label}</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg">
                     <div
                       className="h-full rounded-full bg-ink/80"
                       style={{ width: `${Math.round(f.score * 100)}%` }}

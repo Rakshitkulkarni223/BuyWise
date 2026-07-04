@@ -2,8 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Light palette (default) ── */
 :root {
   color-scheme: light;
+  --color-bg: #F4F5F7;
+  --color-surface: #FFFFFF;
+  --color-ink: #0F172A;
+  --color-ink-soft: #1E293B;
+  --color-muted: #64748B;
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-soft: #ECFDF5;
+  --color-success: #10B981;
+  --color-success-bg: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-danger: #EF4444;
+  --color-line: #E2E8F0;
+  --scrollbar-bg: #F4F5F7;
+  --scrollbar-thumb: #CBD5E1;
+  --scrollbar-thumb-hover: #94A3B8;
+  --selection-bg: #0F172A;
+  --selection-fg: #FFFFFF;
+}
+
+/* ── Dark palette ── */
+html.dark {
+  color-scheme: dark;
+  --color-bg: #0F172A;
+  --color-surface: #1E293B;
+  --color-ink: #F1F5F9;
+  --color-ink-soft: #E2E8F0;
+  --color-muted: #94A3B8;
+  --color-accent: #34D399;
+  --color-accent-hover: #6EE7B7;
+  --color-accent-soft: rgba(52, 211, 153, 0.15);
+  --color-success: #34D399;
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-warning: #FBBF24;
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-danger: #F87171;
+  --color-line: #334155;
+  --scrollbar-bg: #0F172A;
+  --scrollbar-thumb: #475569;
+  --scrollbar-thumb-hover: #64748B;
+  --selection-bg: #3B82F6;
+  --selection-fg: #FFFFFF;
 }
 
 * {
@@ -18,14 +62,14 @@ body,
 
 body {
   margin: 0;
-  background-color: #f4f5f7;
-  color: #0f172a;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
 }
 
 ::selection {
-  background: #0f172a;
-  color: #fff;
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
 /* Slim, crisp scrollbar */
@@ -34,12 +78,12 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--scrollbar-thumb);
   border-radius: 99px;
-  border: 2px solid #f4f5f7;
+  border: 2px solid var(--scrollbar-bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--scrollbar-thumb-hover);
 }
 
 @layer components {
@@ -54,8 +98,9 @@ body {
     font-feature-settings: 'tnum';
   }
   .grid-bg {
-    background-image: linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(var(--color-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
     background-size: 28px 28px;
+    opacity: 0.4;
   }
 }
