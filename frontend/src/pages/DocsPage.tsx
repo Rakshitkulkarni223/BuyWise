@@ -32,6 +32,9 @@ import {
   Eye,
   Download,
   Brain,
+  Gauge,
+  Calculator,
+  ArrowDown,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -407,6 +410,52 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
   {
+    id: 'g-business-impact',
+    title: 'Business Impact',
+    icon: Gauge,
+    badge: { label: 'New', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The <strong className="text-ink">Business Impact</strong> page shows exactly how ProcureAI transforms your procurement —
+          measurable savings, time freed, and smarter decisions. Use the date range filter to focus on any period.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Key Metrics</h4>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {[
+              { title: 'Total Savings', desc: 'Cumulative procurement savings from AI recommendations.' },
+              { title: 'Hours Saved', desc: 'Time saved vs manual comparison (42 min per search).' },
+              { title: 'Purchases Optimized', desc: 'Searches where AI recommended a better supplier.' },
+              { title: 'Products Compared', desc: 'Total supplier options evaluated across all searches.' },
+              { title: 'AI Accuracy', desc: 'Percentage of searches with a successful recommendation.' },
+              { title: 'Efficiency Score', desc: 'Composite score (0–100) measuring procurement performance.' },
+            ].map((m) => (
+              <div key={m.title} className="rounded-md border border-line bg-surface p-3">
+                <h5 className="text-xs font-semibold text-ink">{m.title}</h5>
+                <p className="mt-0.5 text-[11px] text-muted">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><ArrowDown size={14} className="text-green-600" /> Before vs After</h4>
+            <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with ProcureAI's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — a 93% time reduction.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Calculator size={14} className="text-accent" /> ROI Calculator</h4>
+            <p className="text-xs text-muted">Interactive sliders let you input your <strong className="text-ink">purchases/month, hourly cost,</strong> and <strong className="text-ink">comparison times</strong> to estimate monthly hours saved, salary savings, and annual cost reduction.</p>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
+          <p className="text-xs text-ink-soft">Use the Business Impact page when presenting procurement ROI to management — it provides concrete numbers on time and cost savings.</p>
+        </div>
+      </div>
+    ),
+  },
+  {
     id: 'g-account',
     title: 'Account & Settings',
     icon: Users,
@@ -504,7 +553,8 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Autocomplete Search </li>
               <li>• CSV/PDF export engine</li>
               <li>• localStorage Watchlist</li>
-              <li>• Date range filter (Dashboard & Analytics)</li>
+              <li>• Date range filter (Dashboard, Analytics & Business Impact)</li>
+              <li>• Business Impact page (metrics, before/after, ROI calculator)</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
@@ -517,6 +567,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Multi-provider scraping adapters</li>
               <li>• Weighted decision engine</li>
               <li>• Date-filtered analytics (from/to query params)</li>
+              <li>• Business impact API (hours saved, efficiency, ROI)</li>
             </ul>
           </div>
         </div>
@@ -620,6 +671,7 @@ const DEV_SECTIONS: DocSection[] = [
                 ['GET', '/analytics/spend?from=&to=', '✓', 'Spend analytics (date range optional)'],
                 ['GET', '/analytics/savings?from=&to=', '✓', 'Savings trend (date range optional)'],
                 ['GET', '/insights?from=&to=', '✓', 'AI insights (date range optional)'],
+                ['GET', '/business-impact?from=&to=', '✓', 'Business impact metrics (date range optional)'],
                 ['GET', '/preferences', '✓', 'Get user preferences'],
                 ['PUT', '/preferences', '✓', 'Update preferences'],
               ].map(([method, path, auth, desc]) => (

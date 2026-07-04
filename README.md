@@ -33,6 +33,9 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist (localStorage) to track prices across sessions. |
 | **Autocomplete Search** | Bloom filter–based prefix search suggestions for faster product discovery. |
+| **Business Impact Dashboard** | Dedicated page showing measurable business transformation: total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
+| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) showing 93% time reduction. |
+| **ROI Calculator** | Interactive calculator with sliders — input purchases/month, hourly cost, manual vs AI time to estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
 | **Dashboard & Analytics** | Real-time KPIs with **date range filtering** — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. All charts, insights, and KPIs update based on the selected period. Default: All Time. |
 | **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. Re-run or delete past searches. |
 | **User Preferences** | Persist default category, currency, and notification settings. |
@@ -48,8 +51,8 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
 ┌─────────────────────────────────────────────────────────┐
 │                      Browser (React SPA)                │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐  │
-│  │Dashboard │ │ Search & │ │Analytics │ │  History   │  │
-│  │  Page    │ │ Compare  │ │  Page    │ │   Page     │  │
+│  │Dashboard │ │ Search & │ │Analytics │ │  Business  │  │
+│  │  Page    │ │ Compare  │ │  Page    │ │  Impact    │  │
 │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └─────┬─────┘  │
 │       │             │            │              │        │
 │       └─────────────┴─────┬──────┴──────────────┘        │
@@ -198,7 +201,7 @@ User Action          Frontend                     Backend                       
 | **`ComparisonService`** | Deduplicates products, applies filters, sorts by chosen strategy |
 | **`RecommendationService`** | AI scoring engine — normalizes price/delivery/rating/discount/warranty/returns to 0–1, multiplies by weight profile, sums to a final score. Generates human-readable reasons. |
 | **`BasketOptimizationService`** | Split-cart optimizer. Builds a SPLIT plan (best supplier per item) vs. CONSOLIDATED baseline (single supplier). Applies consolidation penalty for shipping. |
-| **`DashboardService`** | Aggregates KPIs from search/basket history with optional date range filtering |
+| **`DashboardService`** | Aggregates KPIs from search/basket history with optional date range filtering. Includes `businessImpact()` for hours saved, efficiency score, and ROI metrics |
 | **`CatalogService`** | Returns categories and suppliers per category |
 | **`HistoryService`** | Paginated listing and deletion of search history |
 | **`PreferenceService`** | CRUD for user preferences |
@@ -231,6 +234,7 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 | **AnalyticsPage** | `/analytics` | Spend by month/category, supplier usage, savings trend — with date range filter |
 | **HistoryPage** | `/history` | Paginated search history (15/page) with Prev/Next, re-run, delete |
 | **WatchlistPage** | `/watchlist` | Price watchlist with localStorage persistence |
+| **BusinessImpactPage** | `/impact` | Business transformation metrics, before/after workflow, ROI calculator |
 | **SettingsPage** | `/settings` | User preferences |
 
 #### Key Components
@@ -242,7 +246,7 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 | **BasketResults** | Renders the split-cart optimization results |
 | **RecommendationCard** | AI recommendation with radar chart, color-coded scoreboard, and explanation panel |
 | **WeightProfileSelector** | UI for selecting weight profiles (Balanced, Cost Saver, etc.) |
-| **DateRangeFilter** | Preset + custom date range picker used on Dashboard and Analytics |
+| **DateRangeFilter** | Preset + custom date range picker used on Dashboard, Analytics, and Business Impact |
 | **SupplierLogo** | Renders supplier avatar with brand color |
 | **AuthShell** | Layout wrapper for login/register pages |
 | **ProtectedRoute** | Route guard that redirects unauthenticated users to `/login` |
@@ -302,6 +306,7 @@ Data access layer wrapping Mongoose queries. Each repository provides `create`, 
 | GET | `/api/analytics/spend?from=YYYY-MM-DD&to=YYYY-MM-DD` | Spend analytics with optional date filter |
 | GET | `/api/analytics/savings?from=YYYY-MM-DD&to=YYYY-MM-DD` | Savings trend + total savings with optional date filter |
 | GET | `/api/insights?from=YYYY-MM-DD&to=YYYY-MM-DD` | AI-generated procurement insights with optional date filter |
+| GET | `/api/business-impact?from=YYYY-MM-DD&to=YYYY-MM-DD` | Business impact metrics (savings, hours saved, efficiency score, ROI) |
 
 ---
 
@@ -399,7 +404,8 @@ The demo user is automatically created via the seed script on first startup.
 - **Repository Pattern** — All database access goes through repositories, keeping Mongoose out of services and controllers.
 - **Promise.allSettled** — Individual supplier failures don't block the entire search. Failed providers are logged and skipped.
 - **Fire-and-forget history** — Search history is persisted asynchronously so it never slows down the response. Only successful searches (with results) are saved.
-- **Date range filtering** — Dashboard and Analytics endpoints accept optional `from`/`to` query params, enabling period-based analysis without separate aggregation pipelines.
+- **Date range filtering** — Dashboard, Analytics, and Business Impact endpoints accept optional `from`/`to` query params, enabling period-based analysis without separate aggregation pipelines.
+- **Business impact metrics** — Derived from search history: hours saved (manual 45 min vs AI 3 min per search), efficiency score (composite of accuracy + automation + volume), projected annual savings.
 - **Single user role** — No admin/buyer distinction. All users share the same role (`user`) and feature set, keeping the auth model simple.
 - **Compound indexes** — `{ userId: 1, createdAt: -1 }` on both history collections for efficient user-scoped, time-sorted pagination.
 - **Weight profiles** — The recommendation engine is fully configurable via weight profiles, making it easy to add new scoring strategies.
