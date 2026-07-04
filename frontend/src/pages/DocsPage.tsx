@@ -29,6 +29,10 @@ import {
   LifeBuoy,
   Lightbulb,
   PlayCircle,
+  Eye,
+  Download,
+  Brain,
+  Radar,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -59,8 +63,8 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
         <p>
-          Watch a <strong className="text-ink">90-second walkthrough</strong> covering every feature —
-          login, search, basket optimization, analytics, history, settings, documentation, and dark mode.
+          Watch a <strong className="text-ink">full walkthrough</strong> covering every feature —
+          login, smart search suggestions, export reports, AI explanation panel, watchlist, basket optimization, analytics, and dark mode.
         </p>
         <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
           <video
@@ -70,6 +74,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             className="w-full"
             poster=""
           >
+            <source src="/procureai-demo.webm" type="video/webm" />
             <source src="/procureai-demo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -293,6 +298,117 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
   {
+    id: 'g-export',
+    title: 'Export Reports (CSV & PDF)',
+    icon: Download,
+    badge: { label: 'New', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          After running a search, you can <strong className="text-ink">export the comparison results</strong> as a CSV spreadsheet
+          or a professional PDF report — perfect for sharing with your team or archiving procurement decisions.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">How to export</h4>
+          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
+            <li>Run a product search from the <strong className="text-ink">Search & Compare</strong> page.</li>
+            <li>In the comparison table toolbar, click <strong className="text-ink">CSV</strong> to download a spreadsheet.</li>
+            <li>Or click <strong className="text-ink">PDF</strong> to open a styled, print-ready report in a new tab.</li>
+            <li>Use your browser's <strong className="text-ink">Print → Save as PDF</strong> to save permanently.</li>
+          </ol>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">CSV Export</h5>
+            <p className="mt-1 text-[11px] text-muted">Includes supplier, product, price, discount, rating, delivery, and stock status. Open in Excel or Google Sheets.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">PDF Report</h5>
+            <p className="mt-1 text-[11px] text-muted">Beautifully formatted report with AI recommendation summary, comparison table, and generation timestamp.</p>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'g-ai-explanation',
+    title: 'AI Explanation Panel',
+    icon: Brain,
+    badge: { label: 'New', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Ever wonder <strong className="text-ink">why the AI recommended a particular supplier</strong>? The Explanation Panel
+          makes every AI decision transparent and auditable.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
+          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
+            <li>Run a product search — the AI Recommendation card appears at the top.</li>
+            <li>Click <strong className="text-ink">"Why this recommendation?"</strong> at the bottom of the card.</li>
+            <li>A panel expands showing a <strong className="text-ink">radar chart</strong> of the winning supplier's factor scores.</li>
+            <li>A <strong className="text-ink">scoreboard table</strong> ranks every supplier with their weighted score and price.</li>
+          </ol>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Radar Chart</h5>
+            <p className="mt-1 text-[11px] text-muted">Visualises how the recommended supplier performs across price, delivery, rating, discount, and availability.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Supplier Scoreboard</h5>
+            <p className="mt-1 text-[11px] text-muted">A ranked table of all suppliers with progress bars and prices so you can verify the AI's choice.</p>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
+          <p className="text-xs text-ink-soft">Use this panel when presenting procurement decisions to your team — it provides the evidence behind each recommendation.</p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'g-watchlist',
+    title: 'Price Watchlist',
+    icon: Eye,
+    badge: { label: 'New', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Track products you're interested in and set <strong className="text-ink">target prices</strong>. The watchlist
+          persists across sessions and tells you when products hit your desired price point.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
+          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
+            <li>Run a product search from the <strong className="text-ink">Search & Compare</strong> page.</li>
+            <li>In the comparison table, click the <strong className="text-ink">eye icon</strong> next to any product to add it to your watchlist.</li>
+            <li>A target price (10% below current) is automatically set — click it to edit.</li>
+            <li>Navigate to <strong className="text-ink">Watchlist</strong> from the sidebar to see all tracked products.</li>
+            <li>Products at or below your target are highlighted in green with a "At target" badge.</li>
+          </ol>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-md border border-line bg-bg p-3 text-center">
+            <Eye size={20} className="mx-auto text-accent" />
+            <h5 className="mt-2 text-xs font-semibold text-ink">Track</h5>
+            <p className="mt-1 text-[11px] text-muted">Add products from any search result with one click.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3 text-center">
+            <DollarSign size={20} className="mx-auto text-accent" />
+            <h5 className="mt-2 text-xs font-semibold text-ink">Target</h5>
+            <p className="mt-1 text-[11px] text-muted">Set your desired price — editable inline anytime.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3 text-center">
+            <TrendingUp size={20} className="mx-auto text-accent" />
+            <h5 className="mt-2 text-xs font-semibold text-ink">Monitor</h5>
+            <p className="mt-1 text-[11px] text-muted">Summary cards show how many items are at or above target.</p>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
     id: 'g-account',
     title: 'Account & Settings',
     icon: Users,
@@ -386,8 +502,10 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Tailwind CSS with CSS-variable theming</li>
               <li>• React Router v6</li>
               <li>• Context API (Auth, Theme)</li>
-              <li>• Recharts for visualization</li>
-              <li>• Class-based dark mode</li>
+              <li>• Recharts (Radar, Area, Bar, Pie)</li>
+              <li>• Autocomplete Search </li>
+              <li>• CSV/PDF export engine</li>
+              <li>• localStorage Watchlist</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
@@ -442,7 +560,7 @@ const DEV_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
           <CodeBlock title="backend/" code={`src/\n  ├── config/        # env, DB connection\n  ├── controllers/   # route handlers\n  ├── middleware/     # auth, validation\n  ├── models/         # Mongoose schemas\n  ├── routes/         # Express routers\n  ├── services/       # business logic\n  ├── providers/      # supplier adapters\n  ├── validators/     # Zod schemas\n  └── app.ts          # Express app entry`} />
-          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext\n  ├── lib/           # utils, API client\n  ├── pages/         # route-level pages\n  ├── types/         # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
+          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
     ),
@@ -625,7 +743,7 @@ const DEV_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-3 sm:grid-cols-3">
           {[
-            { category: 'Frontend', items: ['React 18', 'TypeScript', 'Tailwind CSS', 'React Router v6', 'Recharts', 'Lucide Icons'] },
+            { category: 'Frontend', items: ['React 18', 'TypeScript', 'Tailwind CSS', 'React Router v6', 'Recharts (Radar)', 'Bloom Filter', 'Framer Motion', 'Lucide Icons'] },
             { category: 'Backend', items: ['Node.js', 'Express', 'TypeScript', 'Mongoose', 'Zod', 'JWT / bcrypt'] },
             { category: 'Infrastructure', items: ['MongoDB', 'npm', 'ESLint', 'Prettier', 'Pytest (E2E)', 'Git / GitHub'] },
           ].map((group) => (
@@ -635,6 +753,42 @@ const DEV_SECTIONS: DocSection[] = [
             </div>
           ))}
         </div>
+      </div>
+    ),
+  },
+  {
+    id: 'd-bloom-filter',
+    title: 'Bloom Filter Search',
+    icon: Radar,
+    badge: { label: 'Algorithm', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Search suggestions use a <strong className="text-ink">Bloom filter</strong> — a probabilistic data structure that enables
+          O(1) prefix membership tests before running word-boundary matching.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">How it works</h4>
+            <ol className="space-y-1.5 text-xs text-muted list-decimal list-inside">
+              <li>Each product's <strong className="text-ink">words are decomposed</strong> into prefixes.</li>
+              <li>Prefixes are hashed (FNV-1a) into a bit array.</li>
+              <li>On each keystroke, <strong className="text-ink">every query token</strong> is checked against the filter.</li>
+              <li>If all tokens pass, word-boundary matching runs on the candidate list.</li>
+            </ol>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">Why a Bloom filter?</h4>
+            <ul className="space-y-1 text-xs text-muted">
+              <li>• <strong className="text-ink">False positive OK</strong> — we do a real check after</li>
+              <li>• <strong className="text-ink">False negative impossible</strong> — valid matches never skipped</li>
+              <li>• <strong className="text-ink">Constant memory</strong> — bit array, not string storage</li>
+              <li>• <strong className="text-ink">Sub-millisecond</strong> — faster than scanning arrays</li>
+            </ul>
+          </div>
+        </div>
+        <CodeBlock title="Key files" code={`lib/bloomFilter.ts       — BloomFilter class (FNV-1a, addWithPrefixes, mightContain)\nhooks/useSearchSuggestions.ts — Hook that builds filter per category\ncomponents/SearchSuggestions.tsx — Input UI with dropdown`} />
+        <CodeBlock title="Bloom filter parameters" code={`const filter = new BloomFilter(\n  products.length * 10,  // expected elements\n  0.01                    // 1% false positive rate\n);\n// Optimal: size = ceil(-n·ln(p) / (ln2)²)\n//          k    = ceil(size/n · ln2)`} />
       </div>
     ),
   },

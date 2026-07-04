@@ -207,23 +207,31 @@ export function RecommendationCard({
 
               {/* Scoreboard */}
               <div>
-                <div className="label-eyebrow mb-3 flex items-center gap-1.5">
+                <div className="mb-1 flex items-center gap-1.5 label-eyebrow">
                   <Gauge size={11} /> Supplier Scoreboard
                 </div>
+                <p className="mb-3 text-[11px] text-muted">
+                  Each supplier is scored out of <strong className="text-ink">100</strong> based on price, delivery, rating, discount &amp; stock. Higher is better.
+                </p>
                 <div className="overflow-hidden rounded-md border border-line bg-surface">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-line bg-bg text-left">
                         <th className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted">Rank</th>
                         <th className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted">Supplier</th>
-                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">Score</th>
+                        <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">Score (out of 100)</th>
                         <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">Price</th>
                       </tr>
                     </thead>
                     <tbody>
                       {rec.scoreboard
                         .sort((a, b) => b.score - a.score)
-                        .map((s, i) => (
+                        .map((s, i) => {
+                          const pct = Math.round(s.score * 100);
+                          const barColor = s.supplier === rec.supplier
+                            ? 'bg-accent'
+                            : pct >= 70 ? 'bg-emerald-400' : pct >= 45 ? 'bg-amber-400' : 'bg-red-400';
+                          return (
                           <tr
                             key={s.supplier}
                             className={cn(
@@ -248,17 +256,14 @@ export function RecommendationCard({
                             </td>
                             <td className="px-3 py-2 text-right">
                               <div className="flex items-center justify-end gap-2">
-                                <div className="h-1.5 w-16 overflow-hidden rounded-full bg-bg">
+                                <div className="h-2 w-20 overflow-hidden rounded-full bg-bg">
                                   <div
-                                    className={cn(
-                                      'h-full rounded-full',
-                                      s.supplier === rec.supplier ? 'bg-accent' : 'bg-ink/30',
-                                    )}
-                                    style={{ width: `${Math.round(s.score * 100)}%` }}
+                                    className={cn('h-full rounded-full transition-all', barColor)}
+                                    style={{ width: `${pct}%` }}
                                   />
                                 </div>
-                                <span className="data-num w-10 text-right text-xs font-semibold text-ink">
-                                  {Math.round(s.score * 100)}
+                                <span className="data-num w-12 text-right text-xs font-semibold text-ink">
+                                  {pct}<span className="text-muted font-normal">/100</span>
                                 </span>
                               </div>
                             </td>
@@ -266,7 +271,8 @@ export function RecommendationCard({
                               {formatINR(s.price)}
                             </td>
                           </tr>
-                        ))}
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
