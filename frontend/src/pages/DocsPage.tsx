@@ -235,11 +235,11 @@ const GENERAL_SECTIONS: DocSection[] = [
     icon: BarChart3,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Your Dashboard is the home screen — a snapshot of your procurement activity at a glance.</p>
+        <p>Your Dashboard is the home screen — a snapshot of your procurement activity at a glance. Use the <strong className="text-ink">date range filter</strong> at the top to view data for a specific period (last 7/30/90 days, this month, or custom). All KPIs, charts, and AI insights update accordingly. Default: All Time.</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
             { title: 'Total Searches', desc: 'How many product comparisons you\'ve run.' },
-            { title: 'Estimated Savings', desc: 'Total money saved by following AI recommendations.' },
+            { title: 'Est. Monthly Savings', desc: 'Average monthly savings — adjusts dynamically based on the selected date range.' },
             { title: 'Top Category', desc: 'The product category you search for most often.' },
             { title: 'Preferred Supplier', desc: 'The supplier recommended to you most frequently.' },
             { title: 'Recent Searches', desc: 'Your latest comparisons with quick re-run capability.' },
@@ -260,7 +260,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     icon: TrendingUp,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>The Analytics page shows visual charts that help you understand your spending patterns over time.</p>
+        <p>The Analytics page shows visual charts that help you understand your spending patterns over time. Like the Dashboard, it includes a <strong className="text-ink">date range filter</strong> so you can focus on any time period.</p>
         <div className="space-y-3">
           {[
             { title: 'Spend Trend', desc: 'A line chart showing how your total procurement spend changes month by month. Look for upward trends — they might mean it\'s time to renegotiate with suppliers.' },
@@ -283,7 +283,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     icon: History,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Every search you run is automatically saved. You can browse, review, and delete past searches.</p>
+        <p>Successful searches are automatically saved. Failed or empty searches (no results found) are excluded to keep your history clean. You can browse, review, and delete past searches.</p>
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-2 font-semibold text-ink">What you can do</h4>
           <ul className="space-y-1.5 text-xs text-muted">
@@ -419,8 +419,8 @@ const GENERAL_SECTIONS: DocSection[] = [
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 font-semibold text-ink">Profile</h4>
             <ul className="space-y-1 text-xs text-muted">
-              <li>• View your name, email, and role</li>
-              <li>• Your role determines access permissions</li>
+              <li>• View your name and email</li>
+              <li>• All users share the same feature set</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
@@ -506,6 +506,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Autocomplete Search </li>
               <li>• CSV/PDF export engine</li>
               <li>• localStorage Watchlist</li>
+              <li>• Date range filter (Dashboard & Analytics)</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
@@ -517,6 +518,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Zod schema validation</li>
               <li>• Multi-provider scraping adapters</li>
               <li>• Weighted decision engine</li>
+              <li>• Date-filtered analytics (from/to query params)</li>
             </ul>
           </div>
         </div>
@@ -616,7 +618,10 @@ const DEV_SECTIONS: DocSection[] = [
                 ['GET', '/basket/history', '✓', 'Basket search history'],
                 ['GET', '/history', '✓', 'Unified search history (paginated)'],
                 ['DELETE', '/history/:id', '✓', 'Delete history entry'],
-                ['GET', '/analytics/spend', '✓', 'Spend analytics data'],
+                ['GET', '/dashboard?from=&to=', '✓', 'Dashboard KPIs (date range optional)'],
+                ['GET', '/analytics/spend?from=&to=', '✓', 'Spend analytics (date range optional)'],
+                ['GET', '/analytics/savings?from=&to=', '✓', 'Savings trend (date range optional)'],
+                ['GET', '/insights?from=&to=', '✓', 'AI insights (date range optional)'],
                 ['GET', '/preferences', '✓', 'Get user preferences'],
                 ['PUT', '/preferences', '✓', 'Update preferences'],
               ].map(([method, path, auth, desc]) => (
@@ -720,7 +725,7 @@ const DEV_SECTIONS: DocSection[] = [
         <p>Core MongoDB collections:</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            { name: 'users', desc: 'Accounts, hashed credentials, roles', fields: 'name, email, password, role, businessType' },
+            { name: 'users', desc: 'Accounts, hashed credentials', fields: 'name, email, password, role (default: user), businessType' },
             { name: 'searchhistories', desc: 'Single search results + recommendations', fields: 'userId, query, category, results[], recommendation, createdAt' },
             { name: 'baskethistories', desc: 'Basket optimizations with item assignments', fields: 'userId, category, items[], splitTotal, baseline, createdAt' },
             { name: 'preferences', desc: 'Per-user settings and weight profiles', fields: 'userId, defaultCategory, defaultSort, weightProfile, weights' },
