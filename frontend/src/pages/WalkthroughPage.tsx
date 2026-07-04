@@ -252,6 +252,13 @@ export function WalkthroughPage() {
           A step-by-step guide to understanding and using ProcureAI. Follow the flow below to explore every feature,
           or click "Try it now" to jump directly to any section.
         </p>
+        <button
+          onClick={() => navigate('/docs')}
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+        >
+          <BookOpen size={15} /> Learn More — Full Documentation
+          <ArrowRight size={14} />
+        </button>
       </div>
 
       {/* Demo Video Section */}

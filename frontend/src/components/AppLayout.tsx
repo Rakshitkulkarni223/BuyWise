@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   BookOpen,
+  FileText,
   Moon,
   Sun,
 } from 'lucide-react';
@@ -25,6 +26,7 @@ const NAV = [
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/walkthrough', label: 'Walkthrough', icon: BookOpen, testid: 'nav-walkthrough' },
+  { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

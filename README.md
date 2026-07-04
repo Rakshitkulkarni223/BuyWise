@@ -406,6 +406,6 @@ The admin user is automatically created via the seed script on first startup.
 
 ```bash
 cd backend
-npm run test:unit    # Basket optimizer unit tests
+npm run test:unit 
 npm run typecheck    # TypeScript type checking
 ```
