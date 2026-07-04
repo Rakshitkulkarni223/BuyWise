@@ -6,13 +6,11 @@
 
 ---
 
-## 🏆 Business Transformation
+## 🚀 Business Transformation
 
 ### The Problem
 
-Small and medium businesses spend **hours** manually comparing suppliers across Amazon, Flipkart, IndiaMART, and other marketplaces.
-
-The typical procurement process involves:
+Businesses spend **45–60 minutes** manually comparing suppliers across multiple marketplaces, maintaining spreadsheets, and making procurement decisions with limited visibility.
 
 - 🔍 Opening **5–10 supplier websites** one by one
 - 📋 Copying prices into **Excel spreadsheets**
@@ -21,27 +19,20 @@ The typical procurement process involves:
 - 📝 Preparing reports for **management approvals**
 - 🔁 Repeating this for **every single purchase**
 
-This process is **repetitive, error-prone, and expensive** — often leading to suboptimal purchasing decisions and higher procurement costs.
+### The Solution
 
----
+ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and recommend the best procurement strategy in seconds.**
 
-### Our Solution
+### Impact
 
-ProcureAI uses **AI to automate** supplier discovery, comparison, and procurement optimization.
+| | |
+|---|---|
+| ✅ Up to **93% reduction** in procurement time | ✅ Automated supplier comparison across all marketplaces |
+| ✅ **Explainable AI** recommendations with "Why?" panel | ✅ One-click professional PDF & CSV reports |
+| ✅ **Split-cart optimizer** for multi-item purchases | ✅ Real-time savings tracking & ROI dashboard |
+| ✅ Lower operational costs | ✅ Dark mode for extended use |
 
-Instead of spending nearly an hour comparing suppliers manually, users receive an **AI-optimized recommendation in seconds** — with full transparency into why each supplier was chosen.
-
-```
-🏢 Business Problem         →    🤖 ProcureAI           →    📊 AI Recommendation     →    💰 Business Impact
-                                                                                              
-Manual supplier comparison        Automated multi-supplier      Weighted scoring with          Measurable savings,
-across 5–10 websites              search + AI scoring           explainable reasoning          hours freed, ROI tracked
-(45–60 min per purchase)          (3–5 min per purchase)        (radar chart + scoreboard)     (dedicated impact dashboard)
-```
-
----
-
-### Business Impact
+### Before vs After
 
 | Metric | Before (Manual) | After (ProcureAI) |
 |---|---|---|
@@ -54,19 +45,6 @@ across 5–10 websites              search + AI scoring           explainable re
 | **Multi-item optimization** | Not feasible manually | ✅ Split-cart optimizer across suppliers |
 | **Savings tracking** | No visibility | ✅ Real-time dashboard with trends |
 | **Decision transparency** | "Gut feel" | ✅ Radar chart + scoreboard |
-
----
-
-### Value Delivered
-
-- 📉 Reduce procurement time by up to **93%** (45 min → 3 min)
-- 💰 **Track and maximize savings** with AI-optimized recommendations
-- 🧠 **Explainable AI** — every recommendation comes with a "Why?" panel
-- 📊 **Business Impact Dashboard** — total savings, hours saved, efficiency score, ROI calculator
-- 🛒 **Basket Optimization** — split orders across suppliers for maximum savings
-- 📄 **One-click reports** — export comparisons as professional PDF or CSV
-- 👁️ **Price Watchlist** — track products and set target price alerts
-- 🌗 **Dark mode** — optimized for extended use
 
 ---
 
@@ -149,37 +127,9 @@ across 5–10 websites              search + AI scoring           explainable re
 <details>
 <summary>Can't see the video above? Click to expand.</summary>
 
-The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4). Download and play locally, or run `node demo/record-demo.mjs` to re-record.
+The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4). Download and play locally.
 
 </details>
-
----
-
-## 🔄 How It Works
-
-```
-┌─────────────────┐     ┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
-│                 │     │                     │     │                      │     │                     │
-│  🏢 Business    │────►│  🤖 ProcureAI       │────►│  📊 AI               │────►│  💰 Business        │
-│     Need        │     │     Platform        │     │     Recommendation   │     │     Impact          │
-│                 │     │                     │     │                      │     │                     │
-│  "I need to     │     │  • Multi-supplier   │     │  • Weighted scoring  │     │  • Total savings    │
-│   buy laptops   │     │    search           │     │  • Confidence score  │     │  • Hours saved      │
-│   for my team"  │     │  • Price normalize  │     │  • Radar chart       │     │  • Efficiency score │
-│                 │     │  • AI scoring       │     │  • "Why?" panel      │     │  • ROI projection   │
-│                 │     │  • Basket optimize  │     │  • Export PDF/CSV    │     │  • Annual forecast  │
-└─────────────────┘     └─────────────────────┘     └──────────────────────┘     └─────────────────────┘
-```
-
-### Step-by-Step
-
-1. **Search** — Type a product name, pick a category, and ProcureAI queries all suppliers simultaneously
-2. **Compare** — Results are normalized and displayed in a sortable comparison table
-3. **Recommend** — AI scores every option on price, delivery, rating, discount, warranty, and returns
-4. **Explain** — Click "Why this recommendation?" for a radar chart and supplier scoreboard
-5. **Optimize** — Add multiple items to a basket for split-cart optimization across suppliers
-6. **Export** — Download results as CSV or styled PDF for team review
-7. **Track** — Monitor savings, hours freed, and procurement efficiency on the Business Impact dashboard
 
 ---
 
@@ -202,7 +152,23 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 
 ---
 
-## 🏗️ Architecture
+## 🔄 How It Works
+
+```
+� Business Need  →  🤖 ProcureAI  →  📊 AI Recommendation  →  💰 Business Impact
+```
+
+1. **Search** — Type a product name, pick a category, and ProcureAI queries all suppliers simultaneously
+2. **Compare** — Results are normalized and displayed in a sortable comparison table
+3. **Recommend** — AI scores every option on price, delivery, rating, discount, warranty, and returns
+4. **Explain** — Click "Why this recommendation?" for a radar chart and supplier scoreboard
+5. **Optimize** — Add multiple items to a basket for split-cart optimization across suppliers
+6. **Export** — Download results as CSV or styled PDF for team review
+7. **Track** — Monitor savings, hours freed, and procurement efficiency on the Business Impact dashboard
+
+---
+
+## �🏗️ Architecture
 
 ### Technology Stack
 
@@ -212,7 +178,6 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
 | **Backend** | Python 3.13, FastAPI, Pydantic (validation), Uvicorn |
 | **Database** | MongoDB with Motor (async driver) |
 | **Auth** | JWT (PyJWT) + bcrypt |
-| **Dev Tools** | react-scripts, PostCSS, Autoprefixer |
 
 ### High-Level Architecture
 
@@ -251,117 +216,6 @@ The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4
                     │   Local)      │
                     └───────────────┘
 ```
-
-### Project Structure
-
-```
-ProcureAI/
-├── backend/
-│   ├── server.py               # FastAPI entry point (Uvicorn)
-│   ├── requirements.txt        # Python dependencies
-│   └── app/
-│       ├── config.py           # Env vars, categories, suppliers, weight profiles, catalog
-│       ├── database.py         # Motor async MongoDB client
-│       ├── auth.py             # JWT (PyJWT), bcrypt password hashing, auth dependency
-│       ├── schemas.py          # Pydantic validation models
-│       ├── routes.py           # All API routes under /api prefix
-│       ├── seed.py             # DB seeder (categories, suppliers, demo user, sample history)
-│       └── services/
-│           ├── core.py         # PRNG, CatalogResolver, MockProviderAdapter, Search, Comparison, Recommendation
-│           ├── basket.py       # Basket optimization (split-cart)
-│           └── analytics.py    # Dashboard, History, Preference, Catalog services
-│
-├── frontend/
-│   └── src/
-│       ├── components/         # Reusable UI (AppLayout, Card, Badge, DateRangeFilter, etc.)
-│       ├── context/            # AuthContext, ThemeContext
-│       ├── hooks/              # useSearchSuggestions, useWatchlist
-│       ├── lib/                # api client, formatters, exportUtils
-│       ├── pages/              # Dashboard, Search, BusinessImpact, Analytics, History, Watchlist, Settings, Docs
-│       └── types.ts            # Shared TypeScript interfaces
-│
-├── demo/                      # Playwright demo recorder script
-├── screenshots/               # Product screenshots for README
-└── README.md
-```
-
----
-
-## 🚀 Setup & Running the Project
-
-### Prerequisites
-
-- **Python** >= 3.11
-- **Node.js** >= 18.x (frontend only)
-- **MongoDB** (local or Atlas connection string)
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Rakshitkulkarni223/ProcureAI.git
-cd ProcureAI
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-Create a `.env` file in `backend/`:
-
-```env
-MONGO_URL=mongodb+srv://<user>:<pass>@cluster.mongodb.net
-DB_NAME=procureai
-JWT_SECRET=your-secret-key
-JWT_EXPIRES_IN=7d
-PORT=8001
-DEMO_EMAIL=demo@procureai.com
-DEMO_PASSWORD=Demo@123
-DEMO_NAME=Demo User
-CORS_ORIGINS=*
-NODE_ENV=development
-```
-
-Start the backend:
-
-```bash
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload   # Development
-uvicorn server:app --host 0.0.0.0 --port 8001             # Production
-```
-
-The API will be available at `http://localhost:8001`.
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create a `.env` file in `frontend/`:
-
-```env
-REACT_APP_BACKEND_URL=http://localhost:8001
-```
-
-Start the frontend:
-
-```bash
-npm start
-```
-
-The app will be available at `http://localhost:3000`.
-
-### 4. Default Login
-
-| Field | Value |
-|---|---|
-| Email | `demo@procureai.com` |
-| Password | `Demo@123` |
-
-The demo user is automatically created via the seed script on first startup.
 
 ---
 
@@ -411,7 +265,112 @@ The demo user is automatically created via the seed script on first startup.
 
 ---
 
-## 🛠️ Developer Guide
+## 🚀 Setup & Running
+
+### Prerequisites
+
+- **Python** >= 3.11
+- **Node.js** >= 18.x (frontend only)
+- **MongoDB** (local or Atlas connection string)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Rakshitkulkarni223/ProcureAI.git
+cd ProcureAI
+```
+
+### 2. Backend Setup
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+Create a `.env` file in `backend/`:
+
+```env
+MONGO_URL=mongodb+srv://<user>:<pass>@cluster.mongodb.net
+DB_NAME=procureai
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=7d
+PORT=8001
+DEMO_EMAIL=demo@procureai.com
+DEMO_PASSWORD=Demo@123
+DEMO_NAME=Demo User
+CORS_ORIGINS=*
+```
+
+Start the backend:
+
+```bash
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload   # Development
+uvicorn server:app --host 0.0.0.0 --port 8001             # Production
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+Create a `.env` file in `frontend/`:
+
+```env
+REACT_APP_BACKEND_URL=http://localhost:8001
+```
+
+Start the frontend:
+
+```bash
+npm start
+```
+
+### 4. Default Login
+
+| Field | Value |
+|---|---|
+| Email | `demo@procureai.com` |
+| Password | `Demo@123` |
+
+The demo user is automatically created via the seed script on first startup.
+
+---
+
+## �️ Developer Guide
+
+### Project Structure
+
+```
+ProcureAI/
+├── backend/
+│   ├── server.py               # FastAPI entry point (Uvicorn)
+│   ├── requirements.txt        # Python dependencies
+│   └── app/
+│       ├── config.py           # Env vars, categories, suppliers, weight profiles, catalog
+│       ├── database.py         # Motor async MongoDB client
+│       ├── auth.py             # JWT (PyJWT), bcrypt password hashing, auth dependency
+│       ├── schemas.py          # Pydantic validation models
+│       ├── routes.py           # All API routes under /api prefix
+│       ├── seed.py             # DB seeder (categories, suppliers, demo user, sample history)
+│       └── services/
+│           ├── core.py         # PRNG, CatalogResolver, MockProviderAdapter, Search, Comparison, Recommendation
+│           ├── basket.py       # Basket optimization (split-cart)
+│           └── analytics.py    # Dashboard, History, Preference, Catalog services
+│
+├── frontend/
+│   └── src/
+│       ├── components/         # Reusable UI (AppLayout, Card, Badge, DateRangeFilter, etc.)
+│       ├── context/            # AuthContext, ThemeContext
+│       ├── hooks/              # useSearchSuggestions, useWatchlist
+│       ├── lib/                # api client, formatters, exportUtils
+│       ├── pages/              # Dashboard, Search, BusinessImpact, Analytics, History, Watchlist, Settings, Docs
+│       └── types.ts            # Shared TypeScript interfaces
+│
+├── screenshots/               # Product screenshots for README
+└── README.md
+```
 
 ### Design Decisions
 
