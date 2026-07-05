@@ -12,6 +12,7 @@ import {
   Pie,
   LineChart,
   Line,
+  Legend,
 } from 'recharts';
 import { api } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -121,7 +122,7 @@ export function AnalyticsPage() {
           <CardBody>
             <ChartOrEmpty empty={!spend?.categorySpend.length}>
               <div className="flex flex-col items-center gap-4 sm:flex-row">
-                <ResponsiveContainer width="100%" height={220}>
+                <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
                       data={spend?.categorySpend || []}
@@ -130,6 +131,8 @@ export function AnalyticsPage() {
                       innerRadius={50}
                       outerRadius={85}
                       paddingAngle={2}
+                      minAngle={8}
+                      label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
                     >
                       {(spend?.categorySpend || []).map((_, i) => (
                         <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -139,6 +142,14 @@ export function AnalyticsPage() {
                       contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
                       labelStyle={{ color: 'var(--color-ink)' }}
                       itemStyle={{ color: 'var(--color-ink)' }} />
+                    <Legend
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                      align="center"
+                      iconType="circle"
+                      iconSize={8}
+                      wrapperStyle={{ fontSize: 11, color: 'var(--color-muted)' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
