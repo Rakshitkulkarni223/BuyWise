@@ -96,14 +96,19 @@ async def _seed_sample_history(user_id: ObjectId) -> None:
 
         samples = [
             {"category": "fashion", "query": "Nike Running Shoes", "suppliers": ["Myntra", "Ajio", "Amazon", "Flipkart"], "daysAgo": 2},
-            {"category": "electronics", "query": "UltraBook Laptop", "suppliers": ["Amazon", "Flipkart", "Croma", "Reliance Digital"], "daysAgo": 5},
-            {"category": "grocery", "query": "Basmati Rice", "suppliers": ["Blinkit", "Zepto", "BigBasket", "JioMart"], "daysAgo": 9},
-            {"category": "electronics", "query": "Galaxy Smartphone", "suppliers": ["Amazon", "Flipkart", "Croma"], "daysAgo": 14},
-            {"category": "furniture", "query": "Ergonomic Office Chair", "suppliers": ["Pepperfry", "Urban Ladder", "IKEA"], "daysAgo": 21},
-            {"category": "office", "query": "A4 Copier Paper", "suppliers": ["Amazon", "Flipkart", "Local Suppliers"], "daysAgo": 33},
-            {"category": "medical", "query": "Surgical Masks", "suppliers": ["Apollo Pharmacy", "Netmeds", "Pharmacy Vendors"], "daysAgo": 41},
-            {"category": "grocery", "query": "Cooking Oil", "suppliers": ["BigBasket", "JioMart", "Blinkit"], "daysAgo": 52},
-            {"category": "cleaning", "query": "Floor Cleaner", "suppliers": ["Amazon", "BigBasket", "JioMart"], "daysAgo": 64},
+            {"category": "fashion", "query": "Formal Suit Set", "suppliers": ["Myntra", "Ajio", "Amazon"], "daysAgo": 18},
+            {"category": "electronics", "query": "Wireless Headphones", "suppliers": ["Amazon", "Flipkart", "Croma"], "daysAgo": 5},
+            {"category": "grocery", "query": "Basmati Rice 25kg", "suppliers": ["Blinkit", "Zepto", "BigBasket", "JioMart"], "daysAgo": 9},
+            {"category": "grocery", "query": "Premium Cooking Oil Pack", "suppliers": ["BigBasket", "JioMart", "Blinkit"], "daysAgo": 30},
+            {"category": "grocery", "query": "Organic Spice Bundle", "suppliers": ["BigBasket", "Amazon", "JioMart"], "daysAgo": 52},
+            {"category": "furniture", "query": "Ergonomic Office Chair", "suppliers": ["Pepperfry", "Urban Ladder", "IKEA"], "daysAgo": 14},
+            {"category": "furniture", "query": "Standing Desk", "suppliers": ["IKEA", "Pepperfry", "Amazon"], "daysAgo": 38},
+            {"category": "office", "query": "Printer Toner Cartridge", "suppliers": ["Amazon", "Flipkart", "Local Suppliers"], "daysAgo": 21},
+            {"category": "office", "query": "A4 Copier Paper Bulk", "suppliers": ["Amazon", "Flipkart", "Local Suppliers"], "daysAgo": 45},
+            {"category": "medical", "query": "First Aid Kit Professional", "suppliers": ["Apollo Pharmacy", "Netmeds", "Amazon"], "daysAgo": 33},
+            {"category": "medical", "query": "Digital Blood Pressure Monitor", "suppliers": ["Apollo Pharmacy", "Amazon", "Flipkart"], "daysAgo": 55},
+            {"category": "cleaning", "query": "Industrial Floor Cleaner", "suppliers": ["Amazon", "BigBasket", "JioMart"], "daysAgo": 41},
+            {"category": "cleaning", "query": "Commercial Vacuum Cleaner", "suppliers": ["Amazon", "Flipkart", "Croma"], "daysAgo": 60},
         ]
 
         docs = []
@@ -149,7 +154,7 @@ def _write_test_credentials() -> None:
 ## Notes
 - Backend: Python FastAPI on port {env.PORT}.
 - All API routes are prefixed with /api.
-- The demo account is seeded with ~9 sample searches so the dashboard/analytics are populated.
+- The demo account is seeded with ~14 sample searches so the dashboard/analytics are populated.
 """
         with open(os.path.join(d, "test_credentials.md"), "w") as f:
             f.write(content)

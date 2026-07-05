@@ -131,8 +131,7 @@ export function AnalyticsPage() {
                       innerRadius={50}
                       outerRadius={85}
                       paddingAngle={2}
-                      minAngle={8}
-                      label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
+                      minAngle={15}
                     >
                       {(spend?.categorySpend || []).map((_, i) => (
                         <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
