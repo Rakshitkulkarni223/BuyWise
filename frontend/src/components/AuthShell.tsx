@@ -25,13 +25,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 Search once. Compare every supplier. Decide with confidence.
               </h1>
               <p className="mt-4 text-sm text-white/70">
-                An AI-native procurement intelligence platform that scores suppliers on price, delivery, reliability
-                and availability — and tells you exactly why.
+                An AI-powered procurement platform that compares suppliers, recommends the best purchasing
+                decisions, and explains every recommendation.
               </p>
               <div className="mt-8 space-y-3">
                 {[
                   { icon: Sparkles, text: 'Explainable AI recommendations with confidence scores' },
-                  { icon: TrendingDown, text: 'Quantified savings across every comparison' },
+                  { icon: TrendingDown, text: 'Track measurable procurement savings and business impact' },
                   { icon: ShieldCheck, text: 'Configurable weight profiles per business type' },
                 ].map((f, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm text-white/85">
@@ -45,7 +45,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="data-num text-xs tracking-widest text-white/40">
-              PHASE 1 · MOCK PROVIDER ADAPTERS · API-READY
+              Procurement Intelligence • Explainable AI • Business Impact
             </div>
           </div>
         </div>
