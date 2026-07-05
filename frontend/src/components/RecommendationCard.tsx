@@ -107,7 +107,7 @@ export function RecommendationCard({
         {/* Right: savings + confidence + factors */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md border border-line bg-surface p-3.5">
+            <div className="rounded-md border border-line shadow-sm p-3.5">
               <div className="label-eyebrow flex items-center gap-1.5">
                 <TrendingDown size={12} /> Est. savings
               </div>
@@ -115,7 +115,7 @@ export function RecommendationCard({
                 {formatINR(rec.estimatedSavings)}
               </div>
             </div>
-            <div className="rounded-md border border-line bg-surface p-3.5">
+            <div className="rounded-md border border-line shadow-sm p-3.5">
               <div className="label-eyebrow flex items-center gap-1.5">
                 <Gauge size={12} /> Confidence
               </div>
@@ -134,7 +134,7 @@ export function RecommendationCard({
             </div>
           </div>
 
-          <div className="rounded-md border border-line bg-surface p-3.5">
+          <div className="rounded-md border border-line shadow-sm p-3.5">
             <div className="label-eyebrow mb-2.5">Decision factors</div>
             <div className="space-y-2">
               {rec.factors.map((f, i) => {

@@ -199,7 +199,7 @@ const GENERAL_SECTIONS: DocSection[] = [
   {
     id: 'g-how-it-works',
     title: 'How It Works',
-    icon: PlayCircle,
+    icon: Layers,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {/* Visual workflow */}
