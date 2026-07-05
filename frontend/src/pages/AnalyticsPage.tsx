@@ -20,7 +20,7 @@ import { Badge } from '../components/ui/Badge';
 import { formatINR } from '../lib/format';
 import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 
-const PIE_COLORS = ['#0F172A', '#2563EB', '#10B981', '#F59E0B', '#7E3FF2', '#EF4444', '#0EA5E9', '#84C225'];
+const PIE_COLORS = ['#6366F1', '#2563EB', '#10B981', '#F59E0B', '#7E3FF2', '#EF4444', '#0EA5E9', '#84C225'];
 
 export function AnalyticsPage() {
   const [spend, setSpend] = useState<{

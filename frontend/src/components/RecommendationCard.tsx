@@ -137,20 +137,23 @@ export function RecommendationCard({
           <div className="rounded-md border border-line bg-surface p-3.5">
             <div className="label-eyebrow mb-2.5">Decision factors</div>
             <div className="space-y-2">
-              {rec.factors.map((f) => (
-                <div key={f.label} className="flex items-center gap-2.5">
-                  <span className="w-20 shrink-0 text-xs text-muted">{f.label}</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg">
-                    <div
-                      className="h-full rounded-full bg-ink/80"
-                      style={{ width: `${Math.round(f.score * 100)}%` }}
-                    />
+              {rec.factors.map((f, i) => {
+                const FACTOR_COLORS = ['#6366F1', '#2563EB', '#F59E0B', '#10B981', '#0EA5E9', '#7E3FF2', '#EF4444'];
+                return (
+                  <div key={f.label} className="flex items-center gap-2.5">
+                    <span className="w-20 shrink-0 text-xs text-muted">{f.label}</span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg">
+                      <div
+                        className="h-full rounded-full"
+                        style={{ width: `${Math.round(f.score * 100)}%`, backgroundColor: FACTOR_COLORS[i % FACTOR_COLORS.length] }}
+                      />
+                    </div>
+                    <span className="data-num w-9 shrink-0 text-right text-[11px] text-muted">
+                      {Math.round(f.weight * 100)}%
+                    </span>
                   </div>
-                  <span className="data-num w-9 shrink-0 text-right text-[11px] text-muted">
-                    {Math.round(f.weight * 100)}%
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
