@@ -9,6 +9,6 @@
 - Endpoints: POST /api/auth/register, POST /api/auth/login, GET /api/auth/me, POST /api/auth/logout
 
 ## Notes
-- Backend: Node.js + Express + TypeScript on internal port 8002, fronted by a FastAPI proxy on 8001.
+- Backend: Python FastAPI on port 8002.
 - All API routes are prefixed with /api.
-- The demo account is seeded with ~9 sample searches so the dashboard/analytics are populated.
+- The demo account is seeded with ~14 sample searches so the dashboard/analytics are populated.
