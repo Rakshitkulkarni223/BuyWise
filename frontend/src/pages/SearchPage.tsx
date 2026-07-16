@@ -120,7 +120,7 @@ export function SearchPage() {
         setRecModes(modes);
         setWeightProfile(pref.weightProfile);
         setSortPref(pref.sortPreference);
-        setCategory(preset?.category || pref.defaultCategory || cats[0]?.slug || '');
+        setCategory(preset?.category || pref.defaultCategory || 'grocery');
       })
       .catch((e) => setError(apiError(e)));
   }, []);

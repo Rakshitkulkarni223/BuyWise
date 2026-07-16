@@ -62,9 +62,9 @@ export function BasketResults({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="basket-summary"
-        className="relative overflow-hidden rounded-md border border-accent/40 bg-accent-soft/40 shadow-card"
+        className="relative overflow-hidden rounded-md border border-accent/60 bg-accent-soft/60 shadow-card dark:shadow-card-dark"
       >
-        <div className="absolute inset-x-0 top-0 h-0.5 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-1 overflow-hidden">
           <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-accent to-transparent animate-scan" />
         </div>
 

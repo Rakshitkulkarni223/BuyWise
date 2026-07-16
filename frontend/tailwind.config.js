@@ -31,6 +31,8 @@ module.exports = {
       boxShadow: {
         card: '0 1px 2px 0 rgba(15, 23, 42, 0.04)',
         lift: '0 8px 24px -8px rgba(15, 23, 42, 0.12)',
+        'card-dark': '0 1px 3px 0 rgba(0, 0, 0, 0.3)',
+        'lift-dark': '0 8px 24px -8px rgba(0, 0, 0, 0.4)',
       },
       keyframes: {
         'fade-up': {
