@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Shield, Star, Gauge, TrendingUp, ChevronDown, Award, Info } from 'lucide-react';
 import type { SupplierIntelligence } from '../types';
 import { Badge } from './ui/Badge';
@@ -47,12 +46,7 @@ export function SupplierIntelligenceCard({
         </button>
 
         {open && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            transition={{ duration: 0.2 }}
-            className="border-t border-line px-4 py-4"
-          >
+          <div className="border-t border-line px-4 py-4 animate-fade-up">
             <div className="mb-3 flex items-center gap-1.5 text-xs text-muted">
               <Info size={11} /> All metrics are <strong>Estimated (Demo Data)</strong>
             </div>
@@ -76,7 +70,7 @@ export function SupplierIntelligenceCard({
                 <Star size={12} className="fill-current" /> Preferred Supplier — consistently high performance across metrics
               </div>
             )}
-          </motion.div>
+          </div>
         )}
       </div>
     );
