@@ -580,7 +580,7 @@ export function SearchPage() {
                 Object.keys(result.intelligence.supplierIntelligence).length > 0 && (
                   <div>
                     <div className="label-eyebrow mb-3">Supplier Intelligence</div>
-                    <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid items-start gap-3 sm:grid-cols-2">
                       {Object.entries(result.intelligence.supplierIntelligence).map(([supplier, intel]) => (
                         <SupplierIntelligenceCard
                           key={supplier}
