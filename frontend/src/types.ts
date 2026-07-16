@@ -26,6 +26,13 @@ export interface Supplier {
 
 export type SortOption = 'lowest_price' | 'highest_rating' | 'fastest_delivery' | 'highest_discount';
 export type WeightProfileKey = 'balanced' | 'budget' | 'urgent' | 'fast';
+export type RecommendationMode =
+  | 'balanced'
+  | 'lowest_cost'
+  | 'lowest_risk'
+  | 'fastest_delivery'
+  | 'highest_reliability'
+  | 'best_long_term_value';
 
 export interface Product {
   id: string;
@@ -60,8 +67,18 @@ export interface Recommendation {
   estimatedSavings: number;
   confidence: number;
   weightProfile: WeightProfileKey;
+  recommendationMode?: RecommendationMode;
   factors: RecommendationFactor[];
-  scoreboard: { supplier: string; score: number; price: number }[];
+  scoreboard: {
+    supplier: string;
+    score: number;
+    price: number;
+    totalProcurementCost?: number;
+    riskScore?: number;
+    riskLevel?: string;
+    supplierScore?: number;
+    deliveryReliability?: number;
+  }[];
 }
 
 export interface SearchResponse {
@@ -70,6 +87,7 @@ export interface SearchResponse {
   count: number;
   results: Product[];
   recommendation: Recommendation | null;
+  intelligence?: ProcurementIntelligence;
 }
 
 export interface WeightProfile {
@@ -209,4 +227,103 @@ export interface BasketHistoryEntry {
   recommendedPlan: 'split' | 'consolidate';
   weightProfile: string;
   createdAt: string;
+}
+
+// ---- Procurement Intelligence ----
+
+export interface SupplierIntelligence {
+  supplierScore: number;
+  riskLevel: 'Low' | 'Medium' | 'High';
+  riskScore: number;
+  deliveryReliability: number;
+  onTimeDeliveryRate: number;
+  qualityConsistency: 'High' | 'Medium' | 'Low';
+  businessStability: 'Strong' | 'Moderate' | 'Weak';
+  stabilityScore: number;
+  preferredSupplier: boolean;
+  confidence: number;
+  isEstimated: boolean;
+}
+
+export interface TotalCostBreakdown {
+  supplier: string;
+  productId: string;
+  productPrice: number;
+  shipping: number;
+  processing: number;
+  handling: number;
+  hiddenCost: number;
+  totalProcurementCost: number;
+  isEstimated: boolean;
+}
+
+export interface RiskScore {
+  riskScore: number;
+  riskLevel: 'Low' | 'Medium' | 'High';
+  riskBadge: string;
+  factors: {
+    deliveryRisk: number;
+    ratingRisk: number;
+    warrantyRisk: number;
+    returnRisk: number;
+    stockRisk: number;
+    stabilityRisk: number;
+    qualityRisk: number;
+  };
+  isEstimated: boolean;
+}
+
+export interface ProcurementInsight {
+  icon: string;
+  text: string;
+  tone: 'success' | 'info' | 'warning';
+}
+
+export interface HealthScore {
+  score: number;
+  status: 'Excellent' | 'Good' | 'Average' | 'Needs Attention';
+  statusBadge: string;
+  factors: {
+    costSavings: number;
+    supplierRisk: number;
+    supplierDiversity: number;
+    deliveryPerformance: number;
+    procurementEfficiency: number;
+  };
+  isEstimated: boolean;
+}
+
+export interface LongTermRecommendation {
+  supplier: string;
+  product: Product;
+  longTermScore: number;
+  reasons: string[];
+  supplierScore: number;
+  riskLevel: string;
+  deliveryReliability: number;
+  totalProcurementCost: number;
+  isEstimated: boolean;
+}
+
+export interface ComparisonMatrix {
+  criteria: string[];
+  suppliers: string[];
+  matrix: Record<string, Record<string, boolean>>;
+  isEstimated: boolean;
+}
+
+export interface ProcurementIntelligence {
+  supplierIntelligence: Record<string, SupplierIntelligence>;
+  totalCosts: TotalCostBreakdown[];
+  riskScores: Record<string, RiskScore>;
+  insights: ProcurementInsight[];
+  healthScore: HealthScore | null;
+  longTermRecommendation: LongTermRecommendation | null;
+  comparisonMatrix: ComparisonMatrix;
+}
+
+export interface RecommendationModeOption {
+  key: RecommendationMode;
+  label: string;
+  description: string;
 }

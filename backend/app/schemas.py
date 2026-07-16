@@ -35,6 +35,12 @@ class SearchFilters(BaseModel):
     inStockOnly: Optional[bool] = None
 
 
+RecommendationMode = Literal[
+    "balanced", "lowest_cost", "lowest_risk",
+    "fastest_delivery", "highest_reliability", "best_long_term_value",
+]
+
+
 class SearchInput(BaseModel):
     category: str = Field(..., min_length=1)
     suppliers: list[str] = Field(default_factory=list)
@@ -42,11 +48,13 @@ class SearchInput(BaseModel):
     sortBy: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
     filters: Optional[SearchFilters] = None
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
+    recommendationMode: Optional[RecommendationMode] = None
 
 
 class RecommendationInput(BaseModel):
     products: list[dict] = Field(..., min_length=1)
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
+    recommendationMode: Optional[RecommendationMode] = None
 
 
 # ---------------------------------------------------------------------------

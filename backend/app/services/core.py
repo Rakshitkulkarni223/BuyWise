@@ -18,10 +18,17 @@ from app.config import (
     CATALOG,
     CATEGORY_SUPPLIERS,
     DEFAULT_CATEGORY_BASE_PRICE,
+    RECOMMENDATION_MODES,
     SUPPLIER_PROFILES,
     WEIGHT_PROFILES,
     clamp,
     format_inr,
+)
+from app.services.intelligence import (
+    ProcurementIntelligenceService,
+    RiskScoreService,
+    SupplierIntelligenceService,
+    TotalCostService,
 )
 
 
@@ -379,6 +386,203 @@ class RecommendationService:
             return None
 
     @staticmethod
+    def recommend_by_mode(products: list[dict], mode: str = "balanced") -> Optional[dict]:
+        """Recommend using a smart recommendation mode that leverages intelligence data."""
+        try:
+            if not products:
+                return None
+
+            mode_config = RECOMMENDATION_MODES.get(mode, RECOMMENDATION_MODES["balanced"])
+            sort_by = mode_config.get("sortBy", "balanced")
+            weight_profile = mode_config.get("weightProfile", "balanced")
+
+            # Compute intelligence data for all products
+            intel = SupplierIntelligenceService.compute_for_all(products)
+            total_costs = TotalCostService.compute_for_all(products)
+            risk_scores = RiskScoreService.compute_for_all(products)
+
+            # Base recommendation from weighted scoring
+            base_rec = RecommendationService.recommend(products, weight_profile)
+            if not base_rec:
+                return None
+
+            # Re-rank based on the mode's sort criteria
+            if sort_by == "total_cost":
+                # Pick supplier with lowest total procurement cost
+                if total_costs:
+                    best_supplier = total_costs[0]["supplier"]
+                    best_product = next((p for p in products if p["provider"] == best_supplier), products[0])
+                else:
+                    best_product = base_rec["product"]
+            elif sort_by == "risk":
+                # Pick supplier with lowest risk score
+                if risk_scores:
+                    best_supplier = min(risk_scores.items(), key=lambda x: x[1]["riskScore"])[0]
+                    best_product = next((p for p in products if p["provider"] == best_supplier), products[0])
+                else:
+                    best_product = base_rec["product"]
+            elif sort_by == "delivery":
+                # Pick supplier with fastest delivery
+                best_product = min(products, key=lambda p: p["deliveryDays"])
+            elif sort_by == "reliability":
+                # Pick supplier with highest delivery reliability
+                if intel:
+                    best_supplier = max(intel.items(), key=lambda x: x[1]["deliveryReliability"])[0]
+                    best_product = next((p for p in products if p["provider"] == best_supplier), products[0])
+                else:
+                    best_product = base_rec["product"]
+            elif sort_by == "long_term":
+                # Pick supplier with highest supplier score (long-term value)
+                if intel:
+                    best_supplier = max(intel.items(), key=lambda x: x[1]["supplierScore"])[0]
+                    best_product = next((p for p in products if p["provider"] == best_supplier), products[0])
+                else:
+                    best_product = base_rec["product"]
+            else:
+                # balanced: use base recommendation
+                best_product = base_rec["product"]
+
+            # Build enhanced business-friendly reasons
+            prices = [p["price"] for p in products]
+            min_price, max_price = min(prices), max(prices)
+            min_days = min(p["deliveryDays"] for p in products)
+            max_warranty = max(p.get("warrantyMonths") or 0 for p in products)
+
+            reasons = RecommendationService._build_business_reasons(
+                best_product, products, intel, risk_scores, total_costs, mode, min_price, max_price
+            )
+
+            # Compute confidence based on margin vs runner-up
+            other_products = [p for p in products if p["provider"] != best_product["provider"]]
+            if other_products:
+                if sort_by == "total_cost" and total_costs:
+                    best_tc = next((t["totalProcurementCost"] for t in total_costs if t["supplier"] == best_product["provider"]), best_product["price"])
+                    second_tc = sorted([t["totalProcurementCost"] for t in total_costs])[1] if len(total_costs) > 1 else best_tc
+                    confidence = clamp(1 - (second_tc - best_tc) / (best_tc + 1), 0.5, 0.98) if best_tc > 0 else 0.7
+                elif sort_by == "risk" and risk_scores:
+                    best_risk = risk_scores.get(best_product["provider"], {}).get("riskScore", 50)
+                    other_risks = [r["riskScore"] for s, r in risk_scores.items() if s != best_product["provider"]]
+                    if other_risks:
+                        confidence = clamp(1 - best_risk / 200, 0.5, 0.98)
+                    else:
+                        confidence = 0.7
+                else:
+                    confidence = base_rec.get("confidence", 0.7)
+            else:
+                confidence = 0.7
+
+            estimated_savings = max(0, max_price - best_product["price"])
+
+            # Build scoreboard with intelligence data
+            scoreboard = []
+            for p in products:
+                tc = next((t for t in total_costs if t["supplier"] == p["provider"]), None)
+                ri = risk_scores.get(p["provider"], {})
+                si = intel.get(p["provider"], {})
+                scoreboard.append({
+                    "supplier": p["provider"],
+                    "score": round(base_rec.get("confidence", 0.7) * 1000) / 1000,
+                    "price": p["price"],
+                    "totalProcurementCost": tc["totalProcurementCost"] if tc else p["price"],
+                    "riskScore": ri.get("riskScore", 0),
+                    "riskLevel": ri.get("riskLevel", "Medium"),
+                    "supplierScore": si.get("supplierScore", 0),
+                    "deliveryReliability": si.get("deliveryReliability", 0),
+                })
+
+            return {
+                "supplier": best_product["provider"],
+                "product": best_product,
+                "reasons": reasons,
+                "estimatedSavings": estimated_savings,
+                "confidence": round(confidence * 100) / 100,
+                "weightProfile": weight_profile,
+                "recommendationMode": mode,
+                "factors": base_rec.get("factors", []),
+                "scoreboard": scoreboard,
+            }
+        except Exception:
+            return None
+
+    @staticmethod
+    def _build_business_reasons(best: dict, all_products: list[dict],
+                                intel: dict, risk_scores: dict, total_costs: list[dict],
+                                mode: str, min_price, max_price) -> list[str]:
+        """Generate business-friendly reasoning instead of simple score-based explanations."""
+        try:
+            reasons: list[str] = []
+            supplier = best["provider"]
+            si = intel.get(supplier, {})
+            ri = risk_scores.get(supplier, {})
+            tc = next((t for t in total_costs if t["supplier"] == supplier), None)
+            others = [p for p in all_products if p["provider"] != supplier]
+
+            # Mode-specific primary reason
+            if mode == "lowest_cost":
+                if tc:
+                    reasons.append(
+                        f"{supplier} is recommended because it offers the lowest total procurement cost "
+                        f"of {format_inr(tc['totalProcurementCost'])}, including shipping and handling."
+                    )
+            elif mode == "lowest_risk":
+                reasons.append(
+                    f"{supplier} is recommended because it has the lowest procurement risk "
+                    f"({ri.get('riskLevel', 'Medium')}, score: {ri.get('riskScore', 50)}/100), "
+                    f"ensuring stable and reliable sourcing."
+                )
+            elif mode == "fastest_delivery":
+                d = best["deliveryDays"]
+                reasons.append(
+                    f"{supplier} is recommended for urgent procurement with delivery in {d} day{'s' if d != 1 else ''}."
+                )
+            elif mode == "highest_reliability":
+                reasons.append(
+                    f"{supplier} is recommended because it has the highest delivery reliability "
+                    f"at {si.get('deliveryReliability', 0)}%, minimising supply chain disruptions."
+                )
+            elif mode == "best_long_term_value":
+                reasons.append(
+                    f"{supplier} is recommended for long-term procurement due to its strong supplier score "
+                    f"({si.get('supplierScore', 0)}/100), low risk, and consistent delivery reliability."
+                )
+            else:
+                # balanced
+                reasons.append(
+                    f"{supplier} is recommended because it offers the best balance of "
+                    f"total procurement cost, delivery reliability, and low operational risk."
+                )
+
+            # Comparative insight
+            if others:
+                cheaper = next((p for p in others if p["price"] < best["price"]), None)
+                if cheaper and mode != "lowest_cost":
+                    diff = best["price"] - cheaper["price"]
+                    cheaper_risk = risk_scores.get(cheaper["provider"], {}).get("riskLevel", "Medium")
+                    cheaper_rel = intel.get(cheaper["provider"], {}).get("deliveryReliability", 0)
+                    reasons.append(
+                        f"{cheaper['provider']} is {format_inr(diff)} cheaper but has lower reliability "
+                        f"({cheaper_rel}%) and {cheaper_risk.lower()} risk, increasing long-term procurement risk."
+                    )
+
+            # Reliability and risk context
+            reasons.append(
+                f"This recommendation balances cost, quality, logistics, and supplier stability."
+            )
+
+            # Delivery and stock
+            if best["deliveryDays"] == 0:
+                reasons.append("Same-day delivery available")
+            elif best["deliveryDays"] == min(p["deliveryDays"] for p in all_products):
+                reasons.append(f"Fastest delivery at {best['deliveryDays']} day{'s' if best['deliveryDays'] != 1 else ''}")
+
+            if best.get("warrantyMonths") and best["warrantyMonths"] > 0:
+                reasons.append(f"{best['warrantyMonths']}-month warranty included")
+
+            return reasons[:5]
+        except Exception:
+            return []
+
+    @staticmethod
     def _build_reasons(best: dict, all_products: list[dict], min_price, max_price, min_days, max_warranty) -> list[str]:
         try:
             reasons: list[str] = []
@@ -469,7 +673,19 @@ class SearchService:
             results = ComparisonService.apply(
                 products, req.get("sortBy"), req.get("filters")
             )
-            recommendation = RecommendationService.recommend(results, req.get("weightProfile", "balanced"))
+
+            # Determine recommendation mode (falls back to weightProfile for backward compat)
+            mode = req.get("recommendationMode") or "balanced"
+            weight_profile = req.get("weightProfile", "balanced")
+
+            # Use mode-based recommendation if a mode is specified, otherwise use weight profile
+            if mode and mode != "balanced":
+                recommendation = RecommendationService.recommend_by_mode(results, mode)
+            else:
+                recommendation = RecommendationService.recommend(results, weight_profile)
+
+            # Compute procurement intelligence payload
+            intelligence = ProcurementIntelligenceService.compute_all(results, recommendation)
 
             return {
                 "query": query,
@@ -477,6 +693,7 @@ class SearchService:
                 "count": len(results),
                 "results": results,
                 "recommendation": recommendation,
+                "intelligence": intelligence,
             }
         except Exception:
             raise

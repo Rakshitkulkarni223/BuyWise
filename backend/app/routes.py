@@ -20,6 +20,7 @@ from app.schemas import (
     RegisterInput,
     SearchInput,
 )
+from app.config import RECOMMENDATION_MODES, WEIGHT_PROFILES
 from app.services.analytics import (
     CatalogService,
     DashboardService,
@@ -247,8 +248,24 @@ async def search(body: SearchInput, user: dict = Depends(get_current_user)):
 @router.post("/recommendations")
 async def recommend(body: RecommendationInput, user: dict = Depends(get_current_user)):
     try:
-        recommendation = RecommendationService.recommend(body.products, body.weightProfile or "balanced")
+        mode = body.recommendationMode
+        if mode and mode != "balanced":
+            recommendation = RecommendationService.recommend_by_mode(body.products, mode)
+        else:
+            recommendation = RecommendationService.recommend(body.products, body.weightProfile or "balanced")
         return ok({"recommendation": recommendation})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/recommendation-modes")
+async def recommendation_modes(user: dict = Depends(get_current_user)):
+    try:
+        modes = [
+            {"key": v["key"], "label": v["label"], "description": v["description"]}
+            for v in RECOMMENDATION_MODES.values()
+        ]
+        return ok(modes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

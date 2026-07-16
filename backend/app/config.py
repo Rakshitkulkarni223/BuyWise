@@ -127,6 +127,52 @@ WEIGHT_PROFILES: dict[str, dict] = {
     },
 }
 
+# ---------------------------------------------------------------------------
+# Recommendation modes (Smart Recommendation Modes)
+# Maps mode keys to weight profiles + intelligence-based sort criteria.
+# Existing WEIGHT_PROFILES remain for backward compatibility.
+# ---------------------------------------------------------------------------
+
+RECOMMENDATION_MODES: dict[str, dict] = {
+    "balanced": {
+        "key": "balanced", "label": "Balanced",
+        "description": "Even consideration of price, speed, reliability and value.",
+        "weightProfile": "balanced",
+        "sortBy": "balanced",
+    },
+    "lowest_cost": {
+        "key": "lowest_cost", "label": "Lowest Cost",
+        "description": "Prioritises the lowest total procurement cost.",
+        "weightProfile": "budget",
+        "sortBy": "total_cost",
+    },
+    "lowest_risk": {
+        "key": "lowest_risk", "label": "Lowest Risk",
+        "description": "Selects suppliers with the lowest procurement risk.",
+        "weightProfile": "balanced",
+        "sortBy": "risk",
+    },
+    "fastest_delivery": {
+        "key": "fastest_delivery", "label": "Fastest Delivery",
+        "description": "Optimises for the shortest delivery time.",
+        "weightProfile": "urgent",
+        "sortBy": "delivery",
+    },
+    "highest_reliability": {
+        "key": "highest_reliability", "label": "Highest Reliability",
+        "description": "Chooses the most reliable supplier based on delivery and quality.",
+        "weightProfile": "fast",
+        "sortBy": "reliability",
+    },
+    "best_long_term_value": {
+        "key": "best_long_term_value", "label": "Best Long-Term Value",
+        "description": "Balances cost, reliability, risk, and stability for long-term procurement.",
+        "weightProfile": "balanced",
+        "sortBy": "long_term",
+    },
+}
+
+
 DEFAULT_CATEGORY_BASE_PRICE: dict[str, int] = {
     "electronics": 24000, "grocery": 600, "fashion": 2500, "furniture": 15000,
     "office": 1500, "cleaning": 700, "medical": 900, "industrial": 3500,

@@ -16,6 +16,8 @@ import {
 import type {
   BasketOptimizeResponse,
   Category,
+  RecommendationMode,
+  RecommendationModeOption,
   SearchResponse,
   SortOption,
   Supplier,
@@ -30,6 +32,13 @@ import { WeightProfileSelector } from '../components/WeightProfileSelector';
 import { RecommendationCard } from '../components/RecommendationCard';
 import { ComparisonResults } from '../components/ComparisonResults';
 import { BasketResults } from '../components/BasketResults';
+import { RecommendationModeSelector } from '../components/RecommendationModeSelector';
+import { ProcurementInsightsPanel } from '../components/ProcurementInsightsPanel';
+import { ProcurementHealthMeter } from '../components/ProcurementHealthMeter';
+import { SupplierComparisonMatrix } from '../components/SupplierComparisonMatrix';
+import { TotalCostBreakdownPanel } from '../components/TotalCostBreakdownPanel';
+import { LongTermRecommendationCard } from '../components/LongTermRecommendationCard';
+import { SupplierIntelligenceCard } from '../components/SupplierIntelligenceCard';
 import { getIcon } from '../lib/icons';
 import { cn } from '../lib/utils';
 import { useSearchSuggestions } from '../hooks/useSearchSuggestions';
@@ -74,10 +83,12 @@ export function SearchPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [profiles, setProfiles] = useState<WeightProfile[]>([]);
+  const [recModes, setRecModes] = useState<RecommendationModeOption[]>([]);
   const [category, setCategory] = useState('');
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [weightProfile, setWeightProfile] = useState<WeightProfileKey>('balanced');
+  const [recMode, setRecMode] = useState<RecommendationMode>('balanced');
   const [sortPref, setSortPref] = useState<SortOption>('lowest_price');
   const [error, setError] = useState('');
 
@@ -100,10 +111,11 @@ export function SearchPage() {
   const autoRan = useRef(false);
 
   useEffect(() => {
-    Promise.all([api.categories(), api.weightProfiles(), api.preferences()])
-      .then(([cats, profs, pref]) => {
+    Promise.all([api.categories(), api.weightProfiles(), api.recommendationModes(), api.preferences()])
+      .then(([cats, profs, modes, pref]) => {
         setCategories(cats);
         setProfiles(profs);
+        setRecModes(modes);
         setWeightProfile(pref.weightProfile);
         setSortPref(pref.sortPreference);
         setCategory(preset?.category || pref.defaultCategory || cats[0]?.slug || '');
@@ -148,7 +160,10 @@ export function SearchPage() {
   const weightProfileRef = useRef(weightProfile);
   weightProfileRef.current = weightProfile;
 
-  const runSearch = useCallback(async (overrideQuery?: string, overrideSuppliers?: string[], profileOverride?: WeightProfileKey) => {
+  const recModeRef = useRef(recMode);
+  recModeRef.current = recMode;
+
+  const runSearch = useCallback(async (overrideQuery?: string, overrideSuppliers?: string[], profileOverride?: WeightProfileKey, modeOverride?: RecommendationMode) => {
     try {
       const q = (overrideQuery ?? query).trim();
       if (!q) {
@@ -162,7 +177,14 @@ export function SearchPage() {
       }
       setLoading(true);
       setError('');
-      const res = await api.search({ category, suppliers: names, query: q, weightProfile: profileOverride ?? weightProfileRef.current, sortBy: sortPref });
+      const res = await api.search({
+        category,
+        suppliers: names,
+        query: q,
+        weightProfile: profileOverride ?? weightProfileRef.current,
+        recommendationMode: modeOverride ?? recModeRef.current,
+        sortBy: sortPref,
+      });
       setResult(res);
     } catch (e) {
       setError(apiError(e));
@@ -220,6 +242,18 @@ export function SearchPage() {
       console.error('Failed to change profile', e);
     }
   }, [mode, result, basketResult, runSearch, runOptimize]);
+
+  const onRecModeChange = useCallback((m: RecommendationMode) => {
+    try {
+      setRecMode(m);
+      recModeRef.current = m;
+      if (mode === 'single' && result) {
+        runSearch(result.query, result.results.map((r) => r.provider), undefined, m);
+      }
+    } catch (e) {
+      console.error('Failed to change recommendation mode', e);
+    }
+  }, [mode, result, runSearch]);
 
   const switchMode = useCallback((m: Mode) => {
     try {
@@ -480,6 +514,18 @@ export function SearchPage() {
             <WeightProfileSelector profiles={profiles} value={weightProfile} onChange={onProfileChange} />
           </div>
 
+          {/* Recommendation mode selector */}
+          {recModes.length > 0 && (
+            <div>
+              <div className="label-eyebrow mb-2.5">Smart Recommendation Mode</div>
+              <RecommendationModeSelector
+                modes={recModes}
+                selected={recMode}
+                onSelect={onRecModeChange}
+              />
+            </div>
+          )}
+
           {error && (
             <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger" data-testid="search-error">
               {error}
@@ -497,6 +543,65 @@ export function SearchPage() {
               {result.recommendation && (
                 <RecommendationCard rec={result.recommendation} supplierColors={supplierColors} />
               )}
+
+              {/* Intelligence panels: side-by-side on large screens */}
+              {result.intelligence && (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {/* Left: Insights + Health */}
+                  <div className="space-y-6">
+                    {result.intelligence.insights?.length > 0 && (
+                      <ProcurementInsightsPanel insights={result.intelligence.insights} />
+                    )}
+                    {result.intelligence.healthScore && (
+                      <ProcurementHealthMeter health={result.intelligence.healthScore} />
+                    )}
+                  </div>
+
+                  {/* Right: Long-term rec + Total cost */}
+                  <div className="space-y-6">
+                    {result.intelligence.longTermRecommendation && (
+                      <LongTermRecommendationCard
+                        rec={result.intelligence.longTermRecommendation}
+                        supplierColors={supplierColors}
+                      />
+                    )}
+                    {result.intelligence.totalCosts?.length > 0 && (
+                      <TotalCostBreakdownPanel
+                        totalCosts={result.intelligence.totalCosts}
+                        supplierColors={supplierColors}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Supplier Intelligence Cards */}
+              {result.intelligence?.supplierIntelligence &&
+                Object.keys(result.intelligence.supplierIntelligence).length > 0 && (
+                  <div>
+                    <div className="label-eyebrow mb-3">Supplier Intelligence</div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {Object.entries(result.intelligence.supplierIntelligence).map(([supplier, intel]) => (
+                        <SupplierIntelligenceCard
+                          key={supplier}
+                          supplier={supplier}
+                          intelligence={intel}
+                          color={supplierColors[supplier]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Comparison Matrix */}
+              {result.intelligence?.comparisonMatrix &&
+                result.intelligence.comparisonMatrix.suppliers?.length > 0 && (
+                  <SupplierComparisonMatrix
+                    matrix={result.intelligence.comparisonMatrix}
+                    supplierColors={supplierColors}
+                  />
+                )}
+
               <ComparisonResults
                 products={result.results}
                 recommendedSupplier={result.recommendation?.supplier}

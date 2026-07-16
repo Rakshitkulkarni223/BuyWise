@@ -9,6 +9,7 @@ import type {
   Insight,
   PaginatedResponse,
   Preferences,
+  RecommendationModeOption,
   SearchResponse,
   Supplier,
   User,
@@ -78,6 +79,7 @@ export const api = {
     sortBy?: string;
     filters?: Record<string, unknown>;
     weightProfile?: string;
+    recommendationMode?: string;
   }) => unwrap<SearchResponse>(API.post('/search', body)),
 
   // Split-cart / basket optimization
@@ -95,6 +97,8 @@ export const api = {
   preferences: () => unwrap<Preferences>(API.get('/preferences')),
   updatePreferences: (body: Partial<Preferences>) => unwrap<Preferences>(API.put('/preferences', body)),
   weightProfiles: () => unwrap<WeightProfile[]>(API.get('/weight-profiles')),
+  recommendationModes: () =>
+    unwrap<RecommendationModeOption[]>(API.get('/recommendation-modes')),
 
   // History
   history: (page = 1, limit = 20) =>
