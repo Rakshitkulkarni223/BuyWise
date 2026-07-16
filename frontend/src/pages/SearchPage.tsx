@@ -120,6 +120,8 @@ export function SearchPage() {
       basketSynced.current = true;
       if (BASKET_PRESETS[category]) {
         setBasketRows(BASKET_PRESETS[category].map((p) => makeRow(p.query, p.quantity)));
+      } else {
+        setBasketRows([makeRow()]);
       }
     }
   }, [category, basketResult]);
