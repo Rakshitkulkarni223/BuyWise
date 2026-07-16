@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import {
   Search,
-  Zap,
   Store,
   CheckCheck,
   Square,
@@ -12,6 +11,9 @@ import {
   Trash2,
   Split,
   Truck,
+  TrendingDown,
+  Gauge,
+  Shield,
 } from 'lucide-react';
 import type {
   BasketOptimizeResponse,
@@ -25,10 +27,10 @@ import type {
   WeightProfileKey,
 } from '../types';
 import { api, apiError } from '../lib/api';
+import { formatINR } from '../lib/format';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Switch } from '../components/ui/Switch';
-import { WeightProfileSelector } from '../components/WeightProfileSelector';
 import { RecommendationCard } from '../components/RecommendationCard';
 import { ComparisonResults } from '../components/ComparisonResults';
 import { BasketResults } from '../components/BasketResults';
@@ -95,7 +97,7 @@ export function SearchPage() {
   // Bloom filter powered suggestions
   const suggestions = useSearchSuggestions(category);
 
-  const [mode, setMode] = useState<Mode>('single');
+  const [mode, setMode] = useState<Mode>('basket');
 
   // Single search
   const [query, setQuery] = useState(preset?.query || '');
@@ -510,23 +512,73 @@ export function SearchPage() {
             </div>
           )}
 
-          {/* Weight profile */}
-          <div>
-            <div className="label-eyebrow mb-2.5 flex items-center gap-1.5">
-              <Zap size={12} /> AI Weight Profile — what matters most to you
-            </div>
-            <WeightProfileSelector profiles={profiles} value={weightProfile} onChange={onProfileChange} />
-          </div>
-
-          {/* Recommendation mode selector */}
+          {/* AI Procurement Strategy */}
           {recModes.length > 0 && (
             <div>
-              <div className="label-eyebrow mb-2.5">Smart Recommendation Mode</div>
+              <div className="label-eyebrow mb-2.5 flex items-center gap-1.5">
+                <Sparkles size={12} className="text-accent" /> AI Procurement Strategy
+              </div>
               <RecommendationModeSelector
                 modes={recModes}
                 selected={recMode}
                 onSelect={onRecModeChange}
               />
+            </div>
+          )}
+
+          {/* Quick metrics for basket results */}
+          {mode === 'basket' && basketResult && !basketLoading && (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="rounded-lg border border-success/30 bg-success-bg/30 p-3">
+                <div className="flex items-center gap-1.5 text-emerald-600">
+                  <TrendingDown size={13} />
+                  <span className="label-eyebrow text-emerald-700">Est. Savings</span>
+                </div>
+                <div className="data-num mt-1.5 text-lg font-bold text-success">
+                  {formatINR(basketResult.estimatedSavings)}
+                </div>
+              </div>
+              <div className="rounded-lg border border-line bg-surface p-3">
+                <div className="flex items-center gap-1.5 text-muted">
+                  <Gauge size={13} />
+                  <span className="label-eyebrow">AI Confidence</span>
+                </div>
+                <div className="data-num mt-1.5 text-lg font-bold text-ink">
+                  {Math.round(basketResult.confidence * 100)}%
+                </div>
+              </div>
+              <div className="rounded-lg border border-line bg-surface p-3">
+                <div className="flex items-center gap-1.5 text-muted">
+                  <Shield size={13} />
+                  <span className="label-eyebrow">Risk</span>
+                </div>
+                <div className={cn(
+                  'data-num mt-1.5 text-lg font-bold',
+                  basketResult.intelligence?.risk?.level === 'Low' ? 'text-success'
+                    : basketResult.intelligence?.risk?.level === 'Medium' ? 'text-amber-600'
+                    : 'text-danger',
+                )}>
+                  {basketResult.intelligence?.risk?.level ?? '—'}
+                </div>
+              </div>
+              <div className="rounded-lg border border-line bg-surface p-3">
+                <div className="flex items-center gap-1.5 text-muted">
+                  <Truck size={13} />
+                  <span className="label-eyebrow">Delivery</span>
+                </div>
+                <div className="data-num mt-1.5 text-lg font-bold text-ink">
+                  {basketResult.estimatedDelivery}
+                </div>
+              </div>
+              <div className="rounded-lg border border-accent/30 bg-accent-soft/20 p-3">
+                <div className="flex items-center gap-1.5 text-accent">
+                  <Sparkles size={13} />
+                  <span className="label-eyebrow text-accent">Strategy</span>
+                </div>
+                <div className="mt-1.5 text-sm font-bold capitalize text-ink">
+                  {basketResult.recommendedPlan === 'split' ? 'Split-Cart' : 'Consolidate'}
+                </div>
+              </div>
             </div>
           )}
 
