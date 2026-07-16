@@ -212,6 +212,7 @@ export interface BasketOptimizeResponse {
   confidence: number;
   unfulfillable: string[];
   consolidationPenalty: number;
+  intelligence?: ProcurementIntelligence;
 }
 
 export interface BasketHistoryEntry {
