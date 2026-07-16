@@ -73,6 +73,7 @@ const BASKET_PRESETS: Record<string, { query: string; quantity: number }[]> = {
 type Mode = 'single' | 'basket';
 let nextRowId = 0;
 const makeRow = (query = '', quantity = 1): BasketRow => ({ id: nextRowId++, query, quantity });
+let basketInitialSynced = false;
 interface BasketRow {
   id: number;
   query: string;
@@ -113,11 +114,10 @@ export function SearchPage() {
   const [basketLoading, setBasketLoading] = useState(false);
 
   const autoRan = useRef(false);
-  const basketSynced = useRef(false);
 
   useEffect(() => {
-    if (!basketSynced.current && category && !basketResult) {
-      basketSynced.current = true;
+    if (!basketInitialSynced && category && !basketResult) {
+      basketInitialSynced = true;
       if (BASKET_PRESETS[category]) {
         setBasketRows(BASKET_PRESETS[category].map((p) => makeRow(p.query, p.quantity)));
       } else {
