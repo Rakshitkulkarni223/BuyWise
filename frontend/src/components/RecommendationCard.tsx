@@ -17,9 +17,9 @@ import { cn } from '../lib/utils';
 
 const PROFILE_LABEL: Record<string, string> = {
   balanced: 'Balanced',
-  startup: 'Startup',
-  hospital: 'Hospital',
-  restaurant: 'Restaurant',
+  budget: 'Budget',
+  urgent: 'Urgent',
+  fast: 'Fast',
 };
 
 export function RecommendationCard({

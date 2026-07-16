@@ -110,19 +110,19 @@ WEIGHT_PROFILES: dict[str, dict] = {
         "description": "Even consideration of price, speed, reliability and value.",
         "weights": {"price": 0.3, "delivery": 0.2, "rating": 0.2, "discount": 0.1, "availability": 0.1, "warranty": 0.05, "returnPolicy": 0.05},
     },
-    "startup": {
-        "key": "startup", "label": "Startup",
+    "budget": {
+        "key": "budget", "label": "Budget",
         "description": "Cost-first. Prioritises the lowest price with decent ratings.",
         "weights": {"price": 0.6, "delivery": 0.2, "rating": 0.2, "discount": 0, "availability": 0, "warranty": 0, "returnPolicy": 0},
     },
-    "hospital": {
-        "key": "hospital", "label": "Hospital",
+    "urgent": {
+        "key": "urgent", "label": "Urgent",
         "description": "Availability & speed critical. Stock and delivery dominate.",
         "weights": {"price": 0.2, "delivery": 0.4, "rating": 0, "discount": 0, "availability": 0.4, "warranty": 0, "returnPolicy": 0},
     },
-    "restaurant": {
-        "key": "restaurant", "label": "Restaurant",
-        "description": "Fast, reliable delivery for perishables; price secondary.",
+    "fast": {
+        "key": "fast", "label": "Fast",
+        "description": "Fast, reliable delivery; price secondary.",
         "weights": {"price": 0.3, "delivery": 0.5, "rating": 0, "discount": 0, "availability": 0.2, "warranty": 0, "returnPolicy": 0},
     },
 }

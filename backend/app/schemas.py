@@ -41,12 +41,12 @@ class SearchInput(BaseModel):
     query: str = Field(..., min_length=1)
     sortBy: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
     filters: Optional[SearchFilters] = None
-    weightProfile: Optional[Literal["balanced", "startup", "hospital", "restaurant"]] = None
+    weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
 
 
 class RecommendationInput(BaseModel):
     products: list[dict] = Field(..., min_length=1)
-    weightProfile: Optional[Literal["balanced", "startup", "hospital", "restaurant"]] = None
+    weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class PreferenceInput(BaseModel):
     defaultCategory: Optional[str] = None
     enabledSuppliers: Optional[list[str]] = None
     sortPreference: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
-    weightProfile: Optional[Literal["balanced", "startup", "hospital", "restaurant"]] = None
+    weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     businessType: Optional[str] = None
 
 
@@ -74,5 +74,5 @@ class BasketInput(BaseModel):
     category: str = Field(..., min_length=1)
     suppliers: list[str] = Field(default_factory=list)
     items: list[BasketItem] = Field(..., min_length=1)
-    weightProfile: Optional[Literal["balanced", "startup", "hospital", "restaurant"]] = None
+    weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     consolidationPenalty: Optional[float] = Field(None, ge=0, le=100000)

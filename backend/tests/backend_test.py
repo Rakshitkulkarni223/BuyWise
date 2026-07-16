@@ -180,12 +180,12 @@ class TestWeightProfiles:
         assert r.status_code == 200
         data = _ok(r)
         keys = {p.get("key") for p in data}
-        assert {"balanced", "startup", "hospital", "restaurant"}.issubset(keys), keys
+        assert {"balanced", "budget", "urgent", "fast"}.issubset(keys), keys
 
 
 # -------------------- Core search + recommendation --------------------
 
-def _do_search(s, headers, query="Nike Shoes", category="fashion", weight="startup", suppliers=None):
+def _do_search(s, headers, query="Nike Shoes", category="fashion", weight="budget", suppliers=None):
     payload = {"category": category, "query": query, "weightProfile": weight}
     if suppliers is not None:
         payload["suppliers"] = suppliers
@@ -219,7 +219,7 @@ class TestSearch:
 
     def test_weight_profiles_can_change_ranking(self, s, admin_headers):
         results = {}
-        for profile in ["startup", "hospital", "restaurant"]:
+        for profile in ["budget", "urgent", "fast"]:
             d = _do_search(s, admin_headers, weight=profile)
             rec = d["recommendation"]
             sb = rec.get("scoreboard") or []
@@ -489,7 +489,7 @@ class TestPreferences:
         new_prefs = {
             "defaultCategory": "fashion",
             "sortPreference": "lowest_price",
-            "weightProfile": "startup",
+            "weightProfile": "budget",
             "businessType": "startup",
         }
         r2 = s.put(f"{API}/preferences", headers=admin_headers, json=new_prefs, timeout=20)

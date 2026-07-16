@@ -453,10 +453,10 @@ const GENERAL_SECTIONS: DocSection[] = [
         <p>Manage your profile and tell the AI what matters most to <em>your</em> business with weight profiles.</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            { name: 'Balanced', desc: 'Equal importance to price, speed, and quality. Good default for most businesses.', icon: '⚖️' },
-            { name: 'Startup', desc: 'Maximizes cost savings. Best when budget is the #1 priority.', icon: '💰' },
-            { name: 'Hospital', desc: 'Prioritizes availability and fast delivery. Critical for medical supplies.', icon: '🏥' },
-            { name: 'Restaurant', desc: 'Fast, reliable delivery for perishables. Freshness and speed first.', icon: '🍽️' },
+            { name: 'Balanced', desc: 'Equal importance to price, speed, and quality. Good default for most purchases.', icon: '⚖️' },
+            { name: 'Budget', desc: 'Maximizes cost savings. Best when budget is the #1 priority.', icon: '💰' },
+            { name: 'Urgent', desc: 'Prioritizes availability and fast delivery. Critical when stock and speed matter most.', icon: '⚡' },
+            { name: 'Fast', desc: 'Fast, reliable delivery. Speed first, price secondary.', icon: '🚀' },
           ].map((p) => (
             <div key={p.name} className="rounded-md border border-line bg-bg p-3">
               <div className="flex items-center gap-2">

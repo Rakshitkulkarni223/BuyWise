@@ -25,7 +25,7 @@ export interface Supplier {
 }
 
 export type SortOption = 'lowest_price' | 'highest_rating' | 'fastest_delivery' | 'highest_discount';
-export type WeightProfileKey = 'balanced' | 'startup' | 'hospital' | 'restaurant';
+export type WeightProfileKey = 'balanced' | 'budget' | 'urgent' | 'fast';
 
 export interface Product {
   id: string;
