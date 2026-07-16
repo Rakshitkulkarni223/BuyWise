@@ -635,3 +635,376 @@ class ProcurementIntelligenceService:
                 "longTermRecommendation": None,
                 "comparisonMatrix": {},
             }
+
+    # Alias for backward compat
+    compute = compute_all
+
+
+# ===================================================================
+# BasketIntelligenceService
+# Computes 15 procurement intelligence metrics for basket plans.
+# ===================================================================
+
+class BasketIntelligenceService:
+    @staticmethod
+    def compute(
+        plan: dict,
+        analyses: list[dict],
+        all_supplier_products: dict[str, list[dict]],
+    ) -> dict:
+        """Compute all basket intelligence metrics from the optimization plan."""
+        try:
+            result_items = plan.get("items", [])
+            fulfillable = [i for i in result_items if i.get("availability")]
+            if not fulfillable:
+                return {}
+
+            chosen_products = []
+            for item in fulfillable:
+                p = {
+                    "id": item.get("title", ""),
+                    "provider": item["supplier"],
+                    "title": item["title"],
+                    "price": item["price"],
+                    "deliveryDays": item.get("deliveryDays", 5),
+                    "rating": 4.0,
+                    "availability": True,
+                    "warrantyMonths": 6,
+                    "returnPolicyDays": 7,
+                    "discount": 0,
+                }
+                # Try to find original product for richer data
+                prods = all_supplier_products.get(item["supplier"], [])
+                match = next((pr for pr in prods if pr.get("title") == item["title"]), None)
+                if match:
+                    p.update({
+                        "rating": match.get("rating", 4.0),
+                        "warrantyMonths": match.get("warrantyMonths", 6),
+                        "returnPolicyDays": match.get("returnPolicyDays", 7),
+                        "discount": match.get("discount", 0),
+                    })
+                chosen_products.append(p)
+
+            # Reuse existing intelligence
+            base_intel = ProcurementIntelligenceService.compute_all(chosen_products)
+
+            # --- 1. Total Procurement Cost ---
+            total_procurement_cost = sum(
+                tc["totalProcurementCost"] for tc in base_intel.get("totalCosts", [])
+            )
+            product_cost = sum(i["lineTotal"] for i in fulfillable)
+            logistics_cost = total_procurement_cost - product_cost
+
+            # --- 2. Total Savings ---
+            market_cost = plan.get("baseline", {}).get("total", 0) or product_cost
+            optimized_cost = plan.get("splitTotal", 0)
+            savings = plan.get("estimatedSavings", 0)
+            savings_pct = round((savings / market_cost) * 100, 1) if market_cost > 0 else 0
+
+            # --- 3. Supplier Count ---
+            supplier_count = plan.get("supplierCount", 0)
+
+            # --- 4. Supplier Consolidation Score ---
+            if supplier_count <= 1:
+                consolidation_score = 5
+                consolidation_label = "Excellent Consolidation"
+            elif supplier_count == 2:
+                consolidation_score = 4
+                consolidation_label = "Good Consolidation"
+            elif supplier_count == 3:
+                consolidation_score = 3
+                consolidation_label = "Moderate Consolidation"
+            elif supplier_count == 4:
+                consolidation_score = 2
+                consolidation_label = "Fragmented"
+            else:
+                consolidation_score = 1
+                consolidation_label = "Highly Fragmented"
+
+            # --- 5. Delivery Window ---
+            delivery_days = [i.get("deliveryDays", 0) for i in fulfillable if i.get("deliveryDays")]
+            earliest_delivery = min(delivery_days) if delivery_days else 0
+            latest_delivery = max(delivery_days) if delivery_days else 0
+
+            # --- 6. Procurement Complexity Score ---
+            complexity_factors = {
+                "supplierCount": supplier_count,
+                "deliveryCount": len(set(delivery_days)),
+                "invoiceCount": supplier_count,
+            }
+            complexity_raw = (
+                supplier_count * 20
+                + len(set(delivery_days)) * 10
+                + supplier_count * 10
+            )
+            if complexity_raw <= 30:
+                complexity_level = "Very Easy"
+            elif complexity_raw <= 50:
+                complexity_level = "Easy"
+            elif complexity_raw <= 70:
+                complexity_level = "Medium"
+            elif complexity_raw <= 90:
+                complexity_level = "High"
+            else:
+                complexity_level = "Very High"
+
+            # --- 7. Logistics Cost Breakdown ---
+            total_shipping = sum(tc["shipping"] for tc in base_intel.get("totalCosts", []))
+            total_handling = sum(tc["handling"] for tc in base_intel.get("totalCosts", []))
+            total_processing = sum(tc["processing"] for tc in base_intel.get("totalCosts", []))
+            total_hidden = sum(tc["hiddenCost"] for tc in base_intel.get("totalCosts", []))
+
+            # --- 8. AI Recommendation Score ---
+            avg_supplier_score = 50
+            if base_intel.get("supplierIntelligence"):
+                scores = [s["supplierScore"] for s in base_intel["supplierIntelligence"].values()]
+                avg_supplier_score = sum(scores) / len(scores) if scores else 50
+
+            avg_risk = 50
+            if base_intel.get("riskScores"):
+                risks = [r["riskScore"] for r in base_intel["riskScores"].values()]
+                avg_risk = sum(risks) / len(risks) if risks else 50
+
+            savings_norm = clamp(savings_pct * 5, 0, 100)
+            delivery_norm = clamp(100 - latest_delivery * 10, 0, 100)
+            consolidation_norm = consolidation_score * 20
+            risk_norm = 100 - avg_risk
+
+            ai_score = round(clamp(
+                savings_norm * 0.25
+                + delivery_norm * 0.20
+                + avg_supplier_score * 0.20
+                + risk_norm * 0.15
+                + consolidation_norm * 0.10
+                + plan.get("confidence", 0.7) * 100 * 0.10,
+                0, 100,
+            ))
+
+            # --- 9. Confidence Score with reason ---
+            confidence = plan.get("confidence", 0.7)
+            confidence_pct = round(confidence * 100)
+            if confidence >= 0.8:
+                confidence_label = "High Confidence"
+                confidence_reason = "Consistent pricing and reliable supplier data across the basket."
+            elif confidence >= 0.6:
+                confidence_label = "Moderate Confidence"
+                confidence_reason = "Some variance in supplier pricing or delivery estimates."
+            else:
+                confidence_label = "Low Confidence"
+                confidence_reason = "High variability in pricing or limited supplier coverage."
+
+            # --- 10. Procurement Risk Score ---
+            risk_level = "Low"
+            risk_score = avg_risk
+            if base_intel.get("riskScores"):
+                risk_levels = [r["riskLevel"] for r in base_intel["riskScores"].values()]
+                if "High" in risk_levels:
+                    risk_level = "High"
+                elif "Medium" in risk_levels:
+                    risk_level = "Medium"
+                else:
+                    risk_level = "Low"
+
+            # --- 11. Cost vs Convenience Recommendation ---
+            cost_vs_convenience = BasketIntelligenceService._cost_vs_convenience(
+                plan, supplier_count, savings, consolidation_score
+            )
+
+            # --- 12. Supplier Dependency ---
+            supplier_dependency = {}
+            total_spend = sum(i["lineTotal"] for i in fulfillable)
+            for item in fulfillable:
+                s = item["supplier"]
+                supplier_dependency[s] = supplier_dependency.get(s, 0) + item["lineTotal"]
+            supplier_dependency = {
+                s: {
+                    "amount": round(amt),
+                    "percentage": round((amt / total_spend) * 100, 1) if total_spend > 0 else 0,
+                }
+                for s, amt in supplier_dependency.items()
+            }
+            # Check for dominance
+            dominant_supplier = None
+            for s, dep in supplier_dependency.items():
+                if dep["percentage"] > 70:
+                    dominant_supplier = s
+                    break
+
+            # --- 13. Category Spend (per-item) ---
+            category_spend = []
+            for item in fulfillable:
+                category_spend.append({
+                    "item": item["title"],
+                    "query": item["query"],
+                    "supplier": item["supplier"],
+                    "amount": round(item["lineTotal"]),
+                })
+
+            # --- 14. Expected Monthly / Yearly Savings ---
+            monthly_savings = savings * 30  # Assuming daily basket
+            yearly_savings = savings * 365
+
+            # --- 15. AI Procurement Summary ---
+            summary = BasketIntelligenceService._generate_summary(
+                supplier_count, savings, savings_pct, risk_level,
+                latest_delivery, complexity_level, ai_score,
+                dominant_supplier, consolidation_label,
+            )
+
+            return {
+                # Existing intelligence (for supplier intelligence cards etc.)
+                "supplierIntelligence": base_intel.get("supplierIntelligence", {}),
+                "totalCosts": base_intel.get("totalCosts", []),
+                "riskScores": base_intel.get("riskScores", {}),
+                # New basket-specific metrics
+                "totalProcurementCost": round(total_procurement_cost),
+                "productCost": round(product_cost),
+                "logisticsCost": round(logistics_cost),
+                "logisticsBreakdown": {
+                    "shipping": round(total_shipping),
+                    "transport": round(total_processing),
+                    "handling": round(total_handling),
+                    "hidden": round(total_hidden),
+                    "total": round(total_shipping + total_processing + total_handling + total_hidden),
+                },
+                "savings": {
+                    "marketCost": round(market_cost),
+                    "optimizedCost": round(optimized_cost),
+                    "amount": round(savings),
+                    "percentage": savings_pct,
+                },
+                "supplierCount": supplier_count,
+                "consolidationScore": {
+                    "score": consolidation_score,
+                    "label": consolidation_label,
+                    "stars": "★" * consolidation_score + "☆" * (5 - consolidation_score),
+                },
+                "deliveryWindow": {
+                    "earliest": earliest_delivery,
+                    "latest": latest_delivery,
+                    "complete": latest_delivery,
+                    "earliestLabel": _days_label(earliest_delivery),
+                    "latestLabel": _days_label(latest_delivery),
+                },
+                "complexity": {
+                    "level": complexity_level,
+                    "factors": complexity_factors,
+                },
+                "aiScore": ai_score,
+                "confidence": {
+                    "percentage": confidence_pct,
+                    "label": confidence_label,
+                    "reason": confidence_reason,
+                },
+                "risk": {
+                    "level": risk_level,
+                    "score": round(risk_score),
+                },
+                "costVsConvenience": cost_vs_convenience,
+                "supplierDependency": supplier_dependency,
+                "dominantSupplier": dominant_supplier,
+                "categorySpend": category_spend,
+                "expectedSavings": {
+                    "perBasket": round(savings),
+                    "monthly": round(monthly_savings),
+                    "yearly": round(yearly_savings),
+                },
+                "aiSummary": summary,
+                "isEstimated": True,
+            }
+        except Exception:
+            return {}
+
+    @staticmethod
+    def _cost_vs_convenience(plan: dict, supplier_count: int,
+                             savings: float, consolidation_score: int) -> dict:
+        try:
+            is_split = plan.get("recommendedPlan") == "split"
+            baseline = plan.get("baseline", {})
+            split_total = plan.get("splitTotal", 0)
+            baseline_total = baseline.get("total", 0)
+            baseline_supplier = baseline.get("supplier")
+
+            if is_split and baseline_supplier:
+                cost_diff = baseline_total - split_total
+                if cost_diff > 0 and supplier_count > 1:
+                    extra_suppliers = supplier_count - 1
+                    per_supplier_saving = cost_diff / supplier_count if supplier_count else 0
+                    if per_supplier_saving < 500 and extra_suppliers >= 2:
+                        return {
+                            "recommended": "consolidate",
+                            "reason": (
+                                f"Only {format_inr(cost_diff)} saved by splitting across "
+                                f"{supplier_count} suppliers. Consolidating at {baseline_supplier} "
+                                f"saves {extra_suppliers} extra deliveries, invoices, and vendor follow-ups."
+                            ),
+                            "splitCost": round(split_total),
+                            "consolidateCost": round(baseline_total),
+                            "extraCost": round(baseline_total - split_total),
+                        }
+                    else:
+                        return {
+                            "recommended": "split",
+                            "reason": (
+                                f"Splitting saves {format_inr(cost_diff)} across {supplier_count} suppliers. "
+                                f"The cost benefit justifies the additional coordination."
+                            ),
+                            "splitCost": round(split_total),
+                            "consolidateCost": round(baseline_total),
+                            "extraCost": round(baseline_total - split_total),
+                        }
+
+            return {
+                "recommended": plan.get("recommendedPlan", "split"),
+                "reason": "Current plan offers the best balance of cost and convenience.",
+                "splitCost": round(split_total),
+                "consolidateCost": round(baseline_total) if baseline_supplier else 0,
+                "extraCost": 0,
+            }
+        except Exception:
+            return {"recommended": "split", "reason": "", "splitCost": 0, "consolidateCost": 0, "extraCost": 0}
+
+    @staticmethod
+    def _generate_summary(supplier_count: int, savings: float, savings_pct: float,
+                          risk_level: str, latest_delivery: int, complexity_level: str,
+                          ai_score: int, dominant_supplier: Optional[str],
+                          consolidation_label: str) -> str:
+        try:
+            parts = []
+            parts.append(
+                f"Your basket has been optimized across {supplier_count} supplier"
+                f"{'s' if supplier_count != 1 else ''}."
+            )
+            if savings > 0:
+                parts.append(f"Estimated savings: {format_inr(savings)} ({savings_pct}%).")
+            parts.append(f"Supplier diversification: {consolidation_label.lower()}.")
+            parts.append(f"Risk: {risk_level}.")
+            parts.append(f"Expected delivery: within {latest_delivery} day{'s' if latest_delivery != 1 else ''}.")
+            parts.append(f"Procurement complexity: {complexity_level}.")
+            if dominant_supplier:
+                parts.append(
+                    f"⚠ {dominant_supplier} dominates the basket — consider diversifying to reduce dependency."
+                )
+            if ai_score >= 80:
+                parts.append("Recommendation: Proceed with this purchase.")
+                parts.append("Reason: Best balance of cost, delivery, and supplier reliability.")
+            elif ai_score >= 60:
+                parts.append("Recommendation: Proceed with minor adjustments.")
+                parts.append("Reason: Good optimization with acceptable trade-offs.")
+            else:
+                parts.append("Recommendation: Review alternatives before proceeding.")
+                parts.append("Reason: Significant trade-offs between cost and convenience.")
+            return " ".join(parts)
+        except Exception:
+            return ""
+
+
+def _days_label(days: int) -> str:
+    try:
+        if days <= 0:
+            return "Today"
+        if days == 1:
+            return "1 day"
+        return f"{days} days"
+    except Exception:
+        return "—"

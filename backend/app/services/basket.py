@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 from app.config import CATEGORY_SUPPLIERS, clamp
 from app.services.core import RecommendationService, SearchService
-from app.services.intelligence import ProcurementIntelligenceService
+from app.services.intelligence import ProcurementIntelligenceService, BasketIntelligenceService
 
 
 def _eta_label(days: int) -> str:
@@ -150,17 +150,34 @@ class BasketOptimizationService:
 
             # --- Intelligence on chosen products ---
             chosen_products = []
+            all_supplier_products: dict[str, list[dict]] = {}
             for a in analyses:
                 if a["best"]:
                     product = a["best"]
                     if recommended_plan == "consolidate" and baseline["supplier"]:
                         product = a["bySupplier"].get(baseline["supplier"], a["best"])
                     chosen_products.append(product)
+                    s = product["provider"]
+                    all_supplier_products.setdefault(s, [])
+                    all_supplier_products[s].extend(a["bySupplier"].values())
+
+            # Build plan dict for intelligence service
+            plan_for_intel = {
+                "items": result_items,
+                "recommendedPlan": recommended_plan,
+                "splitTotal": round(chosen_total),
+                "baseline": {"supplier": baseline["supplier"], "total": round(baseline["total"])},
+                "estimatedSavings": estimated_savings,
+                "supplierCount": len(chosen_suppliers),
+                "confidence": confidence,
+            }
 
             intelligence = {}
             try:
                 if chosen_products:
-                    intelligence = ProcurementIntelligenceService.compute(chosen_products)
+                    intelligence = BasketIntelligenceService.compute(
+                        plan_for_intel, analyses, all_supplier_products
+                    )
             except Exception:
                 pass
 

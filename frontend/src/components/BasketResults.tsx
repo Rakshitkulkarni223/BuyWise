@@ -6,10 +6,8 @@ import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
 import { formatINR } from '../lib/format';
 import { cn } from '../lib/utils';
-import { ProcurementInsightsPanel } from './ProcurementInsightsPanel';
-import { ProcurementHealthMeter } from './ProcurementHealthMeter';
+import { BasketIntelligencePanel } from './BasketIntelligencePanel';
 import { SupplierIntelligenceCard } from './SupplierIntelligenceCard';
-import { TotalCostBreakdownPanel } from './TotalCostBreakdownPanel';
 
 export function BasketResults({
   result,
@@ -128,26 +126,12 @@ export function BasketResults({
         </div>
       </motion.div>
 
-      {/* Intelligence panels */}
+      {/* Basket Intelligence Panel */}
       {result.intelligence && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-6">
-            {result.intelligence.insights?.length > 0 && (
-              <ProcurementInsightsPanel insights={result.intelligence.insights} />
-            )}
-            {result.intelligence.healthScore && (
-              <ProcurementHealthMeter health={result.intelligence.healthScore} />
-            )}
-          </div>
-          <div className="space-y-6">
-            {result.intelligence.totalCosts?.length > 0 && (
-              <TotalCostBreakdownPanel
-                totalCosts={result.intelligence.totalCosts}
-                supplierColors={supplierColors}
-              />
-            )}
-          </div>
-        </div>
+        <BasketIntelligencePanel
+          intelligence={result.intelligence}
+          supplierColors={supplierColors}
+        />
       )}
 
       {/* Supplier Intelligence Cards */}

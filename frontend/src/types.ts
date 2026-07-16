@@ -212,7 +212,7 @@ export interface BasketOptimizeResponse {
   confidence: number;
   unfulfillable: string[];
   consolidationPenalty: number;
-  intelligence?: ProcurementIntelligence;
+  intelligence?: BasketIntelligence;
 }
 
 export interface BasketHistoryEntry {
@@ -327,4 +327,108 @@ export interface RecommendationModeOption {
   key: RecommendationMode;
   label: string;
   description: string;
+}
+
+// ---- Basket Intelligence ----
+
+export interface BasketLogisticsBreakdown {
+  shipping: number;
+  transport: number;
+  handling: number;
+  hidden: number;
+  total: number;
+}
+
+export interface BasketSavings {
+  marketCost: number;
+  optimizedCost: number;
+  amount: number;
+  percentage: number;
+}
+
+export interface BasketConsolidationScore {
+  score: number;
+  label: string;
+  stars: string;
+}
+
+export interface BasketDeliveryWindow {
+  earliest: number;
+  latest: number;
+  complete: number;
+  earliestLabel: string;
+  latestLabel: string;
+}
+
+export interface BasketComplexity {
+  level: 'Very Easy' | 'Easy' | 'Medium' | 'High' | 'Very High';
+  factors: {
+    supplierCount: number;
+    deliveryCount: number;
+    invoiceCount: number;
+  };
+}
+
+export interface BasketConfidence {
+  percentage: number;
+  label: string;
+  reason: string;
+}
+
+export interface BasketRisk {
+  level: 'Low' | 'Medium' | 'High';
+  score: number;
+}
+
+export interface CostVsConvenience {
+  recommended: 'split' | 'consolidate';
+  reason: string;
+  splitCost: number;
+  consolidateCost: number;
+  extraCost: number;
+}
+
+export interface SupplierDependency {
+  amount: number;
+  percentage: number;
+}
+
+export interface CategorySpendItem {
+  item: string;
+  query: string;
+  supplier: string;
+  amount: number;
+}
+
+export interface ExpectedSavings {
+  perBasket: number;
+  monthly: number;
+  yearly: number;
+}
+
+export interface BasketIntelligence {
+  // Base intelligence (reused)
+  supplierIntelligence: Record<string, SupplierIntelligence>;
+  totalCosts: TotalCostBreakdown[];
+  riskScores: Record<string, RiskScore>;
+  // New basket metrics
+  totalProcurementCost: number;
+  productCost: number;
+  logisticsCost: number;
+  logisticsBreakdown: BasketLogisticsBreakdown;
+  savings: BasketSavings;
+  supplierCount: number;
+  consolidationScore: BasketConsolidationScore;
+  deliveryWindow: BasketDeliveryWindow;
+  complexity: BasketComplexity;
+  aiScore: number;
+  confidence: BasketConfidence;
+  risk: BasketRisk;
+  costVsConvenience: CostVsConvenience;
+  supplierDependency: Record<string, SupplierDependency>;
+  dominantSupplier: string | null;
+  categorySpend: CategorySpendItem[];
+  expectedSavings: ExpectedSavings;
+  aiSummary: string;
+  isEstimated: boolean;
 }
