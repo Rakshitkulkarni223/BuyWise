@@ -214,8 +214,10 @@ class BasketOptimizationService:
             if not items:
                 raise ValueError("At least one item is required")
 
-            suppliers = req.get("suppliers") or []
-            suppliers = [s for s in suppliers if s in valid] if suppliers else []
+            requested = req.get("suppliers") or []
+            marketplace_selected = [s for s in requested if s in valid]
+            supplier_hub_selected = [s for s in requested if s not in valid]
+            suppliers = marketplace_selected + supplier_hub_selected if requested else []
             if not suppliers:
                 suppliers = valid
 

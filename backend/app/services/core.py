@@ -644,10 +644,10 @@ class SearchService:
                 from app.services.supplier_hub_search import SupplierHubSearchService
                 # Determine which supplier names are marketplace vs supplier hub
                 marketplace_names = {a.name for a in adapters}
-                # Pass all suppliers as potential supplier hub names (they'll be filtered by the service)
+                # Supplier Hub names = selected names that aren't marketplace suppliers
                 sh_names = [s for s in suppliers if s not in marketplace_names]
-                if sh_names or not suppliers:
-                    tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None))
+                # Always query Supplier Hub when flag is set; pass sh_names to filter (None = all)
+                tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
             products: list[dict] = []
@@ -671,8 +671,11 @@ class SearchService:
                 raise ValueError("Category is required")
 
             valid = CATEGORY_SUPPLIERS.get(category, [])
-            suppliers = req.get("suppliers") or []
-            suppliers = [s for s in suppliers if s in valid] if suppliers else []
+            requested = req.get("suppliers") or []
+            # Keep marketplace suppliers that are valid, plus any non-marketplace names (Supplier Hub)
+            marketplace_selected = [s for s in requested if s in valid]
+            supplier_hub_selected = [s for s in requested if s not in valid]
+            suppliers = marketplace_selected + supplier_hub_selected if requested else []
             if not suppliers:
                 suppliers = valid
             if not suppliers:
