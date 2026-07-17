@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff } from 'lucide-react';
+import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2 } from 'lucide-react';
 import type { Product, SortOption } from '../types';
 import { Badge } from './ui/Badge';
 import { Switch } from './ui/Switch';
@@ -133,6 +133,7 @@ export function ComparisonResults({
               <thead>
                 <tr className="border-b border-line bg-bg text-left">
                   <th className="px-4 py-2.5 label-eyebrow">Supplier</th>
+                  <th className="px-4 py-2.5 label-eyebrow">Source</th>
                   <th className="px-4 py-2.5 label-eyebrow">Product</th>
                   <th className="px-4 py-2.5 label-eyebrow text-right">Price</th>
                   <th className="px-4 py-2.5 label-eyebrow text-center">Discount</th>
@@ -169,6 +170,17 @@ export function ComparisonResults({
                             <div className="text-xs text-muted">{p.brand}</div>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {p.supplierSource === 'supplier_hub' ? (
+                          <Badge tone="neutral" className="gap-1">
+                            <Building2 size={10} /> My Supplier
+                          </Badge>
+                        ) : (
+                          <Badge tone="accent" className="gap-1">
+                            <Store size={10} /> Marketplace
+                          </Badge>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
@@ -290,6 +302,17 @@ export function ComparisonResults({
                       </div>
                       {p.discount > 0 && <Badge tone="success">{p.discount}% off</Badge>}
                     </div>
+                  </div>
+                  <div className="mt-2">
+                    {p.supplierSource === 'supplier_hub' ? (
+                      <Badge tone="neutral" className="gap-1">
+                        <Building2 size={10} /> My Supplier
+                      </Badge>
+                    ) : (
+                      <Badge tone="accent" className="gap-1">
+                        <Store size={10} /> Marketplace
+                      </Badge>
+                    )}
                   </div>
                   <div className="mt-3 flex items-center justify-between text-xs text-muted">
                     <span>Delivery: {deliveryLabel(p.deliveryDays)}</span>

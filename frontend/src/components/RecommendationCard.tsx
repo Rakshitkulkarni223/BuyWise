@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Check, ExternalLink, TrendingDown, Gauge, ChevronDown, Brain } from 'lucide-react';
+import { Sparkles, Check, ExternalLink, TrendingDown, Gauge, ChevronDown, Brain, Store, Building2 } from 'lucide-react';
 import {
   ResponsiveContainer,
   RadarChart,
@@ -74,6 +74,17 @@ export function RecommendationCard({
                 data-testid="recommended-supplier-name"
               >
                 {rec.supplier}
+              </div>
+              <div className="mt-0.5">
+                {rec.product?.supplierSource === 'supplier_hub' ? (
+                  <Badge tone="neutral" className="gap-1">
+                    <Building2 size={10} /> My Supplier Network
+                  </Badge>
+                ) : (
+                  <Badge tone="accent" className="gap-1">
+                    <Store size={10} /> Marketplace
+                  </Badge>
+                )}
               </div>
             </div>
           </div>

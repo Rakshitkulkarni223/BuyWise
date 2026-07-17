@@ -25,6 +25,17 @@ export interface SupplierHubSupplier {
   updatedAt: string;
 }
 
+export interface SupplierHubSupplierSummary {
+  id: string;
+  name: string;
+  supplierType: string;
+  deliveryDays?: number;
+  creditPeriod?: number;
+  reliabilityScore?: number;
+  preferredCategories: string[];
+  active: boolean;
+}
+
 export interface SupplierHubProduct {
   id: string;
   supplierId: string;

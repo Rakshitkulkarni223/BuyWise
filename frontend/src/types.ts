@@ -52,6 +52,7 @@ export interface Product {
   warrantyMonths?: number;
   returnPolicyDays?: number;
   productUrl: string;
+  supplierSource?: 'marketplace' | 'supplier_hub';
 }
 
 export interface RecommendationFactor {
@@ -190,12 +191,14 @@ export interface BasketItemResult {
   deliveryDays: number;
   availability: boolean;
   reasons: string[];
+  supplierSource?: 'marketplace' | 'supplier_hub';
 }
 
 export interface BasketSupplierGroup {
   items: string[];
   subtotal: number;
   eta: string;
+  supplierSource?: 'marketplace' | 'supplier_hub';
 }
 
 export interface BasketOptimizeResponse {

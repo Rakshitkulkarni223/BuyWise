@@ -202,6 +202,7 @@ class MockProviderAdapter:
                 "warrantyMonths": p.get("warrantyMonths") or None,
                 "returnPolicyDays": p.get("returnDays"),
                 "productUrl": f"https://example.com/{self.name.lower().replace(' ', '')}/product/{tpl['id']}",
+                "supplierSource": "marketplace",
             }]
         except Exception as e:
             print(f"MockProviderAdapter[{self.name}] search failed: {e}")
@@ -631,21 +632,29 @@ class RecommendationService:
 
 class SearchService:
     @staticmethod
-    async def gather(query: str, category: str, suppliers: list[str]) -> list[dict]:
-        """Query every supplier adapter in parallel."""
+    async def gather(query: str, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False) -> list[dict]:
+        """Query every supplier adapter in parallel. Optionally also query Supplier Hub suppliers."""
         try:
             adapters = [
                 a for a in (ProviderFactory.create(name) for name in suppliers) if a is not None
             ]
-            results = await asyncio.gather(
-                *[a.search(query, category) for a in adapters],
-                return_exceptions=True,
-            )
+            # Build task list: marketplace adapters + optional supplier hub gather
+            tasks = [a.search(query, category) for a in adapters]
+            if include_supplier_hub and user_id:
+                from app.services.supplier_hub_search import SupplierHubSearchService
+                # Determine which supplier names are marketplace vs supplier hub
+                marketplace_names = {a.name for a in adapters}
+                # Pass all suppliers as potential supplier hub names (they'll be filtered by the service)
+                sh_names = [s for s in suppliers if s not in marketplace_names]
+                if sh_names or not suppliers:
+                    tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None))
+
+            results = await asyncio.gather(*tasks, return_exceptions=True)
             products: list[dict] = []
             for i, r in enumerate(results):
                 if isinstance(r, list):
                     products.extend(r)
-                else:
+                elif i < len(adapters):
                     print(f'Provider "{adapters[i].name}" failed: {r}')
             return products
         except Exception:
@@ -669,7 +678,8 @@ class SearchService:
             if not suppliers:
                 raise ValueError(f"Unknown category: {category}")
 
-            products = await SearchService.gather(query, category, suppliers)
+            include_supplier_hub = req.get("includeSupplierHub", True)
+            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
             results = ComparisonService.apply(
                 products, req.get("sortBy"), req.get("filters")
             )

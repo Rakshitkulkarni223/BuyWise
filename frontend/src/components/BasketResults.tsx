@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Split, Layers, Truck, Gauge, Check, PackageX, Store } from 'lucide-react';
+import { Split, Layers, Truck, Gauge, Check, PackageX, Store, Building2 } from 'lucide-react';
 import type { BasketOptimizeResponse } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
@@ -152,6 +152,49 @@ export function BasketResults({
           </div>
         )}
 
+      {/* Supplier Mix Summary */}
+      <div className="rounded-md border border-line bg-surface p-4 shadow-card">
+        <div className="label-eyebrow mb-3">Supplier Mix</div>
+        <div className="flex flex-wrap gap-3">
+          {(() => {
+            try {
+              const marketplaceCount = groups.filter(([, g]) => g.supplierSource !== 'supplier_hub').length;
+              const supplierHubCount = groups.filter(([, g]) => g.supplierSource === 'supplier_hub').length;
+              const marketplaceSubtotal = groups.filter(([, g]) => g.supplierSource !== 'supplier_hub').reduce((sum, [, g]) => sum + g.subtotal, 0);
+              const supplierHubSubtotal = groups.filter(([, g]) => g.supplierSource === 'supplier_hub').reduce((sum, [, g]) => sum + g.subtotal, 0);
+              return (
+                <>
+                  {marketplaceCount > 0 && (
+                    <div className="flex-1 min-w-[180px] rounded-md border border-accent/30 bg-accent-soft/20 p-3">
+                      <div className="flex items-center gap-2 text-accent">
+                        <Store size={14} />
+                        <span className="text-sm font-semibold">Marketplace</span>
+                      </div>
+                      <div className="mt-1.5 text-xs text-muted">
+                        {marketplaceCount} supplier{marketplaceCount > 1 ? 's' : ''} · {formatINR(marketplaceSubtotal)}
+                      </div>
+                    </div>
+                  )}
+                  {supplierHubCount > 0 && (
+                    <div className="flex-1 min-w-[180px] rounded-md border border-line bg-bg/40 p-3">
+                      <div className="flex items-center gap-2 text-ink-soft">
+                        <Building2 size={14} />
+                        <span className="text-sm font-semibold">My Supplier Network</span>
+                      </div>
+                      <div className="mt-1.5 text-xs text-muted">
+                        {supplierHubCount} supplier{supplierHubCount > 1 ? 's' : ''} · {formatINR(supplierHubSubtotal)}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            } catch {
+              return null;
+            }
+          })()}
+        </div>
+      </div>
+
       {/* Grouped by supplier */}
       <div>
         <h3 className="mb-3 font-display text-lg font-semibold tracking-tight text-ink">Your baskets by supplier</h3>
@@ -170,7 +213,18 @@ export function BasketResults({
                     <div className="text-xs text-muted">{group.eta}</div>
                   </div>
                 </div>
-                <Badge tone="neutral">{group.items.length} item{group.items.length > 1 ? 's' : ''}</Badge>
+                <div className="flex items-center gap-2">
+                  {group.supplierSource === 'supplier_hub' ? (
+                    <Badge tone="neutral" className="gap-1">
+                      <Building2 size={10} /> My Supplier
+                    </Badge>
+                  ) : (
+                    <Badge tone="accent" className="gap-1">
+                      <Store size={10} /> Marketplace
+                    </Badge>
+                  )}
+                  <Badge tone="neutral">{group.items.length} item{group.items.length > 1 ? 's' : ''}</Badge>
+                </div>
               </div>
               <ul className="mt-3 flex-1 space-y-1.5">
                 {group.items.map((item) => (
@@ -218,6 +272,15 @@ export function BasketResults({
                   <span className="flex items-center gap-2">
                     <SupplierLogo name={item.supplier} color={supplierColors[item.supplier]} size={24} />
                     <span className="text-sm font-medium text-ink">{item.supplier}</span>
+                    {item.supplierSource === 'supplier_hub' ? (
+                      <Badge tone="neutral" className="gap-1">
+                        <Building2 size={9} /> My Supplier
+                      </Badge>
+                    ) : (
+                      <Badge tone="accent" className="gap-1">
+                        <Store size={9} /> Marketplace
+                      </Badge>
+                    )}
                   </span>
                 ) : (
                   <Badge tone="danger">Not Found</Badge>

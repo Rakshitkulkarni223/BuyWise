@@ -15,6 +15,7 @@ import type {
   User,
   WeightProfile,
 } from '../types';
+import type { SupplierHubSupplierSummary } from '../types_supplier';
 
 const API = axios.create({
   baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`,
@@ -70,6 +71,8 @@ export const api = {
   suppliersForCategory: (slug: string) => unwrap<Supplier[]>(API.get(`/categories/${slug}/suppliers`)),
   suppliers: () => unwrap<Supplier[]>(API.get('/suppliers')),
   toggleSupplier: (id: string, enabled: boolean) => unwrap<Supplier>(API.patch(`/suppliers/${id}`, { enabled })),
+  supplierHubSuppliersForCategory: (slug: string) =>
+    unwrap<SupplierHubSupplierSummary[]>(API.get(`/supplier-hub/suppliers/by-category/${slug}`)),
 
   // Search
   search: (body: {
@@ -80,6 +83,7 @@ export const api = {
     filters?: Record<string, unknown>;
     weightProfile?: string;
     recommendationMode?: string;
+    includeSupplierHub?: boolean;
   }) => unwrap<SearchResponse>(API.post('/search', body)),
 
   // Split-cart / basket optimization
@@ -90,6 +94,7 @@ export const api = {
     weightProfile?: string;
     consolidationPenalty?: number;
     recommendationMode?: string;
+    includeSupplierHub?: boolean;
   }) => unwrap<BasketOptimizeResponse>(API.post('/basket/optimize', body)),
   basketHistory: (page = 1, limit = 20) =>
     unwrap<PaginatedResponse<BasketHistoryEntry>>(API.get('/basket/history', { params: { page, limit } })),

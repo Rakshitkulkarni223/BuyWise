@@ -121,7 +121,7 @@ class BasketOptimizationService:
                 chosen_suppliers.add(product["provider"])
                 max_days = max(max_days, product["deliveryDays"])
 
-                g = grouped.get(product["provider"], {"items": [], "subtotal": 0, "eta": "Today", "_days": 0})
+                g = grouped.get(product["provider"], {"items": [], "subtotal": 0, "eta": "Today", "_days": 0, "_source": product.get("supplierSource", "marketplace")})
                 g["items"].append(a["query"])
                 g["subtotal"] += line_total
                 g["_days"] = max(g.get("_days", 0), product["deliveryDays"])
@@ -134,11 +134,12 @@ class BasketOptimizationService:
                     "price": product["price"], "quantity": a["qty"],
                     "lineTotal": line_total, "deliveryDays": product["deliveryDays"],
                     "availability": True, "reasons": reasons,
+                    "supplierSource": product.get("supplierSource", "marketplace"),
                 })
 
             grouped_by_supplier = {}
             for s, g in grouped.items():
-                grouped_by_supplier[s] = {"items": g["items"], "subtotal": round(g["subtotal"]), "eta": g["eta"]}
+                grouped_by_supplier[s] = {"items": g["items"], "subtotal": round(g["subtotal"]), "eta": g["eta"], "supplierSource": g.get("_source", "marketplace")}
 
             chosen_net = chosen_total + penalty * len(chosen_suppliers)
             other_net = baseline_net if recommended_plan == "split" else split_net
@@ -220,10 +221,11 @@ class BasketOptimizationService:
 
             weight_profile = req.get("weightProfile", "balanced")
             recommendation_mode = req.get("recommendationMode", "balanced")
+            include_supplier_hub = req.get("includeSupplierHub", True)
 
             import asyncio
             gathered = await asyncio.gather(*[
-                BasketOptimizationService._gather_item(it, category, suppliers)
+                BasketOptimizationService._gather_item(it, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
                 for it in items
             ])
 
@@ -235,11 +237,11 @@ class BasketOptimizationService:
             raise
 
     @staticmethod
-    async def _gather_item(item: dict, category: str, suppliers: list[str]) -> dict:
+    async def _gather_item(item: dict, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False) -> dict:
         try:
             query = item["query"].strip()
             qty = max(1, round(item.get("quantity", 1) or 1))
-            products = await SearchService.gather(query, category, suppliers)
+            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
             return {"query": query, "quantity": qty, "products": products}
         except Exception:
             return {"query": item.get("query", ""), "quantity": 1, "products": []}

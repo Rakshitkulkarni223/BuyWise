@@ -27,11 +27,11 @@ import type {
   WeightProfile,
   WeightProfileKey,
 } from '../types';
+import type { SupplierHubSupplierSummary } from '../types_supplier';
 import { api, apiError } from '../lib/api';
 import { formatINR } from '../lib/format';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Switch } from '../components/ui/Switch';
 import { RecommendationCard } from '../components/RecommendationCard';
 import { ComparisonResults } from '../components/ComparisonResults';
 import { BasketResults } from '../components/BasketResults';
@@ -42,6 +42,7 @@ import { SupplierComparisonMatrix } from '../components/SupplierComparisonMatrix
 import { TotalCostBreakdownPanel } from '../components/TotalCostBreakdownPanel';
 import { LongTermRecommendationCard } from '../components/LongTermRecommendationCard';
 import { SupplierIntelligenceCard } from '../components/SupplierIntelligenceCard';
+import { SupplierSourceSelector } from '../components/SupplierSourceSelector';
 import { getIcon } from '../lib/icons';
 import { cn } from '../lib/utils';
 import { useSearchSuggestions } from '../hooks/useSearchSuggestions';
@@ -90,6 +91,7 @@ export function SearchPage() {
   const [recModes, setRecModes] = useState<RecommendationModeOption[]>([]);
   const [category, setCategory] = useState('');
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [supplierHubSuppliers, setSupplierHubSuppliers] = useState<SupplierHubSupplierSummary[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [weightProfile, setWeightProfile] = useState<WeightProfileKey>('balanced');
   const [recMode, setRecMode] = useState<RecommendationMode>('balanced');
@@ -144,20 +146,29 @@ export function SearchPage() {
   useEffect(() => {
     if (!category) return;
     let stale = false;
-    api
-      .suppliersForCategory(category)
-      .then((s) => {
+    Promise.all([
+      api.suppliersForCategory(category),
+      api.supplierHubSuppliersForCategory(category),
+    ])
+      .then(([s, sh]) => {
         if (stale) return;
         setSuppliers(s);
-        setSelected(new Set(s.filter((x) => x.enabled).map((x) => x.name)));
+        setSupplierHubSuppliers(sh);
+        const marketplaceSelected = new Set(s.filter((x) => x.enabled).map((x) => x.name));
+        const supplierHubSelected = new Set(sh.map((x) => x.name));
+        setSelected(new Set([...marketplaceSelected, ...supplierHubSelected]));
       })
       .catch((e) => { if (!stale) setError(apiError(e)); });
     return () => { stale = true; };
   }, [category]);
 
   const supplierColors = useMemo(
-    () => Object.fromEntries(suppliers.map((s) => [s.name, s.color])),
-    [suppliers],
+    () => {
+      const marketplace: Record<string, string> = Object.fromEntries(suppliers.map((s) => [s.name, s.color]));
+      const supplierHub: Record<string, string> = Object.fromEntries(supplierHubSuppliers.map((s) => [s.name, '#64748B']));
+      return { ...marketplace, ...supplierHub };
+    },
+    [suppliers, supplierHubSuppliers],
   );
 
   const toggleSupplier = useCallback((name: string) => {
@@ -202,6 +213,7 @@ export function SearchPage() {
         weightProfile: profileOverride ?? weightProfileRef.current,
         recommendationMode: modeOverride ?? recModeRef.current,
         sortBy: sortPref,
+        includeSupplierHub: true,
       });
       setResult(res);
     } catch (e) {
@@ -242,6 +254,7 @@ export function SearchPage() {
         weightProfile: profileOverride ?? weightProfileRef.current,
         consolidationPenalty: penalty || 0,
         recommendationMode: modeOverride ?? recModeRef.current,
+        includeSupplierHub: true,
       });
       setBasketResult(res);
     } catch (e) {
@@ -373,15 +386,15 @@ export function SearchPage() {
           <div>
             <div className="mb-2.5 flex items-center justify-between">
               <div className="label-eyebrow flex items-center gap-1.5">
-                <Store size={12} /> 2 · Suppliers ({selected.size}/{suppliers.length})
+                <Store size={12} /> 2 · Suppliers ({selected.size}/{suppliers.length + supplierHubSuppliers.length})
               </div>
               <div className="flex gap-3 text-xs">
                 <button
                   data-testid="suppliers-select-all"
-                  onClick={() => setSelected(new Set(suppliers.map((s) => s.name)))}
+                  onClick={() => setSelected(new Set([...suppliers.map((s) => s.name), ...supplierHubSuppliers.map((s) => s.name)]))}
                   className={cn(
                     'inline-flex items-center gap-1 font-medium transition-colors',
-                    selected.size === suppliers.length ? 'text-accent' : 'text-muted hover:text-ink',
+                    selected.size === suppliers.length + supplierHubSuppliers.length ? 'text-accent' : 'text-muted hover:text-ink',
                   )}
                 >
                   <CheckCheck size={13} /> All
@@ -398,27 +411,24 @@ export function SearchPage() {
                 </button>
               </div>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-testid="supplier-toggles">
-              {suppliers.map((s) => (
-                <label
-                  key={s.id}
-                  className={cn(
-                    'flex cursor-pointer items-center justify-between gap-3 rounded-md border px-3 py-2.5 transition-colors',
-                    selected.has(s.name) ? 'border-ink/30 bg-bg' : 'border-line bg-surface',
-                  )}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
-                    <span className="text-sm font-medium text-ink">{s.name}</span>
-                  </span>
-                  <Switch
-                    checked={selected.has(s.name)}
-                    onCheckedChange={() => toggleSupplier(s.name)}
-                    data-testid={`supplier-toggle-${s.name}`}
-                  />
-                </label>
-              ))}
-            </div>
+            <SupplierSourceSelector
+              marketplaceSuppliers={suppliers}
+              supplierHubSuppliers={supplierHubSuppliers}
+              selected={selected}
+              onToggle={toggleSupplier}
+              onSelectAllMarketplace={() => setSelected((prev) => new Set([...prev, ...suppliers.map((s) => s.name)]))}
+              onSelectNoneMarketplace={() => setSelected((prev) => {
+                const next = new Set(prev);
+                suppliers.forEach((s) => next.delete(s.name));
+                return next;
+              })}
+              onSelectAllSupplierHub={() => setSelected((prev) => new Set([...prev, ...supplierHubSuppliers.map((s) => s.name)]))}
+              onSelectNoneSupplierHub={() => setSelected((prev) => {
+                const next = new Set(prev);
+                supplierHubSuppliers.forEach((s) => next.delete(s.name));
+                return next;
+              })}
+            />
           </div>
 
           {/* Query (single) OR Basket rows */}

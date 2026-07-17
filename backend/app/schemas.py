@@ -49,6 +49,7 @@ class SearchInput(BaseModel):
     filters: Optional[SearchFilters] = None
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     recommendationMode: Optional[RecommendationMode] = None
+    includeSupplierHub: Optional[bool] = True
 
 
 class RecommendationInput(BaseModel):
@@ -85,3 +86,4 @@ class BasketInput(BaseModel):
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     consolidationPenalty: Optional[float] = Field(None, ge=0, le=100000)
     recommendationMode: Optional[RecommendationMode] = None
+    includeSupplierHub: Optional[bool] = True
