@@ -5,6 +5,7 @@ import {
   Store,
   CheckCheck,
   Square,
+  CheckSquare,
   Sparkles,
   ShoppingBasket,
   Plus,
@@ -393,7 +394,7 @@ export function SearchPage() {
                     selected.size === 0 ? 'text-danger' : 'text-muted hover:text-ink',
                   )}
                 >
-                  <Square size={13} /> None
+                  {selected.size === 0 ? <CheckSquare size={13} /> : <Square size={13} />} None
                 </button>
               </div>
             </div>
