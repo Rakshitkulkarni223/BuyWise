@@ -15,6 +15,7 @@ import {
   Moon,
   Sun,
   TrendingUp,
+  Store,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -27,6 +28,7 @@ const NAV = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
+  { to: '/supplier-hub', label: 'Supplier Hub', icon: Store, testid: 'nav-supplier-hub' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
