@@ -172,7 +172,7 @@ export function SearchPage() {
   }, []);
 
   const activeSuppliersRef = useRef<() => string[]>(() => []);
-  activeSuppliersRef.current = () => (selected.size ? [...selected] : suppliers.map((s) => s.name));
+  activeSuppliersRef.current = () => [...selected];
 
   const weightProfileRef = useRef(weightProfile);
   weightProfileRef.current = weightProfile;
@@ -378,14 +378,20 @@ export function SearchPage() {
                 <button
                   data-testid="suppliers-select-all"
                   onClick={() => setSelected(new Set(suppliers.map((s) => s.name)))}
-                  className="inline-flex items-center gap-1 font-medium text-muted hover:text-ink"
+                  className={cn(
+                    'inline-flex items-center gap-1 font-medium transition-colors',
+                    selected.size === suppliers.length ? 'text-accent' : 'text-muted hover:text-ink',
+                  )}
                 >
                   <CheckCheck size={13} /> All
                 </button>
                 <button
                   data-testid="suppliers-select-none"
                   onClick={() => setSelected(new Set())}
-                  className="inline-flex items-center gap-1 font-medium text-muted hover:text-ink"
+                  className={cn(
+                    'inline-flex items-center gap-1 font-medium transition-colors',
+                    selected.size === 0 ? 'text-danger' : 'text-muted hover:text-ink',
+                  )}
                 >
                   <Square size={13} /> None
                 </button>
