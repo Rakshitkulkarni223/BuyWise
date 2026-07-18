@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Calculator, ChevronDown, Info } from 'lucide-react';
+import { Calculator, ChevronDown, ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import type { TotalCostBreakdown } from '../types';
 import { SupplierLogo } from './SupplierLogo';
 import { Badge } from './ui/Badge';
@@ -14,6 +14,23 @@ export function TotalCostBreakdownPanel({
   totalCosts: TotalCostBreakdown[];
   supplierColors: Record<string, string>;
 }) {
+  const PAGE_SIZE = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = useMemo(() => Math.ceil((totalCosts?.length || 0) / PAGE_SIZE), [totalCosts]);
+  const paginatedCosts = useMemo(() => {
+    try {
+      const start = (currentPage - 1) * PAGE_SIZE;
+      return (totalCosts || []).slice(start, start + PAGE_SIZE);
+    } catch { return totalCosts || []; }
+  }, [totalCosts, currentPage]);
+
+  const goToPage = useCallback((page: number) => {
+    try {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    } catch { /* silent */ }
+  }, [totalPages]);
+
   try {
     if (!totalCosts || totalCosts.length === 0) return null;
 
@@ -34,10 +51,58 @@ export function TotalCostBreakdownPanel({
         </div>
 
         <div className="space-y-2 p-4">
-          {totalCosts.map((tc, i) => (
+          {paginatedCosts.map((tc, i) => (
             <CostRow key={i} tc={tc} color={supplierColors[tc.supplier]} isLowest={tc.supplier === lowest.supplier} />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-2.5">
+            <span className="text-xs text-muted">
+              {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, totalCosts.length)} of {totalCosts.length}
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={cn(
+                  'flex h-7 w-7 items-center justify-center rounded-md border text-sm transition-colors',
+                  currentPage === 1
+                    ? 'border-line text-muted/40 cursor-not-allowed'
+                    : 'border-line text-ink hover:bg-bg',
+                )}
+              >
+                <ChevronLeft size={13} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={cn(
+                    'flex h-7 min-w-[1.75rem] items-center justify-center rounded-md border text-xs font-medium transition-colors',
+                    page === currentPage
+                      ? 'border-accent bg-accent text-white'
+                      : 'border-line text-ink hover:bg-bg',
+                  )}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={cn(
+                  'flex h-7 w-7 items-center justify-center rounded-md border text-sm transition-colors',
+                  currentPage === totalPages
+                    ? 'border-line text-muted/40 cursor-not-allowed'
+                    : 'border-line text-ink hover:bg-bg',
+                )}
+              >
+                <ChevronRight size={13} />
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="border-t border-line px-4 py-2.5 text-[11px] text-muted">
           <Info size={11} className="mr-1 inline" />
