@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2, MapPin } from 'lucide-react';
+import React, { useMemo, useState, useCallback } from 'react';
+import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Product, SortOption } from '../types';
 import { Badge } from './ui/Badge';
 import { Switch } from './ui/Switch';
@@ -48,6 +48,8 @@ export function ComparisonResults({
   const [inStockOnly, setInStockOnly] = useState(false);
   const [minRating, setMinRating] = useState(0);
   const watchlist = useWatchlist();
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 6;
 
   const view = useMemo(() => {
     let list = [...products];
@@ -56,6 +58,21 @@ export function ComparisonResults({
     list.sort(sorters[sortBy]);
     return list;
   }, [products, sortBy, inStockOnly, minRating]);
+
+  // Reset page when filters change
+  useMemo(() => { setCurrentPage(1); }, [sortBy, inStockOnly, minRating]);
+
+  const totalPages = Math.ceil(view.length / PAGE_SIZE);
+  const paginatedView = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return view.slice(start, start + PAGE_SIZE);
+  }, [view, currentPage]);
+
+  const goToPage = useCallback((page: number) => {
+    try {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    } catch { /* silent */ }
+  }, [totalPages]);
 
   const cheapest = useMemo(() => (products.length ? Math.min(...products.map((p) => p.price)) : 0), [products]);
 
@@ -144,7 +161,7 @@ export function ComparisonResults({
                 </tr>
               </thead>
               <tbody>
-                {view.map((p, idx) => {
+                {paginatedView.map((p, idx) => {
                   const isBest = p.provider === recommendedSupplier;
                   return (
                     <tr
@@ -280,9 +297,58 @@ export function ComparisonResults({
             </table>
           </div>
 
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-4 py-3">
+              <span className="text-xs text-muted">
+                Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, view.length)} of {view.length} products
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-md border text-sm transition-colors',
+                    currentPage === 1
+                      ? 'border-line text-muted/40 cursor-not-allowed'
+                      : 'border-line text-ink hover:bg-bg',
+                  )}
+                >
+                  <ChevronLeft size={14} />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={cn(
+                      'flex h-8 min-w-[2rem] items-center justify-center rounded-md border text-xs font-medium transition-colors',
+                      page === currentPage
+                        ? 'border-accent bg-accent text-white'
+                        : 'border-line text-ink hover:bg-bg',
+                    )}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-md border text-sm transition-colors',
+                    currentPage === totalPages
+                      ? 'border-line text-muted/40 cursor-not-allowed'
+                      : 'border-line text-ink hover:bg-bg',
+                  )}
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Mobile cards */}
           <div className="space-y-3 lg:hidden">
-            {view.map((p) => {
+            {paginatedView.map((p) => {
               const isBest = p.provider === recommendedSupplier;
               return (
                 <div
@@ -341,6 +407,42 @@ export function ComparisonResults({
               );
             })}
           </div>
+
+          {/* Pagination (bottom — visible on mobile too) */}
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-3 py-2.5 sm:px-4 sm:py-3 lg:hidden">
+              <span className="text-xs text-muted">
+                {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, view.length)} of {view.length}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-md border text-sm transition-colors',
+                    currentPage === 1
+                      ? 'border-line text-muted/40 cursor-not-allowed'
+                      : 'border-line text-ink hover:bg-bg',
+                  )}
+                >
+                  <ChevronLeft size={14} />
+                </button>
+                <span className="px-2 text-xs font-medium text-ink">{currentPage}/{totalPages}</span>
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-md border text-sm transition-colors',
+                    currentPage === totalPages
+                      ? 'border-line text-muted/40 cursor-not-allowed'
+                      : 'border-line text-ink hover:bg-bg',
+                  )}
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
