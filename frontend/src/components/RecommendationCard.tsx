@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Check, ExternalLink, TrendingDown, Gauge, ChevronDown, Brain, Store, Building2 } from 'lucide-react';
+import { Sparkles, Check, ExternalLink, TrendingDown, Gauge, ChevronDown, Brain, Store, Building2, MessageSquareText } from 'lucide-react';
 import {
   ResponsiveContainer,
   RadarChart,
@@ -92,6 +92,16 @@ export function RecommendationCard({
           <p className="mt-3 text-sm text-muted">
             for <span className="font-medium text-ink">{rec.product.title}</span>
           </p>
+
+          {rec.aiExplanation && (
+            <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
+              <div className="mb-2 flex items-center gap-1.5">
+                <MessageSquareText size={13} className="text-accent" />
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
+              </div>
+              <p className="text-sm leading-relaxed text-ink-soft">{rec.aiExplanation}</p>
+            </div>
+          )}
 
           <ul className="mt-4 space-y-2">
             {rec.reasons.map((reason, i) => (

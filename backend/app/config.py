@@ -39,6 +39,7 @@ class Env:
     CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
     NODE_ENV: str = os.getenv("NODE_ENV", "development")
     SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
 
 
 env = Env()

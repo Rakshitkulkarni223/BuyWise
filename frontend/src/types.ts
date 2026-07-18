@@ -72,6 +72,7 @@ export interface Recommendation {
   confidence: number;
   weightProfile: WeightProfileKey;
   recommendationMode?: RecommendationMode;
+  aiExplanation?: string;
   factors: RecommendationFactor[];
   scoreboard: {
     supplier: string;

@@ -770,6 +770,18 @@ class SearchService:
             # Compute procurement intelligence payload
             intelligence = ProcurementIntelligenceService.compute_all(results, recommendation)
 
+            # Generate LLM-powered AI explanation (non-blocking, never fails)
+            ai_explanation = ""
+            if recommendation:
+                try:
+                    from app.services.llm_advisor import generate_explanation
+                    ai_explanation = await generate_explanation(recommendation, results, mode)
+                except Exception as llm_err:
+                    print(f"[WARN] LLM advisor skipped: {llm_err}")
+
+            if recommendation and ai_explanation:
+                recommendation["aiExplanation"] = ai_explanation
+
             return {
                 "query": query,
                 "category": category,

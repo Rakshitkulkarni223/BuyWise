@@ -255,6 +255,17 @@ async def recommend(body: RecommendationInput, user: dict = Depends(get_current_
             recommendation = RecommendationService.recommend_by_mode(body.products, mode)
         else:
             recommendation = RecommendationService.recommend(body.products, body.weightProfile or "balanced")
+
+        # Generate LLM-powered AI explanation
+        if recommendation:
+            try:
+                from app.services.llm_advisor import generate_explanation
+                ai_text = await generate_explanation(recommendation, body.products, mode or "balanced")
+                if ai_text:
+                    recommendation["aiExplanation"] = ai_text
+            except Exception as llm_err:
+                print(f"[WARN] LLM advisor skipped: {llm_err}")
+
         return ok({"recommendation": recommendation})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

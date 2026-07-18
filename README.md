@@ -488,6 +488,7 @@ DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
 CORS_ORIGINS=*
 SERPAPI_KEY=                    # Optional — enables live Google Shopping results (free: serpapi.com)
+GEMINI_API_KEY=                # Optional — enables AI Procurement Advisor (free: ai.google.dev)
 ```
 
 Start the backend:
@@ -543,7 +544,8 @@ ProcureAI/
 │           ├── supplier_hub.py # Supplier Hub CRUD service
 │           ├── supplier_hub_adapter.py  # Adapter for Supplier Hub as a provider
 │           ├── supplier_hub_search.py   # Supplier Hub search with state-based filtering
-│           └── serpapi_adapter.py       # Live Google Shopping adapter via SerpAPI
+│           ├── serpapi_adapter.py       # Live Google Shopping adapter via SerpAPI
+│           └── llm_advisor.py          # Gemini-powered AI Procurement Advisor
 │
 ├── frontend/
 │   └── src/
@@ -587,11 +589,12 @@ python -m pytest tests/backend_test.py -v
 
 ## 🗺️ Future Ready — Live Procurement Ecosystem
 
-> **Real-time market data is already live.** ProcureAI silently enriches every search with real Google Shopping prices via SerpAPI. When `SERPAPI_KEY` is set, the system fetches live product data and **filters it to only your enabled suppliers** (e.g., Amazon, Flipkart, Croma). Real prices blend seamlessly with simulated data — the AI scores both equally. No UI changes needed; no extra checkboxes. The architecture proves that adding any new API requires only a single adapter file.
+> **Real-time market data and LLM-powered advice are already live.** ProcureAI silently enriches every search with real Google Shopping prices via SerpAPI, and generates natural language procurement recommendations using Google Gemini. Set `SERPAPI_KEY` and `GEMINI_API_KEY` in your `.env` to enable them. Both are optional — the system works perfectly without them.
 
 | Phase | Feature | Description |
 |---|---|---|
 | **✅ Done** | Live Market Prices | Real-time prices from Google Shopping India via SerpAPI — filtered to your selected suppliers, blended silently into AI scoring |
+| **✅ Done** | AI Procurement Advisor | Gemini 2.0 Flash generates natural language explanations for every recommendation — e.g. *"Flipkart is recommended because it offers the lowest cost at ₹19,990 while maintaining 4-day delivery..."* |
 | **P1** | More Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — live pricing and availability |
 | **P1** | Live Supplier Quotes | Real-time quote requests and responses from Supplier Hub network |
 | **P1** | ERP Integration | Sync procurement data with SAP, Oracle, Zoho for seamless order management |
