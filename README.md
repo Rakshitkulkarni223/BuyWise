@@ -16,12 +16,12 @@
 
 > Any business that compares suppliers before purchasing can use ProcureAI.
 
-Compare suppliers, optimize purchases, reduce procurement costs, and measure business impact — with explainable AI.
+ProcureAI helps businesses discover suppliers, compare procurement options, optimize purchasing decisions, and build long-term supplier networks — using explainable AI.
 
-⭐ **~93% faster** supplier comparison *(estimated based on typical procurement workflow)*  
+🤖 **AI Procurement Intelligence**  
 💰 **Business Impact** Dashboard  
 📊 **ROI Calculator**  
-🤖 **Explainable AI** Recommendations
+🏢 **Supplier Hub** — Online + Offline
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
@@ -87,7 +87,21 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 
 ---
 
-## 🏆 Business Transformation
+## 🧠 Procurement Intelligence
+
+ProcureAI is more than a supplier comparison tool. It acts as an **AI procurement analyst** that helps businesses answer questions like:
+
+- Which supplier offers the best long-term value?
+- Should I split my basket across suppliers?
+- Is paying more worth faster delivery?
+- Which suppliers are becoming risky?
+- How much money and time can I save every month?
+
+Instead of comparing prices alone, ProcureAI combines **procurement intelligence**, **supplier intelligence**, and **explainable AI** to recommend the best purchasing strategy.
+
+---
+
+## 🏆 Real Business Impact
 
 ### The Problem
 
@@ -139,7 +153,7 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
 | **Business Impact Dashboard** | Total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
-| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) — estimated ~93% time reduction. |
+| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps). |
 | **ROI Calculator** | Interactive calculator with sliders — estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
 | **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
 | **Search History** | Paginated per-user log of comparisons with basket entries tagged. Failed/empty searches are excluded. |
@@ -153,7 +167,7 @@ Businesses already have trusted suppliers. ProcureAI allows users to **build the
 
 | Capability | Description |
 |---|---|
-| **Add Suppliers** | Register your own suppliers with name, contact, city, state, and category |
+| **Build Your Supplier Network** | Register your own suppliers with name, contact, city, state, and category |
 | **Add Products** | Add products with pricing, delivery days, warranty, ratings, and stock status |
 | **Unified Search** | Supplier Hub products appear alongside marketplace results in every search |
 | **State Filtering** | Only suppliers from your state are included — ensuring relevant, local results |
@@ -167,7 +181,7 @@ Businesses already have trusted suppliers. ProcureAI allows users to **build the
 
 ## 🤖 AI Procurement Intelligence
 
-ProcureAI's AI doesn't simply rank the cheapest supplier. It evaluates **multiple business dimensions** to produce a procurement recommendation that balances cost, speed, quality, and risk.
+ProcureAI evaluates procurement decisions using a **multi-factor scoring engine**. It doesn't simply rank the cheapest supplier — it balances cost, speed, quality, and risk to produce the best procurement recommendation.
 
 ### What the AI Evaluates
 
@@ -191,6 +205,24 @@ ProcureAI's AI doesn't simply rank the cheapest supplier. It evaluates **multipl
 
 ---
 
+## 💡 Why AI?
+
+Traditional procurement tools rank suppliers using simple sorting — lowest price or highest rating. This leads to suboptimal decisions because procurement is inherently multi-dimensional.
+
+ProcureAI uses a **multi-factor AI procurement engine** that balances:
+
+- **Cost** — Unit price, total procurement cost, volume discounts
+- **Delivery** — Days to deliver based on supplier and buyer location
+- **Reliability** — Supplier consistency, rating history
+- **Warranty** — Coverage terms and duration
+- **Returns** — Return policy availability
+- **Risk** — Price volatility, delivery risk, supplier concentration
+- **Business Strategy** — Which procurement mode the business selects
+
+This enables procurement decisions that **align with business priorities** rather than optimizing for a single metric.
+
+---
+
 ## 🎯 Procurement Strategies (Recommendation Modes)
 
 The same supplier may not be the best choice under every business objective. ProcureAI supports **6 recommendation modes** that rerank suppliers based on what matters most to your business.
@@ -204,6 +236,8 @@ The same supplier may not be the best choice under every business objective. Pro
 | **Highest Reliability** | Supplier delivery consistency and rating | Repeat orders where reliability matters |
 | **Best Long-Term Value** | Supplier score (quality + consistency + warranty) | Building long-term supplier relationships |
 
+Different business goals produce different recommendations. The recommendation engine **dynamically reranks suppliers** without changing the underlying supplier data — the same product catalog produces different "best" suppliers depending on what your business prioritizes.
+
 > Each mode generates **different business-friendly reasoning** explaining why the recommended supplier was chosen under that specific strategy.
 
 ---
@@ -211,13 +245,28 @@ The same supplier may not be the best choice under every business objective. Pro
 ## 🔄 Procurement Workflow
 
 ```
-🏢 Build Supplier Network  →  🔍 Search Products  →  ⚖️ Compare Online + Offline
-        ↓                                                         ↓
-   Supplier Hub                                          AI Recommendation
-                                                                  ↓
-                                              🛒 Basket Optimization
-                                                                  ↓
-                                              � Business Impact + Export
+     ┌───────────────────┐     ┌───────────────────────┐
+     │  Supplier Network  │     │  Marketplace Suppliers │
+     │  (Your Suppliers)  │     │  (Amazon, Udaan, etc.) │
+     └────────┬──────────┘     └───────────┬───────────┘
+              └──────────────┬─────────────┘
+                             ▼
+              ┌──────────────────────────┐
+              │   AI Procurement Engine  │
+              │  (Multi-factor scoring)  │
+              └────────────┬─────────────┘
+                           ▼
+              ┌──────────────────────────┐
+              │  Recommendation + Explain│
+              └────────────┬─────────────┘
+                           ▼
+              ┌──────────────────────────┐
+              │   Basket Optimization    │
+              └────────────┬─────────────┘
+                           ▼
+              ┌──────────────────────────┐
+              │  Business Impact + Export│
+              └──────────────────────────┘
 ```
 
 1. **Build** — Add your trusted suppliers and products to Supplier Hub
@@ -267,7 +316,7 @@ The same supplier may not be the best choice under every business objective. Pro
 │       │       │         └───────────┬───────────┘              │ │
 │       │       │                     ▼                          │ │
 │       │       │        ┌────────────────────────┐              │ │
-│       │       │        │  AI Recommendation     │              │ │
+│       │       │        │  AI Procurement        │              │ │
 │       │       │        │  Engine (6 modes)      │              │ │
 │       │       │        └────────────┬───────────┘              │ │
 │       │       └─────────────────────┼──────────────────────────┘ │
@@ -481,12 +530,14 @@ python -m pytest tests/backend_test.py -v
 
 ---
 
-## 🗺️ Future Roadmap
+## 🗺️ Future Roadmap — Live Procurement Ecosystem
 
 | Phase | Feature | Description |
 |---|---|---|
-| **P1** | Real Supplier Integrations | Connect to live marketplace APIs (Amazon, Flipkart, IndiaMART) for real-time pricing |
-| **P1** | ERP Integration | Sync procurement data with SAP, Oracle, or Zoho for seamless order management |
+| **P1** | Live Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — real-time pricing and availability |
+| **P1** | ERP Integration | Sync procurement data with SAP, Oracle, Zoho for seamless order management |
+| **P1** | WhatsApp Quotations | Send and receive supplier quotes via WhatsApp Business API |
+| **P2** | OCR Invoice Processing | Extract pricing from supplier invoices and PDFs automatically |
 | **P2** | Approval Workflows | Multi-level purchase approval chains with role-based routing |
 | **P2** | Predictive Procurement | ML-based demand forecasting and optimal reorder point suggestions |
 | **P3** | Inventory Synchronization | Real-time stock level monitoring across warehouses and suppliers |
@@ -496,7 +547,22 @@ python -m pytest tests/backend_test.py -v
 
 ---
 
+## 🏅 Competitive Advantages
+
+- ✅ **Marketplace Comparison** — All suppliers in one click
+- ✅ **Supplier Hub** — Online + Offline supplier network
+- ✅ **Explainable AI** — Radar chart + scoreboard + business reasoning
+- ✅ **6 Procurement Strategies** — Dynamically rerank without changing data
+- ✅ **Basket Optimization** — Split-cart AI across all suppliers
+- ✅ **Business Impact Analytics** — Savings, hours saved, efficiency score
+- ✅ **ROI Calculator** — Estimate monthly and annual procurement savings
+- ✅ **Procurement Intelligence** — Multi-factor scoring, not just price
+- ✅ **Location-Aware Delivery** — City/state-based delivery estimation
+- ✅ **Online + Offline Suppliers** — Combine marketplaces with your own network
+
+---
+
 <p align="center">
-  <b>ProcureAI</b> — Smart Procurement, Powered by AI<br/>
+  <b>ProcureAI</b> — AI Procurement Intelligence Platform<br/>
   <a href="https://github.com/Rakshitkulkarni223/ProcureAI">GitHub</a>
 </p>
