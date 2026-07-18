@@ -231,7 +231,7 @@ async def search(body: SearchInput, user: dict = Depends(get_current_user)):
                     "recommendedSupplier": rec["supplier"] if rec else "",
                     "bestPrice": rec["product"]["price"] if rec else 0,
                     "estimatedSavings": rec["estimatedSavings"] if rec else 0,
-                    "weightProfile": req.get("weightProfile", "balanced"),
+                    "weightProfile": req.get("recommendationMode") or req.get("weightProfile") or "balanced",
                     "createdAt": datetime.utcnow(),
                     "updatedAt": datetime.utcnow(),
                 }
@@ -308,7 +308,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
                     "estimatedSavings": result.get("estimatedSavings", 0),
                     "supplierCount": result.get("supplierCount", 0),
                     "recommendedPlan": result.get("recommendedPlan", "split"),
-                    "weightProfile": body.weightProfile or "balanced",
+                    "weightProfile": body.recommendationMode or body.weightProfile or "balanced",
                     "createdAt": now,
                     "updatedAt": now,
                 })
@@ -325,7 +325,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
                     "recommendedSupplier": top_item.get("supplier", ""),
                     "bestPrice": result.get("splitTotal", 0),
                     "estimatedSavings": total_savings,
-                    "weightProfile": body.weightProfile or "balanced",
+                    "weightProfile": body.recommendationMode or body.weightProfile or "balanced",
                     "isBasket": True,
                     "createdAt": now,
                     "updatedAt": now,
