@@ -118,15 +118,19 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 |---|---|
 | **Single Product Search** | Search any product across all configured suppliers in one click. Results are normalized and ranked by an AI recommendation engine. |
 | **Basket Optimization** | Add multiple items to a basket. The split-cart optimizer finds the cheapest combination across suppliers while factoring in consolidation penalties (shipping). |
+| **Supplier Hub** | Add your own suppliers with products, pricing, and location data. Supplier Hub results are integrated into search and basket optimization alongside marketplace suppliers. |
+| **Supplier Comparison Dropdown** | Item-by-item supplier comparison in basket results via a responsive dropdown — view pricing, location, delivery, and ratings per item without UI clutter. |
+| **Location-Aware Delivery** | Set your city in Settings. Delivery estimates auto-calculate: same city → 1 day, same state → 2 days, different state → 4–5 days. Supplier Hub filters to your state. |
 | **Weight Profiles** | Choose from predefined profiles (Balanced, Cost Saver, Speed Priority, Quality First) that adjust how price, delivery, rating, discount, warranty, and return policy are weighted. |
+| **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value — each with AI-generated business-friendly reasoning. |
 | **AI Explanation Panel** | "Why this recommendation?" — interactive radar chart comparing top suppliers + color-coded scoreboard with scores out of 100. |
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
 | **Business Impact Dashboard** | Total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
 | **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) — estimated ~93% time reduction based on a sample business scenario. |
 | **ROI Calculator** | Interactive calculator with sliders — estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
-| **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
-| **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. |
+| **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. Basket searches count as single entries in the dashboard. |
+| **Search History** | Paginated (15 per page), per-user log of comparisons with basket entries tagged. Failed/empty searches are excluded. |
 | **Dark Mode** | Full light/dark theme support with CSS variable theming. |
 
 ---
@@ -318,21 +322,26 @@ ProcureAI/
 │   ├── server.py               # FastAPI entry point (Uvicorn)
 │   ├── requirements.txt        # Python dependencies
 │   └── app/
-│       ├── config.py           # Env vars, categories, suppliers, weight profiles, catalog
+│       ├── config.py           # Env vars, categories, suppliers, weight profiles, city/state mapping
 │       ├── database.py         # Motor async MongoDB client
 │       ├── auth.py             # JWT (PyJWT), bcrypt password hashing, auth dependency
-│       ├── schemas.py          # Pydantic validation models
+│       ├── schemas.py          # Pydantic validation models (SearchInput, BasketInput, PreferenceInput)
 │       ├── routes.py           # All API routes under /api prefix
+│       ├── routes_supplier.py  # Supplier Hub CRUD routes
+│       ├── schemas_supplier.py # Supplier Hub Pydantic models
 │       ├── seed.py             # DB seeder (categories, suppliers, demo user, sample history)
 │       └── services/
-│           ├── core.py         # PRNG, CatalogResolver, MockProviderAdapter, Search, Comparison, Recommendation
+│           ├── core.py         # PRNG, CatalogResolver, MockProviderAdapter, Search, Recommendation
 │           ├── basket.py       # Basket optimization (split-cart)
-│           └── analytics.py    # Dashboard, History, Preference, Catalog services
+│           ├── analytics.py    # Dashboard, History, Preference, Catalog services
+│           ├── supplier_hub.py # Supplier Hub CRUD service
+│           ├── supplier_hub_adapter.py  # Adapter for Supplier Hub as a provider
+│           └── supplier_hub_search.py   # Supplier Hub search with state-based filtering
 │
 ├── frontend/
 │   └── src/
-│       ├── components/         # Reusable UI (AppLayout, Card, Badge, DateRangeFilter, etc.)
-│       ├── context/            # AuthContext, ThemeContext
+│       ├── components/         # Reusable UI (AppLayout, Card, Badge, DateRangeFilter, BasketResults, etc.)
+│       ├── context/            # AuthContext, ThemeContext, LocationContext
 │       ├── hooks/              # useSearchSuggestions, useWatchlist
 │       ├── lib/                # api client, formatters, exportUtils
 │       ├── pages/              # Dashboard, Search, BusinessImpact, Analytics, History, Watchlist, Settings, Docs
@@ -344,13 +353,14 @@ ProcureAI/
 
 ### Design Decisions
 
-- **Adapter Pattern** — Supplier integrations use an adapter interface so mock data can be swapped for real APIs without touching business logic.
+- **Adapter Pattern** — Supplier integrations use an adapter interface so mock data can be swapped for real APIs without touching business logic. Supplier Hub uses the same adapter interface.
 - **Service Layer** — All database access goes through service classes, keeping Motor queries out of routes.
 - **Async concurrency** — Individual supplier failures don't block the entire search (asyncio gather with error handling).
-- **Fire-and-forget history** — Search history is persisted asynchronously. Only successful searches (with results) are saved.
+- **Fire-and-forget history** — Search and basket history persisted asynchronously. Basket optimizations count as a single search entry in the dashboard.
+- **Location-aware filtering** — Supplier Hub suppliers are filtered by the user's state. Delivery days estimated from city/state distance.
 - **Date range filtering** — Dashboard, Analytics, and Business Impact endpoints accept optional `from`/`to` query params.
 - **Business impact metrics** — Derived from search history: hours saved (manual 45 min vs AI 3 min), efficiency score (composite of accuracy + automation + volume), projected annual savings.
-- **Weight profiles** — The recommendation engine is fully configurable via weight profiles.
+- **Weight profiles** — The recommendation engine is fully configurable via weight profiles and 6 recommendation modes.
 
 ### Conventions
 
