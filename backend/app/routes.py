@@ -312,25 +312,24 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
                     "createdAt": now,
                     "updatedAt": now,
                 })
-                # Also record each basket item in searchhistories so they appear in dashboard
-                search_docs = []
-                for item in fulfilled:
-                    search_docs.append({
-                        "userId": ObjectId(user["sub"]),
-                        "query": item["query"],
-                        "category": body.category,
-                        "suppliers": body.suppliers,
-                        "resultCount": 1,
-                        "recommendedSupplier": item.get("supplier", ""),
-                        "bestPrice": item.get("price", 0),
-                        "estimatedSavings": item.get("savings", 0),
-                        "weightProfile": body.weightProfile or "balanced",
-                        "createdAt": now,
-                        "updatedAt": now,
-                    })
-                if search_docs:
-                    await db.searchhistories.insert_many(search_docs)
-                    print(f"[INFO] Basket search history saved: {len(search_docs)} items for category='{body.category}'")
+                # Record one searchhistories entry for the whole basket so it counts as 1 search in dashboard
+                basket_query = f"Basket ({len(fulfilled)} items)"
+                top_item = min(fulfilled, key=lambda x: x.get("price", 0))
+                total_savings = result.get("estimatedSavings", 0)
+                await db.searchhistories.insert_one({
+                    "userId": ObjectId(user["sub"]),
+                    "query": basket_query,
+                    "category": body.category,
+                    "suppliers": body.suppliers,
+                    "resultCount": len(fulfilled),
+                    "recommendedSupplier": top_item.get("supplier", ""),
+                    "bestPrice": result.get("splitTotal", 0),
+                    "estimatedSavings": total_savings,
+                    "weightProfile": body.weightProfile or "balanced",
+                    "createdAt": now,
+                    "updatedAt": now,
+                })
+                print(f"[INFO] Basket search history saved: 1 entry ({len(fulfilled)} items) for category='{body.category}'")
         except Exception as he:
             print(f"[WARN] Failed to persist basket history: {he}")
 
