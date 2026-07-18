@@ -656,6 +656,8 @@ class SearchService:
                     products.extend(r)
                 elif i < len(adapters):
                     print(f'Provider "{adapters[i].name}" failed: {r}')
+                else:
+                    print(f'SupplierHub gather failed: {r}')
             return products
         except Exception:
             return []

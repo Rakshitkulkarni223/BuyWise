@@ -144,9 +144,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
     """
     try:
         db = get_db()
-        existing = await db.supplier_hub_suppliers.count_documents({"userId": user_id})
-        if existing > 0:
-            return
+        # Drop old Supplier Hub data to ensure fresh products with catalogId
+        await db.supplier_hub_products.delete_many({"userId": user_id})
+        await db.supplier_hub_suppliers.delete_many({"userId": user_id})
 
         now = datetime.utcnow()
 
