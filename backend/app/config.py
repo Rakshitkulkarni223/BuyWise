@@ -86,18 +86,17 @@ SUPPLIER_PROFILES: dict[str, dict[str, Any]] = {
     "Netmeds": {"name": "Netmeds", "color": "#34A853", "priceFactor": 0.95, "baseRating": 4.3, "deliveryDays": 2, "discountBias": 18, "warrantyMonths": 0, "returnDays": 5, "stockProbability": 0.9},
     "Industrial Tools Co": {"name": "Industrial Tools Co", "color": "#B45309", "priceFactor": 1.0, "baseRating": 4.2, "deliveryDays": 6, "discountBias": 8, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.82},
     "Amazon Business": {"name": "Amazon Business", "color": "#146EB4", "priceFactor": 1.01, "baseRating": 4.5, "deliveryDays": 3, "discountBias": 12, "warrantyMonths": 24, "returnDays": 10, "stockProbability": 0.9},
-    "Google Shopping": {"name": "Google Shopping", "color": "#4285F4", "priceFactor": 1.0, "baseRating": 4.3, "deliveryDays": 4, "discountBias": 15, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.9, "isLiveAPI": True},
 }
 
 CATEGORY_SUPPLIERS: dict[str, list[str]] = {
-    "electronics": ["Amazon", "Flipkart", "Croma", "Reliance Digital", "Google Shopping"],
+    "electronics": ["Amazon", "Flipkart", "Croma", "Reliance Digital"],
     "grocery": ["Blinkit", "Zepto", "BigBasket", "JioMart", "Instamart"],
     "fashion": ["Myntra", "Ajio", "Amazon", "Flipkart", "Tata CLiQ"],
     "furniture": ["Pepperfry", "Urban Ladder", "IKEA"],
-    "office": ["Amazon", "Flipkart", "Google Shopping"],
+    "office": ["Amazon", "Flipkart"],
     "cleaning": ["Amazon", "BigBasket", "JioMart"],
     "medical": ["Apollo Pharmacy", "Netmeds", "Pharmacy Vendors", "Medical Equipment Suppliers"],
-    "industrial": ["Amazon Business", "Industrial Tools Co", "Google Shopping"],
+    "industrial": ["Amazon Business", "Industrial Tools Co"],
 }
 
 

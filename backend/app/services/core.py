@@ -217,16 +217,6 @@ class ProviderFactory:
     @staticmethod
     def create(supplier_name: str) -> Optional[MockProviderAdapter]:
         try:
-            # Route Google Shopping to the live SerpAPI adapter if key is available
-            if supplier_name == "Google Shopping":
-                try:
-                    from app.config import env as _env
-                    if _env.SERPAPI_KEY:
-                        from app.services.serpapi_adapter import SerpAPIProviderAdapter
-                        return SerpAPIProviderAdapter()  # type: ignore[return-value]
-                except Exception:
-                    pass
-                return None  # No API key — silently skip
             profile = SUPPLIER_PROFILES.get(supplier_name)
             if not profile:
                 return None
@@ -706,7 +696,7 @@ class SearchService:
             adapters = [
                 a for a in (ProviderFactory.create(name) for name in suppliers) if a is not None
             ]
-            # Build task list: marketplace adapters + optional supplier hub gather
+            # Build task list: marketplace adapters + optional supplier hub gather + optional SerpAPI
             tasks = [a.search(query, category) for a in adapters]
             if include_supplier_hub and user_id:
                 from app.services.supplier_hub_search import SupplierHubSearchService
@@ -717,6 +707,15 @@ class SearchService:
                 # Always query Supplier Hub when flag is set; pass sh_names to filter (None = all)
                 tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None, user_city=user_city))
 
+            # SerpAPI: silently fetch real Google Shopping results when API key is set
+            try:
+                from app.config import env as _env
+                if _env.SERPAPI_KEY:
+                    from app.services.serpapi_adapter import SerpAPIProviderAdapter
+                    tasks.append(SerpAPIProviderAdapter().search(query, category))
+            except Exception:
+                pass
+
             results = await asyncio.gather(*tasks, return_exceptions=True)
             products: list[dict] = []
             for i, r in enumerate(results):
@@ -725,7 +724,7 @@ class SearchService:
                 elif i < len(adapters):
                     print(f'Provider "{adapters[i].name}" failed: {r}')
                 else:
-                    print(f'SupplierHub gather failed: {r}')
+                    print(f'Background data source failed: {r}')
             return products
         except Exception:
             return []

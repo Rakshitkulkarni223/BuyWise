@@ -157,8 +157,8 @@ class SerpAPIProviderAdapter:
                     if isinstance(reviews, str):
                         reviews = int(re.sub(r"[^\d]", "", reviews) or "0")
 
-                    # Source / seller
-                    source = item.get("source", "Google Shopping")
+                    # Source / seller — use real seller name (e.g. "Amazon.in", "Flipkart")
+                    source = item.get("source") or "Online Store"
 
                     # Delivery
                     delivery_text = item.get("delivery") or ""
@@ -175,7 +175,7 @@ class SerpAPIProviderAdapter:
 
                     products.append({
                         "id": product_id,
-                        "provider": "Google Shopping",
+                        "provider": source,
                         "title": title,
                         "brand": _extract_brand(title),
                         "category": category,
@@ -192,7 +192,6 @@ class SerpAPIProviderAdapter:
                         "returnPolicyDays": None,
                         "productUrl": product_url,
                         "supplierSource": "google_shopping",
-                        "googleShoppingSource": source,
                     })
                 except Exception:
                     continue
