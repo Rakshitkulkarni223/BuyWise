@@ -286,9 +286,9 @@ def _do_basket(s, headers, items=None, category="grocery", weight="balanced"):
     payload = {
         "category": category,
         "items": items or [
-            {"query": "Basmati Rice", "quantity": 2},
-            {"query": "Cooking Oil", "quantity": 1},
-            {"query": "Fresh Vegetables", "quantity": 3},
+            {"query": "Premium Basmati Rice 10kg", "quantity": 2},
+            {"query": "Sunflower Cooking Oil 5L", "quantity": 1},
+            {"query": "Fresh Vegetables Combo 5kg", "quantity": 3},
         ],
         "weightProfile": weight,
     }
