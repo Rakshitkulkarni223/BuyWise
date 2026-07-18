@@ -183,6 +183,27 @@ class BasketOptimizationService:
             except Exception:
                 pass
 
+            # Build per-item supplier comparisons
+            comparisons = []
+            for a in analyses:
+                if not a["bySupplier"]:
+                    continue
+                suppliers_list = []
+                for s_name, prod in a["bySupplier"].items():
+                    suppliers_list.append({
+                        "supplier": s_name,
+                        "price": prod["price"],
+                        "lineTotal": prod["price"] * a["qty"],
+                        "deliveryDays": prod.get("deliveryDays", 0),
+                        "rating": prod.get("rating", 0),
+                        "supplierSource": prod.get("supplierSource", "marketplace"),
+                    })
+                suppliers_list.sort(key=lambda x: x["price"])
+                comparisons.append({
+                    "query": a["query"],
+                    "suppliers": suppliers_list,
+                })
+
             return {
                 "recommendedPlan": recommended_plan,
                 "items": result_items,
@@ -196,6 +217,7 @@ class BasketOptimizationService:
                 "unfulfillable": unfulfillable,
                 "consolidationPenalty": penalty,
                 "intelligence": intelligence,
+                "comparisons": comparisons,
             }
         except Exception:
             raise

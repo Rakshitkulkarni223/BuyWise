@@ -201,6 +201,20 @@ export interface BasketSupplierGroup {
   supplierSource?: 'marketplace' | 'supplier_hub';
 }
 
+export interface BasketComparisonSupplier {
+  supplier: string;
+  price: number;
+  lineTotal: number;
+  deliveryDays: number;
+  rating: number;
+  supplierSource: 'marketplace' | 'supplier_hub';
+}
+
+export interface BasketComparison {
+  query: string;
+  suppliers: BasketComparisonSupplier[];
+}
+
 export interface BasketOptimizeResponse {
   category: string;
   weightProfile: WeightProfileKey;
@@ -216,6 +230,7 @@ export interface BasketOptimizeResponse {
   unfulfillable: string[];
   consolidationPenalty: number;
   intelligence?: BasketIntelligence;
+  comparisons?: BasketComparison[];
 }
 
 export interface BasketHistoryEntry {
