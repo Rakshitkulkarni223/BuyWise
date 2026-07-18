@@ -112,42 +112,122 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 
 ---
 
+## 🔍 Why ProcureAI?
+
+| | Existing Platforms | ProcureAI |
+|---|---|---|
+| **Supplier scope** | Search one marketplace at a time | Compare all suppliers in one click |
+| **Supplier types** | Only online marketplaces | Online + Offline (your own suppliers) |
+| **Decision logic** | Pick the cheapest product | Best procurement decision (price + delivery + risk + reliability) |
+| **AI reasoning** | ❌ No transparency | ✅ Explainable AI — radar chart + scoreboard |
+| **Multi-item buying** | Manual, one product at a time | ✅ AI Basket Optimizer across suppliers |
+| **Procurement analytics** | ❌ Not available | ✅ Business Impact Dashboard + ROI Calculator |
+| **Supplier network** | ❌ No custom suppliers | ✅ Supplier Hub — build your own network |
+| **Location intelligence** | ❌ No delivery estimation | ✅ City/state-aware delivery days |
+
+---
+
 ## ✨ Key Features
 
 | Feature | Description |
 |---|---|
 | **Single Product Search** | Search any product across all configured suppliers in one click. Results are normalized and ranked by an AI recommendation engine. |
 | **Basket Optimization** | Add multiple items to a basket. The split-cart optimizer finds the cheapest combination across suppliers while factoring in consolidation penalties (shipping). |
-| **Supplier Hub** | Add your own suppliers with products, pricing, and location data. Supplier Hub results are integrated into search and basket optimization alongside marketplace suppliers. |
 | **Supplier Comparison Dropdown** | Item-by-item supplier comparison in basket results via a responsive dropdown — view pricing, location, delivery, and ratings per item without UI clutter. |
 | **Location-Aware Delivery** | Set your city in Settings. Delivery estimates auto-calculate: same city → 1 day, same state → 2 days, different state → 4–5 days. Supplier Hub filters to your state. |
-| **Weight Profiles** | Choose from predefined profiles (Balanced, Cost Saver, Speed Priority, Quality First) that adjust how price, delivery, rating, discount, warranty, and return policy are weighted. |
-| **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value — each with AI-generated business-friendly reasoning. |
 | **AI Explanation Panel** | "Why this recommendation?" — interactive radar chart comparing top suppliers + color-coded scoreboard with scores out of 100. |
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
 | **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
 | **Business Impact Dashboard** | Total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
-| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) — estimated ~93% time reduction based on a sample business scenario. |
+| **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) — estimated ~93% time reduction. |
 | **ROI Calculator** | Interactive calculator with sliders — estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
-| **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. Basket searches count as single entries in the dashboard. |
-| **Search History** | Paginated (15 per page), per-user log of comparisons with basket entries tagged. Failed/empty searches are excluded. |
+| **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
+| **Search History** | Paginated per-user log of comparisons with basket entries tagged. Failed/empty searches are excluded. |
 | **Dark Mode** | Full light/dark theme support with CSS variable theming. |
 
 ---
 
-## 🔄 How It Works
+## 🏢 Supplier Hub — Build Your Procurement Network
+
+Businesses already have trusted suppliers. ProcureAI allows users to **build their own procurement network** by combining online marketplaces (Amazon Business, Udaan, Metro, IndiaMART) with offline suppliers (local distributors, manufacturers, mandis, farmers). Every supplier becomes searchable and comparable using the same AI recommendation engine.
+
+| Capability | Description |
+|---|---|
+| **Add Suppliers** | Register your own suppliers with name, contact, city, state, and category |
+| **Add Products** | Add products with pricing, delivery days, warranty, ratings, and stock status |
+| **Unified Search** | Supplier Hub products appear alongside marketplace results in every search |
+| **State Filtering** | Only suppliers from your state are included — ensuring relevant, local results |
+| **Same AI Engine** | Your suppliers are scored and ranked by the same recommendation engine as marketplace suppliers |
+
+| Supplier List | Supplier Products |
+|---|---|
+| ![Supplier List](screenshots/supplier-hub-list.png) | ![Supplier Products](screenshots/supplier-hub-products.png) |
+
+---
+
+## 🤖 AI Procurement Intelligence
+
+ProcureAI's AI doesn't simply rank the cheapest supplier. It evaluates **multiple business dimensions** to produce a procurement recommendation that balances cost, speed, quality, and risk.
+
+### What the AI Evaluates
+
+| Factor | What It Measures |
+|---|---|
+| **Price** | Unit cost, line total, volume discounts |
+| **Delivery** | Estimated days based on supplier location and user city |
+| **Reliability** | Supplier rating, delivery consistency |
+| **Warranty** | Coverage duration in months |
+| **Returns** | Return policy availability and terms |
+| **Risk** | Composite risk score (price volatility, delivery risk, supplier concentration) |
+| **Total Cost** | Full procurement cost including shipping, handling, and consolidation penalties |
+
+### What the AI Produces
+
+- **Best Supplier** — The top recommendation with confidence score
+- **Why It Was Selected** — Business-friendly reasoning (not just "lowest price")
+- **Trade-offs** — Radar chart showing how the top supplier compares on every dimension
+- **Scoreboard** — All suppliers ranked with scores out of 100
+- **Business Impact** — Estimated savings vs. the most expensive alternative
+
+---
+
+## 🎯 Procurement Strategies (Recommendation Modes)
+
+The same supplier may not be the best choice under every business objective. ProcureAI supports **6 recommendation modes** that rerank suppliers based on what matters most to your business.
+
+| Mode | Optimizes For | Best When |
+|---|---|---|
+| **Balanced** | Weighted score across all factors | Default — general-purpose procurement |
+| **Lowest Cost** | Total procurement cost (price + shipping + handling) | Budget is the primary constraint |
+| **Lowest Risk** | Composite risk score (price stability, delivery risk) | Buying critical or high-value items |
+| **Fastest Delivery** | Minimum delivery days | Urgent or time-sensitive purchases |
+| **Highest Reliability** | Supplier delivery consistency and rating | Repeat orders where reliability matters |
+| **Best Long-Term Value** | Supplier score (quality + consistency + warranty) | Building long-term supplier relationships |
+
+> Each mode generates **different business-friendly reasoning** explaining why the recommended supplier was chosen under that specific strategy.
+
+---
+
+## 🔄 Procurement Workflow
 
 ```
-🏢 Business Need  →  🤖 ProcureAI  →  📊 AI Recommendation  →  💰 Business Impact
+🏢 Build Supplier Network  →  🔍 Search Products  →  ⚖️ Compare Online + Offline
+        ↓                                                         ↓
+   Supplier Hub                                          AI Recommendation
+                                                                  ↓
+                                              🛒 Basket Optimization
+                                                                  ↓
+                                              � Business Impact + Export
 ```
 
-1. **Search** — Type a product name, pick a category, and ProcureAI queries all suppliers simultaneously
-2. **Compare** — Results are normalized and displayed in a sortable comparison table
-3. **Recommend** — AI scores every option on price, delivery, rating, discount, warranty, and returns
-4. **Explain** — Click "Why this recommendation?" for a radar chart and supplier scoreboard
-5. **Optimize** — Add multiple items to a basket for split-cart optimization across suppliers
-6. **Export** — Download results as CSV or styled PDF for team review
-7. **Track** — Monitor savings, hours freed, and procurement efficiency on the Business Impact dashboard
+1. **Build** — Add your trusted suppliers and products to Supplier Hub
+2. **Search** — Type a product name, pick a category — ProcureAI queries marketplaces + your suppliers simultaneously
+3. **Compare** — Results from online and offline suppliers are normalized in one sortable table
+4. **Recommend** — AI scores every option across price, delivery, reliability, risk, warranty, and returns
+5. **Explain** — Click "Why this recommendation?" for a radar chart, scoreboard, and business reasoning
+6. **Optimize** — Add multiple items to a basket for split-cart optimization across all suppliers
+7. **Export** — Download results as CSV or styled PDF for team review
+8. **Track** — Monitor savings, hours freed, and procurement efficiency on the Business Impact dashboard
 
 ---
 
@@ -165,39 +245,47 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 ### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      Browser (React SPA)                │
-│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐  │
-│  │Dashboard │ │ Search & │ │  Business │ │Analytics │  │
-│  │  Page    │ │ Compare  │ │  Impact   │ │  Page    │  │
-│  └────┬─────┘ └────┬─────┘ └─────┬─────┘ └────┬─────┘  │
-│       │             │            │              │        │
-│       └─────────────┴─────┬──────┴──────────────┘        │
-│                           │  Axios API Client            │
-└───────────────────────────┼──────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                        Browser (React SPA)                       │
+│  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐           │
+│  │Dashboard │ │ Search & │ │ Supplier  │ │ Business │           │
+│  │          │ │ Compare  │ │   Hub     │ │  Impact  │           │
+│  └────┬─────┘ └────┬─────┘ └─────┬─────┘ └────┬─────┘           │
+│       └─────────────┴─────────────┴─────────────┘                │
+│                           │  Axios API Client                    │
+└───────────────────────────┼──────────────────────────────────────┘
                             │ HTTP / JSON
-┌───────────────────────────┼──────────────────────────────┐
-│                   FastAPI Backend (Python)                │
-│  ┌─────────┐  ┌───────────────┐  ┌────────────────────┐ │
-│  │  Auth   │  │   Search &    │  │  Basket Optimizer  │ │
-│  │  (JWT)  │  │  Comparison   │  │  (Split-Cart)      │ │
-│  └────┬────┘  └───────┬───────┘  └─────────┬──────────┘ │
-│       │               │                    │             │
-│       │        ┌──────┴───────┐            │             │
-│       │        │  Provider    │            │             │
-│       │        │  Adapters    │            │             │
-│       │        │ (Mock Data)  │            │             │
-│       │        └──────────────┘            │             │
-│  ┌────┴────────────────────────────────────┴──────────┐  │
-│  │             Services (Motor async MongoDB)         │  │
-│  └────────────────────────┬───────────────────────────┘  │
-└───────────────────────────┼──────────────────────────────┘
-                            │
-                    ┌───────┴───────┐
-                    │   MongoDB     │
-                    │  (Atlas /     │
-                    │   Local)      │
-                    └───────────────┘
+┌───────────────────────────┼──────────────────────────────────────┐
+│                    FastAPI Backend (Python)                       │
+│                                                                  │
+│  ┌─────────┐  ┌────────────────────────────────────────────────┐ │
+│  │  Auth   │  │            Search & Comparison                 │ │
+│  │  (JWT)  │  │  ┌──────────────┐     ┌─────────────────────┐  │ │
+│  └────┬────┘  │  │ Marketplace  │     │   Supplier Hub      │  │ │
+│       │       │  │  Adapters    │     │  (Your Suppliers)   │  │ │
+│       │       │  └──────┬───────┘     └─────────┬───────────┘  │ │
+│       │       │         └───────────┬───────────┘              │ │
+│       │       │                     ▼                          │ │
+│       │       │        ┌────────────────────────┐              │ │
+│       │       │        │  AI Recommendation     │              │ │
+│       │       │        │  Engine (6 modes)      │              │ │
+│       │       │        └────────────┬───────────┘              │ │
+│       │       └─────────────────────┼──────────────────────────┘ │
+│       │                             ▼                            │
+│       │                ┌────────────────────────┐                │
+│       │                │   Basket Optimizer     │                │
+│       │                │   (Split-Cart AI)      │                │
+│       │                └────────────┬───────────┘                │
+│  ┌────┴─────────────────────────────┴────────────────────────┐   │
+│  │              Services (Motor async MongoDB)               │   │
+│  └──────────────────────────┬────────────────────────────────┘   │
+└─────────────────────────────┼────────────────────────────────────┘
+                              │
+                      ┌───────┴───────┐
+                      │   MongoDB     │
+                      │  (Atlas /     │
+                      │   Local)      │
+                      └───────────────┘
 ```
 
 ---
@@ -227,14 +315,29 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 | POST | `/api/basket/optimize` | Optimize a multi-item basket |
 | GET | `/api/basket/history?page=1&limit=20` | Paginated basket optimization history |
 
+### Supplier Hub
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/suppliers` | List all your suppliers |
+| POST | `/api/suppliers` | Add a new supplier |
+| GET | `/api/suppliers/:id` | Get supplier details |
+| PUT | `/api/suppliers/:id` | Update a supplier |
+| DELETE | `/api/suppliers/:id` | Remove a supplier |
+| GET | `/api/suppliers/:id/products` | List products for a supplier |
+| POST | `/api/suppliers/:id/products` | Add a product to a supplier |
+| PUT | `/api/suppliers/:id/products/:pid` | Update a product |
+| DELETE | `/api/suppliers/:id/products/:pid` | Remove a product |
+
 ### History & Preferences
 
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/history?page=1&limit=20` | Paginated search history |
 | DELETE | `/api/history/:id` | Delete a history entry |
-| GET | `/api/preferences` | Get user preferences |
-| PUT | `/api/preferences` | Update user preferences |
+| GET | `/api/preferences` | Get user preferences (includes city) |
+| PUT | `/api/preferences` | Update user preferences (city, category, weight profile) |
+| GET | `/api/cities` | List available cities for location preference |
 
 ### Dashboard, Analytics & Business Impact
 
