@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useLocation as useUserLocation } from '../context/LocationContext';
 import {
   Search,
   Store,
@@ -86,11 +87,11 @@ interface BasketRow {
 export function SearchPage() {
   const location = useLocation();
   const preset = location.state as { category?: string; query?: string } | null;
+  const { city: userCity } = useUserLocation();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [profiles, setProfiles] = useState<WeightProfile[]>([]);
   const [recModes, setRecModes] = useState<RecommendationModeOption[]>([]);
-  const [userCity, setUserCity] = useState<string>('Mumbai');
   const [category, setCategory] = useState('');
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [supplierHubSuppliers, setSupplierHubSuppliers] = useState<SupplierHubSupplierSummary[]>([]);
@@ -141,7 +142,6 @@ export function SearchPage() {
         setWeightProfile(pref.weightProfile);
         setSortPref(pref.sortPreference);
         setCategory(preset?.category || pref.defaultCategory || 'grocery');
-        setUserCity(pref.city || 'Mumbai');
       })
       .catch((e) => setError(apiError(e)));
   }, []);

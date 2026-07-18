@@ -1,40 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { api, apiError } from '../lib/api';
+import { useLocation } from '../context/LocationContext';
 
 export function LocationDropdown({ readOnly = false }: { readOnly?: boolean }) {
-  const [cities, setCities] = useState<string[]>([]);
-  const [city, setCity] = useState<string>('Mumbai');
+  const { city, cities, setCity, refresh } = useLocation();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    try {
-      Promise.all([api.cities(), api.preferences()])
-        .then(([citiesData, pref]) => {
-          setCities(citiesData.cities || []);
-          setCity(pref.city || citiesData.default || 'Mumbai');
-        })
-        .catch((e) => console.error(apiError(e)));
-    } catch (e) {
-      console.error('Failed to load location data', e);
-    }
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      try {
-        if (ref.current && !ref.current.contains(e.target as Node)) {
-          setOpen(false);
-        }
-      } catch {
-        /* silent */
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const changeCity = async (newCity: string) => {
     try {
@@ -42,6 +15,7 @@ export function LocationDropdown({ readOnly = false }: { readOnly?: boolean }) {
       setOpen(false);
       setLoading(true);
       await api.updatePreferences({ city: newCity });
+      refresh();
     } catch (e) {
       console.error('Failed to update city', e);
     } finally {

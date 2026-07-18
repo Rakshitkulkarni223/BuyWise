@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from '../context/LocationContext';
 
 const SORTS: { value: SortOption; label: string }[] = [
   { value: 'lowest_price', label: 'Lowest Price' },
@@ -16,19 +17,18 @@ const SORTS: { value: SortOption; label: string }[] = [
 
 export function SettingsPage() {
   const { user } = useAuth();
+  const { cities: availableCities, setCity, refresh: refreshLocation } = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([api.categories(), api.preferences(), api.cities()])
-      .then(([c, pr, citiesData]) => {
+    Promise.all([api.categories(), api.preferences()])
+      .then(([c, pr]) => {
         setCategories(c);
         setPrefs(pr);
-        setAvailableCities(citiesData.cities || []);
       })
       .catch((e) => setError(apiError(e)));
   }, []);
@@ -51,6 +51,10 @@ export function SettingsPage() {
         city: prefs.city,
       });
       setPrefs(updated);
+      if (prefs.city) {
+        setCity(prefs.city);
+      }
+      refreshLocation();
       setSaved(true);
     } catch (e) {
       setError(apiError(e));
