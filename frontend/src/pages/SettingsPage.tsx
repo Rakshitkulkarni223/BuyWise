@@ -17,7 +17,7 @@ const SORTS: { value: SortOption; label: string }[] = [
 
 export function SettingsPage() {
   const { user } = useAuth();
-  const { cities: availableCities, setCity, refresh: refreshLocation } = useLocation();
+  const { city: contextCity, cities: availableCities, setCity, refresh: refreshLocation } = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
@@ -28,10 +28,10 @@ export function SettingsPage() {
     Promise.all([api.categories(), api.preferences()])
       .then(([c, pr]) => {
         setCategories(c);
-        setPrefs(pr);
+        setPrefs({ ...pr, city: pr.city || contextCity });
       })
       .catch((e) => setError(apiError(e)));
-  }, []);
+  }, [contextCity]);
 
   const update = (patch: Partial<Preferences>) => {
     setPrefs((prev) => (prev ? { ...prev, ...patch } : prev));
@@ -133,7 +133,7 @@ export function SettingsPage() {
                 </label>
                 <select
                   data-testid="pref-city"
-                  value={prefs?.city || 'Mumbai'}
+                  value={prefs?.city || contextCity || 'Mumbai'}
                   onChange={(e) => update({ city: e.target.value })}
                   className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
                 >
