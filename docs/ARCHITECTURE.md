@@ -145,7 +145,7 @@ User Search
 ```
 
 1. **Build** — Add your trusted suppliers and products to Supplier Hub
-2. **Search** — ProcureAI queries marketplace and private suppliers from a single interface
+2. **Search** — BuyWise queries marketplace and private suppliers from a single interface
 3. **Compare** — Results from online and offline suppliers are normalized in one sortable table
 4. **Recommend** — The decision engine scores every option across price, delivery, reliability, risk, warranty, and returns
 5. **Explain** — Click "Why this recommendation?" for a radar chart, scoreboard, and business reasoning
@@ -157,7 +157,7 @@ User Search
 
 ## Recommendation Modes
 
-The same supplier may not be the best choice under every business objective. ProcureAI supports **6 recommendation modes** that dynamically rerank suppliers.
+The same supplier may not be the best choice under every business objective. BuyWise supports **6 recommendation modes** that dynamically rerank suppliers.
 
 | Mode | Optimizes For | Best When |
 |------|---------------|-----------|

@@ -1,9 +1,9 @@
 /**
- * ProcureAI — Demo Video Recorder
+ * BuyWise — Demo Video Recorder
  *
  * Records a full walkthrough with Netflix-style captions.
  * Usage:  node demo/record-demo.mjs
- * Output: demo/procureai-demo.webm
+ * Output: demo/buywise-demo.webm
  */
 
 import { chromium } from 'playwright';
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const BASE = 'https://buywise-compare-1.preview.emergentagent.com';
-const CREDS = { email: 'demo@procureai.com', password: 'Demo@123' };
+const CREDS = { email: 'demo@buywise.com', password: 'Demo@123' };
 const VIDEO_DIR = path.resolve(__dirname);
 
 /* ── Caption overlay ── */
@@ -60,7 +60,7 @@ async function nav(page, testid) {
    MAIN FLOW
    ══════════════════════════════════════════════ */
 (async () => {
-  console.log('🎬 Starting ProcureAI demo recording...');
+  console.log('🎬 Starting BuyWise demo recording...');
 
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext({
@@ -74,7 +74,7 @@ async function nav(page, testid) {
     /* ── 1. LOGIN ── */
     await page.goto(BASE, { waitUntil: 'load', timeout: 60000 });
     await wait(5000);
-    await caption(page, '🔐 Logging in to ProcureAI with secure credentials', 3500);
+    await caption(page, '🔐 Logging in to BuyWise with secure credentials', 3500);
 
     await page.fill('input[type="email"]', CREDS.email);
     await wait(500);
@@ -164,7 +164,7 @@ async function nav(page, testid) {
     await wait(1500);
 
     /* ── 4. SEARCH & COMPARE ── */
-    await caption(page, '🔍 Search & Compare — The core of ProcureAI', 3000);
+    await caption(page, '🔍 Search & Compare — The core of BuyWise', 3000);
     await nav(page, 'nav-search');
     await wait(1500);
 
@@ -268,7 +268,7 @@ async function nav(page, testid) {
     await wait(3000);
 
     /* ── 9. SETTINGS ── */
-    await caption(page, '⚙️ Settings — Customize ProcureAI for your business type', 3000);
+    await caption(page, '⚙️ Settings — Customize BuyWise for your business type', 3000);
     await nav(page, 'nav-settings');
     await caption(page, '⚙️ Weight Profiles: Balanced, Startup, Hospital, Restaurant — AI adapts to your priorities', 5000);
     await wait(3000);
@@ -293,7 +293,7 @@ async function nav(page, testid) {
     /* ── OUTRO ── */
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     await wait(1000);
-    await caption(page, '✨ ProcureAI — Transforming procurement with AI. 93% faster. Smarter decisions. Real savings.', 6000);
+    await caption(page, '✨ BuyWise — Transforming procurement with AI. 93% faster. Smarter decisions. Real savings.', 6000);
     await wait(3500);
 
   } catch (e) {

@@ -1,8 +1,8 @@
-# ProcureAI — Project Memory
+# BuyWise — Project Memory
 
 ## Purpose
 
-ProcureAI is a procurement decision-intelligence web app. It lets a business compare marketplace offers and its private/offline suppliers in one search, then recommends the best purchasing option for the selected procurement strategy.
+BuyWise is a procurement decision-intelligence web app. It lets a business compare marketplace offers and its private/offline suppliers in one search, then recommends the best purchasing option for the selected procurement strategy.
 
 ## Architecture
 

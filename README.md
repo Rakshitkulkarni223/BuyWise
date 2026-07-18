@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="screenshots/dashboard.png" alt="ProcureAI Dashboard" width="800" />
+  <img src="screenshots/dashboard.png" alt="BuyWise Dashboard" width="800" />
 </p>
 
-# 🚀 ProcureAI — Procurement Decision Intelligence Platform
+# 🚀 BuyWise — Procurement Decision Intelligence Platform
 
 > Compare marketplace and private suppliers from a single interface. Optimize purchasing with a multi-factor decision engine and optional AI-powered explanations.
 
@@ -13,19 +13,19 @@
 - ✅ Build a private supplier network (Supplier Hub)
 - ✅ Track procurement ROI with Business Impact Dashboard
 
-[![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
+[![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FBuyWise-blue?logo=github)](https://github.com/Rakshitkulkarni223/BuyWise)
 
 ---
 
 ## 🌐 Live Demo
 
-> Try ProcureAI right now — no setup required.
+> Try BuyWise right now — no setup required.
 
 | | |
 |---|---|
 | **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
 | **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
-| **Email** | `demo@procureai.com` |
+| **Email** | `demo@buywise.com` |
 | **Password** | `Demo@123` |
 
 ---
@@ -83,7 +83,7 @@
 <details>
 <summary>Can't see the video? Click to expand.</summary>
 
-Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play locally.
+Download from [`demo/buywise-demo.mp4`](demo/buywise-demo.mp4) and play locally.
 
 </details>
 
@@ -185,8 +185,8 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 
 ```bash
 # Clone
-git clone https://github.com/Rakshitkulkarni223/ProcureAI.git
-cd ProcureAI
+git clone https://github.com/Rakshitkulkarni223/BuyWise.git
+cd BuyWise
 
 # Backend
 cd backend && pip install -r requirements.txt
@@ -200,11 +200,11 @@ cd ../frontend && npm install
 ```env
 # backend/.env
 MONGO_URL=mongodb+srv://<user>:<pass>@cluster.mongodb.net
-DB_NAME=procureai
+DB_NAME=buywise
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
 PORT=8001
-DEMO_EMAIL=demo@procureai.com
+DEMO_EMAIL=demo@buywise.com
 DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
 CORS_ORIGINS=*
@@ -274,6 +274,6 @@ cd backend && python -m pytest tests/backend_test.py -v
 ---
 
 <p align="center">
-  <b>ProcureAI</b> — Transforming procurement from comparing prices to making intelligent business decisions.<br/>
-  <a href="https://github.com/Rakshitkulkarni223/ProcureAI">GitHub</a>
+  <b>BuyWise</b> — Transforming procurement from comparing prices to making intelligent business decisions.<br/>
+  <a href="https://github.com/Rakshitkulkarni223/BuyWise">GitHub</a>
 </p>

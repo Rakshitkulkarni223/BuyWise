@@ -62,7 +62,7 @@ const GENERAL_SECTIONS: DocSection[] = [
   /* ── 0. EXECUTIVE SUMMARY — immediate "why" for visitors ── */
   {
     id: 'g-executive-summary',
-    title: 'Executive Summary — Why ProcureAI?',
+    title: 'Executive Summary — Why BuyWise?',
     icon: Zap,
     badge: { label: 'Start here', tone: 'accent' },
     content: (
@@ -80,7 +80,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div>
           <h4 className="mb-2 font-semibold text-ink text-base">The Solution</h4>
           <p>
-            ProcureAI <strong className="text-ink">automates</strong> supplier discovery, AI-powered comparison,
+            BuyWise <strong className="text-ink">automates</strong> supplier discovery, AI-powered comparison,
             basket optimization, and procurement reporting.
           </p>
         </div>
@@ -126,17 +126,17 @@ const GENERAL_SECTIONS: DocSection[] = [
     icon: Gauge,
     content: (
       <div className="space-y-5 text-sm text-ink-soft leading-relaxed">
-        <p>See how ProcureAI transforms manual procurement into an <strong className="text-ink">AI-powered workflow</strong> — measurable gains across every metric.</p>
+        <p>See how BuyWise transforms manual procurement into an <strong className="text-ink">AI-powered workflow</strong> — measurable gains across every metric.</p>
 
         {/* Before vs After table */}
         <div className="overflow-x-auto rounded-md border border-line">
           <table className="w-full text-xs">
-            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Metric</th><th className="px-3 py-2 font-semibold text-danger/80">Before (Manual)</th><th className="px-3 py-2 font-semibold text-green-600">After (ProcureAI)</th></tr></thead>
+            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Metric</th><th className="px-3 py-2 font-semibold text-danger/80">Before (Manual)</th><th className="px-3 py-2 font-semibold text-green-600">After (BuyWise)</th></tr></thead>
             <tbody className="divide-y divide-line">
               {[
                 ['Supplier comparison', 'Manual across multiple websites', 'Automated — one click'],
                 ['Time per procurement', '45–60 minutes', '3–5 minutes'],
-                ['Websites visited', '5–10 per purchase', '1 (ProcureAI)'],
+                ['Websites visited', '5–10 per purchase', '1 (BuyWise)'],
                 ['Manual calculations', 'Required (Excel/paper)', 'Eliminated — scoring engine handles it'],
                 ['Recommendations', '❌ Not available', '✅ Weighted scoring + explanation'],
                 ['Procurement reports', 'Manual preparation', 'One-click CSV & PDF'],
@@ -187,8 +187,8 @@ const GENERAL_SECTIONS: DocSection[] = [
         </p>
         <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
           <video controls playsInline preload="metadata" className="w-full" poster="">
-            <source src="/procureai-demo.webm" type="video/webm" />
-            <source src="/procureai-demo.mp4" type="video/mp4" />
+            <source src="/buywise-demo.webm" type="video/webm" />
+            <source src="/buywise-demo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
@@ -206,7 +206,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {/* Visual workflow */}
         <div className="flex flex-wrap items-center justify-center gap-2 rounded-md border border-line bg-bg p-4 text-xs font-medium">
-          {['🏢 Business Need', '🤖 ProcureAI', '📊 Recommendation', '💰 Business Impact'].map((s, i, arr) => (
+          {['🏢 Business Need', '🤖 BuyWise', '📊 Recommendation', '💰 Business Impact'].map((s, i, arr) => (
             <React.Fragment key={s}>
               <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
               {i < arr.length - 1 && <ArrowRight size={14} className="text-muted shrink-0" />}
@@ -215,7 +215,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         </div>
         <div className="space-y-3">
           {[
-            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all configured suppliers simultaneously.' },
+            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — BuyWise queries all configured suppliers simultaneously.' },
             { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table.' },
             { step: 3, title: 'Recommend', desc: 'The decision engine scores every option on price, delivery, rating, discount, warranty, and returns.' },
             { step: 4, title: 'Explain', desc: 'Click "Why this recommendation?" for a radar chart and supplier scoreboard.' },
@@ -371,7 +371,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          The <strong className="text-ink">Business Impact</strong> page shows exactly how ProcureAI transforms your procurement —
+          The <strong className="text-ink">Business Impact</strong> page shows exactly how BuyWise transforms your procurement —
           measurable savings, time freed, and smarter decisions. Use the date range filter to focus on any period.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
@@ -395,7 +395,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><ArrowDown size={14} className="text-green-600" /> Before vs After</h4>
-            <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with ProcureAI's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — an estimated ~93% time reduction (illustrative scenario).</p>
+            <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with BuyWise's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — an estimated ~93% time reduction (illustrative scenario).</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Calculator size={14} className="text-accent" /> ROI Calculator</h4>
@@ -534,7 +534,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          The same supplier may not be the best choice under every business objective. ProcureAI supports <strong className="text-ink">6 recommendation modes</strong> that rerank suppliers based on what matters most.
+          The same supplier may not be the best choice under every business objective. BuyWise supports <strong className="text-ink">6 recommendation modes</strong> that rerank suppliers based on what matters most.
         </p>
         <div className="overflow-x-auto rounded-md border border-line">
           <table className="w-full text-xs">
@@ -632,7 +632,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           { q: 'How accurate are the prices?', a: 'Prices are generated by built-in mock providers by default. When SERPAPI_KEY is configured, real-time Google Shopping prices are blended in automatically.' },
           { q: 'Can I add my own suppliers?', a: 'Yes! Use Supplier Hub to register your own offline suppliers with products, pricing, and delivery info. They appear alongside marketplace results in every search.' },
           { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
-          { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
+          { q: 'Can I use BuyWise on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
           { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
         ].map((faq) => (
           <div key={faq.q} className="rounded-md border border-line bg-bg p-4">
@@ -649,7 +649,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           <div className="rounded-md border border-line bg-bg p-4">
             <Globe size={20} className="text-accent" />
             <h4 className="mt-2 font-semibold text-ink">GitHub</h4>
-            <p className="mt-1 text-xs text-muted">Report issues or suggest features on our <a href="https://github.com/Rakshitkulkarni223/ProcureAI" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-accent-hover">GitHub repository</a>.</p>
+            <p className="mt-1 text-xs text-muted">Report issues or suggest features on our <a href="https://github.com/Rakshitkulkarni223/BuyWise" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-accent-hover">GitHub repository</a>.</p>
           </div>
         </div>
       </div>
@@ -669,7 +669,7 @@ const DEV_SECTIONS: DocSection[] = [
     badge: { label: 'Overview', tone: 'accent' },
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>ProcureAI is a full-stack application with a React/TypeScript frontend and Python/FastAPI backend.</p>
+        <p>BuyWise is a full-stack application with a React/TypeScript frontend and Python/FastAPI backend.</p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <div className="mb-2 flex items-center gap-2"><Globe size={16} className="text-accent" /><h4 className="font-semibold text-ink">Frontend</h4></div>
@@ -726,8 +726,8 @@ const DEV_SECTIONS: DocSection[] = [
         <h4 className="font-semibold text-ink">Prerequisites</h4>
         <ul className="space-y-1 text-muted"><li>• Python 3.11+</li><li>• Node.js 18+ (frontend only)</li><li>• MongoDB 6+ (local or Atlas)</li><li>• Git</li></ul>
         <div className="space-y-3">
-          <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/ProcureAI.git\ncd ProcureAI\n\n# Backend\ncd backend && pip install -r requirements.txt\n\n# Frontend\ncd ../frontend && npm install`} />
-          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\nSERPAPI_KEY=              # Optional — live Google Shopping prices\nGEMINI_API_KEY=           # Optional — AI Procurement Advisor\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
+          <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/BuyWise.git\ncd BuyWise\n\n# Backend\ncd backend && pip install -r requirements.txt\n\n# Frontend\ncd ../frontend && npm install`} />
+          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/buywise\nDB_NAME=buywise\nJWT_SECRET=your-secret-key\nPORT=8001\nSERPAPI_KEY=              # Optional — live Google Shopping prices\nGEMINI_API_KEY=           # Optional — AI Procurement Advisor\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
           <CodeBlock title="3. Run" code={`# Terminal 1 — Backend\ncd backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload\n\n# Terminal 2 — Frontend\ncd frontend && npm start`} />
         </div>
         <p className="text-xs text-muted">Backend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:8001</code> · Frontend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:3000</code></p>
@@ -1052,7 +1052,7 @@ export function DocsPage() {
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Documentation</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
             {mode === 'general'
-              ? 'Discover how ProcureAI transforms procurement — from the business problem we solve to every feature you can use.'
+              ? 'Discover how BuyWise transforms procurement — from the business problem we solve to every feature you can use.'
               : 'Technical reference for developers — architecture, APIs, data models, and setup.'}
           </p>
         </div>

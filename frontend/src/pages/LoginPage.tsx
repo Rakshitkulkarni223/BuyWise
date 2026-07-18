@@ -10,7 +10,7 @@ import { apiError } from '../lib/api';
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('demo@procureai.com');
+  const [email, setEmail] = useState('demo@buywise.com');
   const [password, setPassword] = useState('Demo@123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export function LoginPage() {
         <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={20} />
         </span>
-        <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
+        <span className="font-display text-xl font-bold tracking-tight">BuyWise</span>
       </div>
 
       <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Welcome back</h2>
@@ -75,7 +75,7 @@ export function LoginPage() {
       </form>
 
       <div className="mt-5 rounded-md border border-line bg-surface px-3.5 py-3 text-xs text-muted">
-        <span className="font-semibold text-ink">Demo:</span> demo@procureai.com · Demo@123
+        <span className="font-semibold text-ink">Demo:</span> demo@buywise.com · Demo@123
       </div>
 
       <p className="mt-6 text-center text-sm text-muted">

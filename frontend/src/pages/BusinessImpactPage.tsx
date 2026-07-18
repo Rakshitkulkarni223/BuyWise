@@ -122,14 +122,14 @@ function BeforeAfterWorkflow() {
       <div className="space-y-5">
         <div className="flex items-center gap-3">
           <Zap size={20} className="text-accent" />
-          <h2 className="font-display text-xl font-bold text-ink">Before vs After ProcureAI</h2>
+          <h2 className="font-display text-xl font-bold text-ink">Before vs After BuyWise</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           {/* BEFORE */}
           <Card className="border-red-200 dark:border-red-900/40">
             <CardHeader className="border-red-100 dark:border-red-900/30">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-semibold text-red-600">Before ProcureAI</h3>
+                <h3 className="font-display text-base font-semibold text-red-600">Before BuyWise</h3>
                 <Badge tone="danger">45–60 min</Badge>
               </div>
             </CardHeader>
@@ -150,7 +150,7 @@ function BeforeAfterWorkflow() {
           <Card className="border-green-200 dark:border-green-900/40">
             <CardHeader className="border-green-100 dark:border-green-900/30">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-semibold text-green-600">After ProcureAI</h3>
+                <h3 className="font-display text-base font-semibold text-green-600">After BuyWise</h3>
                 <Badge tone="success">3–5 min</Badge>
               </div>
             </CardHeader>
@@ -221,7 +221,7 @@ function ROICalculator() {
           <Calculator size={20} className="text-accent" />
           <h2 className="font-display text-xl font-bold text-ink">ROI Calculator</h2>
         </div>
-        <p className="text-sm text-muted">Estimate how much your business saves by switching to ProcureAI.</p>
+        <p className="text-sm text-muted">Estimate how much your business saves by switching to BuyWise.</p>
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Inputs */}
@@ -234,7 +234,7 @@ function ROICalculator() {
                 { label: 'Purchases per Month', value: purchasesPerMonth, set: setPurchasesPerMonth, min: 1, max: 500, unit: '' },
                 { label: 'Employee Cost (₹/hr)', value: hourlyCost, set: setHourlyCost, min: 100, max: 5000, unit: '₹' },
                 { label: 'Manual Comparison Time (min)', value: manualTime, set: setManualTime, min: 10, max: 120, unit: 'min' },
-                { label: 'ProcureAI Time (min)', value: aiTime, set: setAiTime, min: 1, max: 30, unit: 'min' },
+                { label: 'BuyWise Time (min)', value: aiTime, set: setAiTime, min: 1, max: 30, unit: 'min' },
               ].map((input) => (
                 <div key={input.label}>
                   <div className="mb-1.5 flex items-center justify-between">
@@ -324,7 +324,7 @@ export function BusinessImpactPage() {
           <div className="label-eyebrow">Intelligence</div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Business Impact</h1>
           <p className="mt-1 text-sm text-muted">
-            See how ProcureAI transforms your procurement — measurable savings, time freed, and smarter decisions.
+            See how BuyWise transforms your procurement — measurable savings, time freed, and smarter decisions.
           </p>
           <div className="mt-3">
             <DateRangeFilter value={dateRange} onChange={handleDateChange} />

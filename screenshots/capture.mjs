@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BASE = 'https://buywise-compare-1.preview.emergentagent.com';
-const CREDS = { email: 'demo@procureai.com', password: 'Demo@123' };
+const CREDS = { email: 'demo@buywise.com', password: 'Demo@123' };
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 

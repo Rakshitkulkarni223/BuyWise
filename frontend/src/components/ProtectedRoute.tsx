@@ -8,7 +8,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (user === undefined) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-bg">
-        <div className="font-display text-xl font-bold tracking-tight text-ink">ProcureAI</div>
+        <div className="font-display text-xl font-bold tracking-tight text-ink">BuyWise</div>
         <div className="data-num text-xs text-muted tracking-widest animate-pulse">INITIALISING…</div>
       </div>
     );

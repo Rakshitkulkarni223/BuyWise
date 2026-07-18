@@ -22,7 +22,7 @@ const API = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-const TOKEN_KEY = 'procureai_token';
+const TOKEN_KEY = 'buywise_token';
 
 export const tokenStore = {
   get: () => localStorage.getItem(TOKEN_KEY),

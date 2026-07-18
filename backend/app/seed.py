@@ -442,7 +442,7 @@ def _write_test_credentials() -> None:
         d = "/app/memory"
         if not os.path.exists(d):
             os.makedirs(d, exist_ok=True)
-        content = f"""# Test Credentials \u2014 ProcureAI
+        content = f"""# Test Credentials — BuyWise
 
 ## Demo Account
 - Email: {env.DEMO_EMAIL}

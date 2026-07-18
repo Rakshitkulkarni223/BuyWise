@@ -529,6 +529,6 @@ async def business_impact(
 @router.get("/health")
 async def api_health():
     try:
-        return {"success": True, "status": "ok", "service": "procureai-api"}
+        return {"success": True, "status": "ok", "service": "buywise-api"}
     except Exception:
-        return {"success": True, "status": "ok", "service": "procureai-api"}
+        return {"success": True, "status": "ok", "service": "buywise-api"}

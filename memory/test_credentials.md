@@ -1,7 +1,7 @@
-# Test Credentials — ProcureAI
+# Test Credentials — BuyWise
 
 ## Demo Account
-- Email: demo@procureai.com
+- Email: demo@buywise.com
 - Password: Demo@123
 
 ## Auth

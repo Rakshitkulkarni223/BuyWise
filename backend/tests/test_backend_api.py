@@ -1,11 +1,11 @@
-"""Backend API tests for ProcureAI proxy + Node backend."""
+"""Backend API tests for BuyWise proxy + Node backend."""
 import os
 import pytest
 import requests
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://buywise-compare-1.preview.emergentagent.com").rstrip("/")
 INTERNAL_URL = "http://localhost:8001"
-ADMIN_EMAIL = "admin@procureai.com"
+ADMIN_EMAIL = "admin@buywise.com"
 ADMIN_PASSWORD = "Admin@123"
 
 

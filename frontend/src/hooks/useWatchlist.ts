@@ -12,7 +12,7 @@ export interface WatchlistItem {
   addedAt: string;
 }
 
-const STORAGE_KEY = 'procureai_watchlist';
+const STORAGE_KEY = 'buywise_watchlist';
 
 function loadWatchlist(): WatchlistItem[] {
   try {

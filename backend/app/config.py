@@ -33,7 +33,7 @@ class Env:
         raise
     JWT_EXPIRES_IN: str = os.getenv("JWT_EXPIRES_IN", "7d")
     PORT: int = int(os.getenv("PORT", "8001"))
-    DEMO_EMAIL: str = os.getenv("DEMO_EMAIL", "demo@procureai.com")
+    DEMO_EMAIL: str = os.getenv("DEMO_EMAIL", "demo@buywise.com")
     DEMO_PASSWORD: str = os.getenv("DEMO_PASSWORD", "Demo@123")
     DEMO_NAME: str = os.getenv("DEMO_NAME", "Demo User")
     CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")

@@ -753,8 +753,8 @@ function EmptyState({ mode }: { mode: Mode }) {
         </h3>
         <p className="max-w-md text-sm text-muted">
           {basket
-            ? 'Add several items and ProcureAI finds the optimal supplier for each — maximising total savings and telling you exactly what to buy where.'
-            : 'ProcureAI queries every selected supplier in parallel, normalizes the results, and returns an explainable recommendation with quantified savings.'}
+            ? 'Add several items and BuyWise finds the optimal supplier for each — maximising total savings and telling you exactly what to buy where.'
+            : 'BuyWise queries every selected supplier in parallel, normalizes the results, and returns an explainable recommendation with quantified savings.'}
         </p>
       </CardBody>
     </Card>

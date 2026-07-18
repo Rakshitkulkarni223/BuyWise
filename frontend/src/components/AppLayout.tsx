@@ -47,7 +47,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <Boxes size={18} />
         </span>
         <div className="leading-none">
-          <div className="font-display text-lg font-bold tracking-tight text-ink">ProcureAI</div>
+          <div className="font-display text-lg font-bold tracking-tight text-ink">BuyWise</div>
           <div className="label-eyebrow text-[9px] mt-0.5">Vendor Intelligence</div>
         </div>
       </div>
@@ -136,7 +136,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <span className="font-display text-lg font-bold tracking-tight">ProcureAI</span>
+          <span className="font-display text-lg font-bold tracking-tight">BuyWise</span>
           <div className="ml-auto">
             <LocationDropdown readOnly />
           </div>

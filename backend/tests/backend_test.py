@@ -1,5 +1,5 @@
 """
-ProcureAI backend integration tests.
+BuyWise backend integration tests.
 
 Covers:
 - Health
@@ -33,7 +33,7 @@ if not BASE_URL:
 
 API = f"{BASE_URL}/api"
 
-ADMIN = {"email": "demo@procureai.com", "password": "Demo@123"}
+ADMIN = {"email": "demo@buywise.com", "password": "Demo@123"}
 
 
 def _ok(resp):
@@ -94,7 +94,7 @@ class TestAuth:
 
     def test_register_new_user(self, s):
         # Backend normalizes emails to lowercase; use lower-case prefix
-        unique = f"test_{uuid.uuid4().hex[:8]}@procureai.com"
+        unique = f"test_{uuid.uuid4().hex[:8]}@buywise.com"
         payload = {
             "name": "TEST User",
             "email": unique,

@@ -10,7 +10,7 @@ const API = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-const TOKEN_KEY = 'procureai_token';
+const TOKEN_KEY = 'buywise_token';
 
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY);

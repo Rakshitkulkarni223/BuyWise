@@ -61,7 +61,7 @@ def _build_prompt(recommendation: dict, products: list[dict], mode: str) -> str:
         }
         mode_label = mode_labels.get(mode, mode)
 
-        prompt = f"""You are a procurement advisor for an enterprise procurement platform called ProcureAI.
+        prompt = f"""You are a procurement advisor for an enterprise procurement platform called BuyWise.
 
 Based on the following data, write a concise 2-3 sentence natural language explanation of why this supplier was recommended. Write in a professional, confident tone. Use specific numbers (prices, delivery days, savings). Do NOT use bullet points or markdown formatting — write flowing prose.
 
@@ -207,7 +207,7 @@ def _build_basket_prompt(intelligence: dict) -> str:
             if isinstance(dep, dict):
                 dep_lines.append(f"- {supplier}: ₹{dep.get('amount', 0):,.0f} ({dep.get('percentage', 0)}%)")
 
-        prompt = f"""You are a procurement advisor for ProcureAI.
+        prompt = f"""You are a procurement advisor for BuyWise.
 
 Write a concise 2-3 sentence summary of this basket optimization. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
 
@@ -303,7 +303,7 @@ def _build_longterm_prompt(long_term: dict, products: list[dict]) -> str:
 
         competitor_text = "\n".join(competitors[:5]) if competitors else "No other suppliers"
 
-        prompt = f"""You are a procurement advisor for ProcureAI.
+        prompt = f"""You are a procurement advisor for BuyWise.
 
 Write a concise 2-3 sentence explanation of why this supplier is recommended as a long-term procurement partner. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
 

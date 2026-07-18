@@ -1,5 +1,5 @@
 """
-ProcureAI — FastAPI Backend
+BuyWise - FastAPI Backend
 
 Native Python/FastAPI backend that replaces the previous Node.js/Express +
 reverse-proxy architecture. Runs on port 8001 (Emergent platform ingress).
@@ -33,7 +33,7 @@ async def lifespan(application: FastAPI):
 
 
 app = FastAPI(
-    title="ProcureAI API",
+    title="BuyWise API",
     version="1.0.0",
     docs_url=None,
     redoc_url=None,
@@ -67,9 +67,9 @@ app.include_router(supplier_router, prefix="/api")
 @app.get("/")
 async def root():
     try:
-        return JSONResponse({"success": True, "service": "procureai-api", "docs": "/api/docs"})
+        return JSONResponse({"success": True, "service": "buywise-api", "docs": "/api/docs"})
     except Exception:
-        return JSONResponse({"success": True, "service": "procureai-api"})
+        return JSONResponse({"success": True, "service": "buywise-api"})
 
 
 @app.get("/health")

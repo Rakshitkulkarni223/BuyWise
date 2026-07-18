@@ -3,7 +3,7 @@
 ## Project Structure
 
 ```
-ProcureAI/
+BuyWise/
 ├── backend/
 │   ├── server.py               # FastAPI entry point (Uvicorn)
 │   ├── requirements.txt        # Python dependencies

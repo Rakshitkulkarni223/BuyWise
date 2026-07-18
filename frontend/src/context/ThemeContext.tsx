@@ -13,7 +13,7 @@ export const useTheme = () => useContext(ThemeContext);
 
 function getInitialTheme(): Theme {
   try {
-    const stored = localStorage.getItem('procureai-theme');
+    const stored = localStorage.getItem('buywise-theme');
     if (stored === 'dark' || stored === 'light') return stored;
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
   } catch {
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       } else {
         root.classList.remove('dark');
       }
-      localStorage.setItem('procureai-theme', theme);
+      localStorage.setItem('buywise-theme', theme);
     } catch {
       // silent
     }

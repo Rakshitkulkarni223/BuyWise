@@ -31,7 +31,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
       {/* Title */}
       <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-100" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-        ProcureAI
+        BuyWise
       </h1>
 
       {/* Subtitle */}
