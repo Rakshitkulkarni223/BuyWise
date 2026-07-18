@@ -487,6 +487,7 @@ DEMO_EMAIL=demo@procureai.com
 DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
 CORS_ORIGINS=*
+SERPAPI_KEY=                    # Optional — enables live Google Shopping results (free: serpapi.com)
 ```
 
 Start the backend:
@@ -541,7 +542,8 @@ ProcureAI/
 │           ├── analytics.py    # Dashboard, History, Preference, Catalog services
 │           ├── supplier_hub.py # Supplier Hub CRUD service
 │           ├── supplier_hub_adapter.py  # Adapter for Supplier Hub as a provider
-│           └── supplier_hub_search.py   # Supplier Hub search with state-based filtering
+│           ├── supplier_hub_search.py   # Supplier Hub search with state-based filtering
+│           └── serpapi_adapter.py       # Live Google Shopping adapter via SerpAPI
 │
 ├── frontend/
 │   └── src/
@@ -585,9 +587,12 @@ python -m pytest tests/backend_test.py -v
 
 ## 🗺️ Future Ready — Live Procurement Ecosystem
 
+> **Google Shopping is already live.** ProcureAI includes a real-time integration with Google Shopping via SerpAPI (100 free searches/month). Set `SERPAPI_KEY` in your `.env` to enable it. This proves the adapter architecture works with real APIs — adding more marketplaces requires only a new adapter file.
+
 | Phase | Feature | Description |
 |---|---|---|
-| **P1** | Real-time Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — live pricing and availability |
+| **✅ Done** | Google Shopping (Live) | Real-time product data via SerpAPI — prices, ratings, sellers, images from Google Shopping India |
+| **P1** | More Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — live pricing and availability |
 | **P1** | Live Supplier Quotes | Real-time quote requests and responses from Supplier Hub network |
 | **P1** | ERP Integration | Sync procurement data with SAP, Oracle, Zoho for seamless order management |
 | **P1** | WhatsApp Quote Reader | Send and receive supplier quotes via WhatsApp Business API |

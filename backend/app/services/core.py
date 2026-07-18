@@ -217,6 +217,16 @@ class ProviderFactory:
     @staticmethod
     def create(supplier_name: str) -> Optional[MockProviderAdapter]:
         try:
+            # Route Google Shopping to the live SerpAPI adapter if key is available
+            if supplier_name == "Google Shopping":
+                try:
+                    from app.config import env as _env
+                    if _env.SERPAPI_KEY:
+                        from app.services.serpapi_adapter import SerpAPIProviderAdapter
+                        return SerpAPIProviderAdapter()  # type: ignore[return-value]
+                except Exception:
+                    pass
+                return None  # No API key — silently skip
             profile = SUPPLIER_PROFILES.get(supplier_name)
             if not profile:
                 return None
