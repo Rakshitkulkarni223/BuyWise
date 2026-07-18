@@ -315,6 +315,18 @@ class BasketOptimizationService:
             plan = BasketOptimizationService.build_plan(
                 list(gathered), req.get("consolidationPenalty", 0) or 0, weight_profile, recommendation_mode
             )
+
+            # Enrich basket intelligence with Gemini AI summary
+            try:
+                intelligence = plan.get("intelligence")
+                if intelligence and intelligence.get("aiSummary"):
+                    from app.services.llm_advisor import generate_basket_explanation
+                    ai_summary = await generate_basket_explanation(intelligence)
+                    if ai_summary:
+                        intelligence["aiSummary"] = ai_summary
+            except Exception:
+                pass
+
             return {"category": category, "weightProfile": weight_profile, **plan}
         except Exception:
             raise

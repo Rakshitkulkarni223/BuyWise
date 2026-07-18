@@ -98,33 +98,43 @@ def _template_fallback(recommendation: dict, products: list[dict], mode: str) ->
         savings = recommendation.get("estimatedSavings", 0)
         others = [p for p in products if p["provider"] != supplier]
 
-        parts = [f"{supplier} is recommended"]
-
+        # Build first sentence: "{Supplier} is recommended because ..."
         if mode == "lowest_cost":
-            parts.append(f"because it offers the lowest total procurement cost at {_format_inr(price)}")
+            first = (f"{supplier} is recommended because it offers the lowest total "
+                     f"procurement cost at {_format_inr(price)}")
         elif mode == "lowest_risk":
-            parts.append("because it has the lowest procurement risk while maintaining competitive pricing")
+            first = (f"{supplier} is recommended because it has the lowest procurement "
+                     f"risk while maintaining competitive pricing at {_format_inr(price)}")
         elif mode == "fastest_delivery":
-            parts.append(f"for urgent procurement with delivery in {delivery} day{'s' if delivery != 1 else ''}")
+            first = (f"{supplier} is recommended for urgent procurement with delivery "
+                     f"in {delivery} day{'s' if delivery != 1 else ''} at {_format_inr(price)}")
         elif mode == "highest_reliability":
-            parts.append("because it has the highest delivery reliability, minimising supply chain disruptions")
+            first = (f"{supplier} is recommended because it has the highest delivery "
+                     f"reliability, minimising supply chain disruptions")
         elif mode == "best_long_term_value":
-            parts.append("for long-term procurement due to its strong supplier score and consistent reliability")
+            first = (f"{supplier} is recommended for long-term procurement due to its "
+                     f"strong supplier score and consistent reliability")
         else:
-            parts.append(f"because it offers the best balance of cost ({_format_inr(price)}), "
-                         f"{delivery}-day delivery, and reliability")
+            first = (f"{supplier} is recommended because it offers the best balance of "
+                     f"cost ({_format_inr(price)}), {delivery}-day delivery, and reliability")
 
+        # Append savings info
         if savings > 0:
-            parts.append(f", saving an estimated {_format_inr(savings)} compared to the most expensive option")
+            first += f", saving an estimated {_format_inr(savings)} compared to the most expensive option"
+        first += "."
 
+        # Build second sentence: trade-off comparison
+        sentences = [first]
         if others:
             cheapest_other = min(others, key=lambda p: p["price"])
             if cheapest_other["price"] < price:
                 diff = price - cheapest_other["price"]
-                parts.append(f". Although {cheapest_other['provider']} is {_format_inr(diff)} cheaper, "
-                             f"{supplier} provides better overall value considering delivery and reliability")
+                sentences.append(
+                    f"Although {cheapest_other['provider']} is {_format_inr(diff)} cheaper, "
+                    f"{supplier} provides better overall value considering delivery and reliability."
+                )
 
-        return "".join(parts) + "."
+        return " ".join(sentences)
     except Exception:
         return ""
 
@@ -166,5 +176,189 @@ async def generate_explanation(recommendation: dict, products: list[dict], mode:
         print(f"[WARN] Gemini API failed, using template fallback: {e}")
         try:
             return _template_fallback(recommendation, products, mode)
+        except Exception:
+            return ""
+
+
+# ---------------------------------------------------------------------------
+# Basket AI Summary
+# ---------------------------------------------------------------------------
+
+def _build_basket_prompt(intelligence: dict) -> str:
+    """Build a Gemini prompt from basket intelligence data."""
+    try:
+        savings = intelligence.get("savings", {})
+        risk = intelligence.get("risk", {})
+        delivery = intelligence.get("deliveryWindow", {})
+        complexity = intelligence.get("complexity", {})
+        consolidation = intelligence.get("consolidationScore", {})
+        supplier_dep = intelligence.get("supplierDependency", {})
+        dominant = intelligence.get("dominantSupplier")
+        supplier_count = intelligence.get("supplierCount", 0)
+        ai_score = intelligence.get("aiScore", 0)
+        cost_vs_conv = intelligence.get("costVsConvenience", {})
+        logistics = intelligence.get("logisticsBreakdown", {})
+        total_cost = intelligence.get("totalProcurementCost", 0)
+        expected = intelligence.get("expectedSavings", {})
+
+        # Supplier dependency summary
+        dep_lines = []
+        for supplier, dep in supplier_dep.items():
+            if isinstance(dep, dict):
+                dep_lines.append(f"- {supplier}: ₹{dep.get('amount', 0):,.0f} ({dep.get('percentage', 0)}%)")
+
+        prompt = f"""You are a procurement advisor for ProcureAI.
+
+Write a concise 2-3 sentence summary of this basket optimization. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
+
+BASKET OPTIMIZATION:
+- Total procurement cost: ₹{total_cost:,.0f}
+- Product cost: ₹{intelligence.get('productCost', 0):,.0f}
+- Logistics cost: ₹{logistics.get('total', 0):,.0f}
+- Suppliers used: {supplier_count}
+- Savings: ₹{savings.get('amount', 0):,.0f} ({savings.get('percentage', 0)}%)
+- Risk level: {risk.get('level', 'Medium')} (score: {risk.get('score', 50)}/100)
+- Delivery window: {delivery.get('latest', 0)} days
+- Complexity: {complexity.get('level', 'Easy')}
+- Consolidation: {consolidation.get('label', 'Good')}
+- AI Score: {ai_score}/100
+- Recommended plan: {cost_vs_conv.get('recommended', 'split')}
+{f'- ⚠ {dominant} dominates the basket' if dominant else ''}
+
+SUPPLIER DEPENDENCY:
+{chr(10).join(dep_lines) if dep_lines else 'Evenly distributed'}
+
+PROJECTED SAVINGS:
+- Monthly: ₹{expected.get('monthly', 0):,.0f}
+- Yearly: ₹{expected.get('yearly', 0):,.0f}
+
+Write a procurement-focused summary now. Start with "Your basket"."""
+
+        return prompt
+    except Exception:
+        return ""
+
+
+async def generate_basket_explanation(intelligence: dict) -> str:
+    """Generate an AI explanation for basket optimization.
+
+    Uses Gemini if available, otherwise returns the existing template aiSummary.
+    """
+    try:
+        existing_summary = intelligence.get("aiSummary", "")
+        api_key = env.GEMINI_API_KEY
+        if not api_key:
+            return existing_summary
+
+        prompt = _build_basket_prompt(intelligence)
+        if not prompt:
+            return existing_summary
+
+        from google import genai
+
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+        )
+
+        text = response.text.strip() if response.text else ""
+        if not text:
+            return existing_summary
+
+        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        return text
+
+    except Exception as e:
+        print(f"[WARN] Gemini basket summary failed: {e}")
+        try:
+            return intelligence.get("aiSummary", "")
+        except Exception:
+            return ""
+
+
+# ---------------------------------------------------------------------------
+# Long-Term Recommendation
+# ---------------------------------------------------------------------------
+
+def _build_longterm_prompt(long_term: dict, products: list[dict]) -> str:
+    """Build a Gemini prompt for long-term recommendation."""
+    try:
+        supplier = long_term.get("supplier", "Unknown")
+        score = long_term.get("longTermScore", 0)
+        supplier_score = long_term.get("supplierScore", 0)
+        risk_level = long_term.get("riskLevel", "Medium")
+        reliability = long_term.get("deliveryReliability", 0)
+        total_cost = long_term.get("totalProcurementCost", 0)
+
+        # Competitors
+        competitors = []
+        for p in products:
+            if p["provider"] != supplier:
+                competitors.append(
+                    f"- {p['provider']}: ₹{p['price']:,.0f}, "
+                    f"rating {p.get('rating', 0)}/5, "
+                    f"{p.get('deliveryDays', 0)}d delivery"
+                )
+
+        competitor_text = "\n".join(competitors[:5]) if competitors else "No other suppliers"
+
+        prompt = f"""You are a procurement advisor for ProcureAI.
+
+Write a concise 2-3 sentence explanation of why this supplier is recommended as a long-term procurement partner. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
+
+RECOMMENDED LONG-TERM PARTNER: {supplier}
+- Long-Term Score: {score}/100
+- Supplier Score: {supplier_score}/100
+- Risk Level: {risk_level}
+- Delivery Reliability: {reliability}%
+- Total Procurement Cost: ₹{total_cost:,.0f}
+
+COMPETING SUPPLIERS:
+{competitor_text}
+
+Write the explanation now. Start with the supplier name."""
+
+        return prompt
+    except Exception:
+        return ""
+
+
+async def generate_longterm_explanation(long_term: dict, products: list[dict]) -> str:
+    """Generate an AI explanation for long-term recommendation.
+
+    Uses Gemini if available, otherwise returns reasons joined as text.
+    """
+    try:
+        reasons = long_term.get("reasons", [])
+        fallback = " ".join(reasons) if reasons else ""
+
+        api_key = env.GEMINI_API_KEY
+        if not api_key:
+            return fallback
+
+        prompt = _build_longterm_prompt(long_term, products)
+        if not prompt:
+            return fallback
+
+        from google import genai
+
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+        )
+
+        text = response.text.strip() if response.text else ""
+        if not text:
+            return fallback
+
+        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        return text
+
+    except Exception as e:
+        print(f"[WARN] Gemini long-term explanation failed: {e}")
+        try:
+            return " ".join(long_term.get("reasons", []))
         except Exception:
             return ""

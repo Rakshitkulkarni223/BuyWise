@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Check, Shield, TrendingUp } from 'lucide-react';
+import { Clock, Check, Shield, TrendingUp, MessageSquareText } from 'lucide-react';
 import type { LongTermRecommendation } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
@@ -45,6 +45,16 @@ export function LongTermRecommendationCard({
               <div className="text-[10px] text-muted">Long-Term Score</div>
             </div>
           </div>
+
+          {rec.aiExplanation && (
+            <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
+              <div className="mb-2 flex items-center gap-1.5">
+                <MessageSquareText size={13} className="text-accent" />
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
+              </div>
+              <p className="text-sm leading-relaxed text-ink-soft">{rec.aiExplanation}</p>
+            </div>
+          )}
 
           <ul className="mt-4 space-y-2">
             {rec.reasons.map((reason, i) => (

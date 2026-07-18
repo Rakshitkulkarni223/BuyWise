@@ -782,6 +782,17 @@ class SearchService:
             if recommendation and ai_explanation:
                 recommendation["aiExplanation"] = ai_explanation
 
+            # Generate LLM-powered long-term recommendation explanation
+            long_term = intelligence.get("longTermRecommendation")
+            if long_term:
+                try:
+                    from app.services.llm_advisor import generate_longterm_explanation
+                    lt_explanation = await generate_longterm_explanation(long_term, results)
+                    if lt_explanation:
+                        long_term["aiExplanation"] = lt_explanation
+                except Exception as lt_err:
+                    print(f"[WARN] LLM long-term advisor skipped: {lt_err}")
+
             return {
                 "query": query,
                 "category": category,

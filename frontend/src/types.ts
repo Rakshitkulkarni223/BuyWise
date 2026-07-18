@@ -333,6 +333,7 @@ export interface LongTermRecommendation {
   product: Product;
   longTermScore: number;
   reasons: string[];
+  aiExplanation?: string;
   supplierScore: number;
   riskLevel: string;
   deliveryReliability: number;
