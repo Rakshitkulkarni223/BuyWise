@@ -35,6 +35,8 @@ import {
   Gauge,
   Calculator,
   ArrowDown,
+  MapPin,
+  Target,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -213,7 +215,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         </div>
         <div className="space-y-3">
           {[
-            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all suppliers simultaneously.' },
+            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all configured suppliers simultaneously.' },
             { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table.' },
             { step: 3, title: 'Recommend', desc: 'AI scores every option on price, delivery, rating, discount, warranty, and returns.' },
             { step: 4, title: 'Explain', desc: 'Click "Why this recommendation?" for a radar chart and supplier scoreboard.' },
@@ -278,17 +280,46 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          Every AI recommendation is <strong className="text-ink">transparent and auditable</strong>. See exactly why a supplier was chosen.
+          Every AI recommendation is <strong className="text-ink">transparent and auditable</strong>. See why a supplier was chosen through rule-based reasoning or optional Gemini-generated insights.
         </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-2 font-semibold text-ink">What the AI Evaluates (7 Factors)</h4>
+          <div className="grid gap-1.5 sm:grid-cols-2">
+            {[
+              { factor: 'Price', desc: 'Unit cost, line total, volume discounts' },
+              { factor: 'Delivery', desc: 'Estimated days based on supplier location and your city' },
+              { factor: 'Reliability', desc: 'Supplier rating and delivery consistency' },
+              { factor: 'Warranty', desc: 'Coverage duration in months' },
+              { factor: 'Returns', desc: 'Return policy availability and terms' },
+              { factor: 'Risk', desc: 'Composite risk score (price volatility, delivery risk, concentration)' },
+              { factor: 'Total Cost', desc: 'Full procurement cost including shipping, handling, and penalties' },
+            ].map((f) => (
+              <div key={f.factor} className="flex gap-2 rounded border border-line bg-surface px-3 py-2">
+                <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
+                <div><span className="text-xs font-semibold text-ink">{f.factor}</span><span className="text-[11px] text-muted"> — {f.desc}</span></div>
+              </div>
+            ))}
+          </div>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 font-semibold text-ink">Radar Chart</h4>
-            <p className="text-xs text-muted">Visualizes how the recommended supplier performs across price, delivery, rating, discount, and availability — all factors at a glance.</p>
+            <p className="text-xs text-muted">Visualizes how the recommended supplier performs across all scoring factors at a glance.</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 font-semibold text-ink">Supplier Scoreboard</h4>
             <p className="text-xs text-muted">A ranked table of all suppliers with color-coded progress bars, weighted scores out of 100, and prices so you can verify the AI's choice.</p>
           </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-2 font-semibold text-ink">What the AI Produces</h4>
+          <ul className="space-y-1 text-xs text-muted">
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Confidence Score</strong> — how confident the AI is in its recommendation</li>
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Business Reasoning</strong> — why this supplier was selected (not just "lowest price")</li>
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Trade-offs</strong> — radar chart showing how the top supplier compares on every dimension</li>
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Supplier Scoreboard</strong> — all suppliers ranked with scores out of 100</li>
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Business Impact</strong> — estimated savings vs. the most expensive alternative</li>
+          </ul>
         </div>
         <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
           <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
@@ -443,7 +474,124 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
 
-  /* ── 10. SETTINGS & WEIGHT PROFILES ── */
+  /* ── 10. SUPPLIER HUB ── */
+  {
+    id: 'g-supplier-hub',
+    title: 'Supplier Hub',
+    icon: Package,
+    badge: { label: 'Network', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Build your own <strong className="text-ink">private supplier network</strong> — combine online marketplace data with your trusted offline suppliers.
+          Every supplier is searchable and comparable using the same AI recommendation engine.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Capabilities</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {[
+              { title: 'Build Your Network', desc: 'Register suppliers with name, contact, city, state, and category.' },
+              { title: 'Add Products', desc: 'Add products with pricing, delivery days, warranty, ratings, and stock status.' },
+              { title: 'Unified Search', desc: 'Supplier Hub products appear alongside marketplace results in every search.' },
+              { title: 'State Filtering', desc: 'Only suppliers from your state are included — ensuring relevant, local results.' },
+              { title: 'Same AI Engine', desc: 'Your suppliers are scored and ranked by the same recommendation engine as marketplace suppliers.' },
+            ].map((c) => (
+              <div key={c.title} className="flex gap-2 rounded border border-line bg-surface px-3 py-2">
+                <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
+                <div><span className="text-xs font-semibold text-ink">{c.title}</span><span className="text-[11px] text-muted"> — {c.desc}</span></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Marketplace Sources</h5>
+            <ul className="mt-1 space-y-0.5 text-[11px] text-muted">
+              <li>• Mock Providers (built-in)</li>
+              <li>• Google Shopping (optional, via SerpAPI)</li>
+              <li>• Future: Amazon, Udaan, Metro, IndiaMART</li>
+            </ul>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-3">
+            <h5 className="text-xs font-semibold text-ink">Your Offline Suppliers</h5>
+            <ul className="mt-1 space-y-0.5 text-[11px] text-muted">
+              <li>• Your Rice Mill</li>
+              <li>• Vegetable Vendor</li>
+              <li>• Oil Distributor</li>
+              <li>• Local Mandi</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 11. RECOMMENDATION MODES ── */
+  {
+    id: 'g-recommendation-modes',
+    title: 'Procurement Strategies (6 Modes)',
+    icon: Target,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The same supplier may not be the best choice under every business objective. ProcureAI supports <strong className="text-ink">6 recommendation modes</strong> that rerank suppliers based on what matters most.
+        </p>
+        <div className="overflow-x-auto rounded-md border border-line">
+          <table className="w-full text-xs">
+            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Mode</th><th className="px-3 py-2 font-semibold text-ink">Optimizes For</th><th className="px-3 py-2 font-semibold text-ink">Best When</th></tr></thead>
+            <tbody className="divide-y divide-line">
+              {[
+                ['Balanced', 'Weighted score across all factors', 'Default — general-purpose procurement'],
+                ['Lowest Cost', 'Total procurement cost (price + shipping + handling)', 'Budget is the primary constraint'],
+                ['Lowest Risk', 'Composite risk score (price stability, delivery risk)', 'Buying critical or high-value items'],
+                ['Fastest Delivery', 'Minimum delivery days', 'Urgent or time-sensitive purchases'],
+                ['Highest Reliability', 'Supplier delivery consistency and rating', 'Repeat orders where reliability matters'],
+                ['Best Long-Term Value', 'Supplier score (quality + consistency + warranty)', 'Building long-term supplier relationships'],
+              ].map(([mode, optimizes, best]) => (
+                <tr key={mode}><td className="px-3 py-2 font-medium text-ink">{mode}</td><td className="px-3 py-2 text-muted">{optimizes}</td><td className="px-3 py-2 text-muted">{best}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
+          <p className="text-xs text-ink-soft">The recommendation engine <strong className="text-ink">dynamically reranks suppliers</strong> without changing the underlying data — the same product catalog produces different "best" suppliers depending on your business priorities. Each mode generates different business-friendly reasoning.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 12. LOCATION-AWARE DELIVERY ── */
+  {
+    id: 'g-location',
+    title: 'Location-Aware Delivery',
+    icon: MapPin,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Set your <strong className="text-ink">city</strong> in Settings. Delivery estimates auto-calculate based on supplier distance.
+          Supplier Hub filters results to your <strong className="text-ink">state</strong>.
+        </p>
+        <div className="overflow-x-auto rounded-md border border-line">
+          <table className="w-full text-xs">
+            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Distance</th><th className="px-3 py-2 font-semibold text-ink">Estimated Delivery</th></tr></thead>
+            <tbody className="divide-y divide-line">
+              {[
+                ['Same city', '1 day'],
+                ['Same state', '2 days'],
+                ['Different state', '4–5 days'],
+              ].map(([distance, delivery]) => (
+                <tr key={distance}><td className="px-3 py-2 font-medium text-ink">{distance}</td><td className="px-3 py-2 text-muted">{delivery}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted">Change your city in <strong className="text-ink">Settings → Location Preferences</strong>. Supplier Hub suppliers from other states are automatically excluded from search results.</p>
+      </div>
+    ),
+  },
+
+  /* ── 13. SETTINGS & WEIGHT PROFILES ── */
   {
     id: 'g-settings',
     title: 'Settings & Weight Profiles',
@@ -481,8 +629,8 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {[
           { q: 'Is my data private?', a: 'Yes. All searches, history, and preferences are tied to your account and not shared.' },
-          { q: 'How accurate are the prices?', a: 'Prices are fetched in real-time from supplier websites at the time of your search.' },
-          { q: 'Can I add my own suppliers?', a: 'The platform supports pre-configured supplier adapters. New ones can be added via the adapter pattern.' },
+          { q: 'How accurate are the prices?', a: 'Prices are generated by built-in mock providers by default. When SERPAPI_KEY is configured, real-time Google Shopping prices are blended in automatically.' },
+          { q: 'Can I add my own suppliers?', a: 'Yes! Use Supplier Hub to register your own offline suppliers with products, pricing, and delivery info. They appear alongside marketplace results in every search.' },
           { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
           { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
           { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
@@ -546,6 +694,8 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• JWT authentication (PyJWT + bcrypt)</li>
               <li>• Pydantic schema validation</li>
               <li>• Multi-provider mock adapters</li>
+              <li>• Optional SerpAPI (live Google Shopping prices)</li>
+              <li>• Optional Gemini AI (natural language explanations)</li>
               <li>• Weighted decision engine</li>
               <li>• Date-filtered analytics (from/to query params)</li>
               <li>• Business impact API (hours saved, efficiency, ROI)</li>
@@ -577,7 +727,7 @@ const DEV_SECTIONS: DocSection[] = [
         <ul className="space-y-1 text-muted"><li>• Python 3.11+</li><li>• Node.js 18+ (frontend only)</li><li>• MongoDB 6+ (local or Atlas)</li><li>• Git</li></ul>
         <div className="space-y-3">
           <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/ProcureAI.git\ncd ProcureAI\n\n# Backend\ncd backend && pip install -r requirements.txt\n\n# Frontend\ncd ../frontend && npm install`} />
-          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
+          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\nSERPAPI_KEY=              # Optional — live Google Shopping prices\nGEMINI_API_KEY=           # Optional — AI Procurement Advisor\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
           <CodeBlock title="3. Run" code={`# Terminal 1 — Backend\ncd backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload\n\n# Terminal 2 — Frontend\ncd frontend && npm start`} />
         </div>
         <p className="text-xs text-muted">Backend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:8001</code> · Frontend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:3000</code></p>
@@ -591,8 +741,8 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Comparison\n      ├── basket.py    # Basket optimization\n      └── analytics.py # Dashboard, History, Preferences`} />
-          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      └── llm_advisor.py # Optional Gemini AI advisor`} />
+          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
     ),
@@ -654,6 +804,14 @@ const DEV_SECTIONS: DocSection[] = [
                 ['GET', '/business-impact?from=&to=', '✓', 'Business impact metrics (date range optional)'],
                 ['GET', '/preferences', '✓', 'Get user preferences'],
                 ['PUT', '/preferences', '✓', 'Update preferences'],
+                ['GET', '/categories', '✗', 'List product categories'],
+                ['GET', '/suppliers/:category', '✓', 'Suppliers for a category'],
+                ['GET', '/weight-profiles', '✗', 'Available weight profiles'],
+                ['GET', '/recommendation-modes', '✗', 'Available recommendation modes'],
+                ['GET', '/cities', '✗', 'Available delivery cities'],
+                ['POST', '/suppliers', '✓', 'Add a Supplier Hub supplier'],
+                ['GET', '/suppliers/:id/products', '✓', 'List supplier products'],
+                ['POST', '/suppliers/:id/products', '✓', 'Add product to supplier'],
               ].map(([method, path, auth, desc]) => (
                 <tr key={path}>
                   <td className="px-3 py-2"><span className={cn('rounded px-1.5 py-0.5 text-[10px] font-bold', method === 'GET' ? 'bg-accent-soft text-accent' : method === 'POST' ? 'bg-success-bg text-success' : method === 'PUT' ? 'bg-warning-bg text-warning' : 'bg-danger/10 text-danger')}>{method}</span></td>
@@ -758,7 +916,9 @@ const DEV_SECTIONS: DocSection[] = [
             { name: 'users', desc: 'Accounts, hashed credentials', fields: 'name, email, password, role (default: user), businessType' },
             { name: 'searchhistories', desc: 'Single search results + recommendations', fields: 'userId, query, category, results[], recommendation, createdAt' },
             { name: 'baskethistories', desc: 'Basket optimizations with item assignments', fields: 'userId, category, items[], splitTotal, baseline, createdAt' },
-            { name: 'preferences', desc: 'Per-user settings and weight profiles', fields: 'userId, defaultCategory, defaultSort, weightProfile, weights' },
+            { name: 'userpreferences', desc: 'Per-user settings and weight profiles', fields: 'userId, defaultCategory, defaultSort, weightProfile, city, weights' },
+            { name: 'categories', desc: 'Product categories (seeded)', fields: 'name, label, icon, suppliers[]' },
+            { name: 'suppliers', desc: 'Marketplace supplier definitions (seeded)', fields: 'name, label, category, city, state' },
           ].map((c) => (
             <div key={c.name} className="rounded-md border border-line bg-bg p-3">
               <code className="text-xs font-bold text-accent">{c.name}</code>

@@ -125,7 +125,7 @@ ProcureAI uses **AI to compare suppliers, optimize purchasing decisions, and rec
 
 | | Before (Manual) | After (ProcureAI) |
 |---|---|---|
-| **Supplier comparison** | Manual across 5–10 websites | Automated — all suppliers in one click |
+| **Supplier comparison** | Manual across 5–10 websites | Automated — all configured suppliers in one search |
 | **Time per procurement** | 45–60 minutes | 3–5 minutes |
 | **Calculations** | Excel / paper | Eliminated — AI handles scoring |
 | **AI recommendations** | ❌ Not available | ✅ Weighted scoring with explanation |
@@ -142,7 +142,7 @@ ProcureAI is **not another marketplace**. Marketplaces sell products from their 
 
 | | Marketplaces (Udaan, Amazon) | Traditional Comparison | ProcureAI |
 |---|---|---|---|
-| **Supplier scope** | Their own sellers only | One website at a time | All suppliers in one click |
+| **Supplier scope** | Their own sellers only | One website at a time | All configured suppliers in one search |
 | **Offline suppliers** | ❌ Not supported | ❌ Not supported | ✅ Your own supplier network |
 | **Decision logic** | Cheapest product | Sort by price/rating | Best business decision (7 factors) |
 | **AI reasoning** | ❌ None | ❌ None | ✅ Explainable AI + confidence score |
@@ -181,12 +181,12 @@ Businesses already have trusted suppliers. ProcureAI allows users to **create th
 
 **Combine:**
 
-| Online Marketplaces | Your Offline Suppliers |
+| Marketplace Sources | Your Offline Suppliers |
 |---|---|
-| Amazon Business | Your Rice Mill |
-| Udaan | Vegetable Vendor |
-| Metro | Oil Distributor |
-| IndiaMART | Local Mandi |
+| Mock Providers (built-in) | Your Rice Mill |
+| Google Shopping (optional, via SerpAPI) | Vegetable Vendor |
+| Future: Amazon, Udaan, Metro | Oil Distributor |
+| Future: IndiaMART, Flipkart | Local Mandi |
 
 Every supplier — online or offline — becomes searchable and comparable using the same AI recommendation engine.
 
@@ -208,7 +208,7 @@ Every supplier — online or offline — becomes searchable and comparable using
 
 ProcureAI uses **Explainable AI** to evaluate procurement decisions using a multi-factor scoring engine. It doesn't simply rank the cheapest supplier — it balances cost, speed, quality, and risk to produce the best procurement recommendation.
 
-**Users always know WHY a supplier was recommended.**
+**Users receive an explanation for every recommendation** through rule-based reasoning or optional Gemini-generated insights.
 
 ### What the AI Evaluates
 
@@ -298,10 +298,10 @@ Different business goals produce different recommendations. The recommendation e
 ## 🔄 Procurement Workflow
 
 ```
-     ┌───────────────────┐     ┌───────────────────────┐
-     │  Supplier Network  │     │  Marketplace Suppliers │
-     │  (Your Suppliers)  │     │  (Amazon, Udaan, etc.) │
-     └────────┬──────────┘     └───────────┬───────────┘
+     ┌───────────────────┐     ┌────────────────────────────┐
+     │  Supplier Network  │     │  Marketplace Sources        │
+     │  (Your Suppliers)  │     │  (Mock + opt. Google Shop.) │
+     └────────┬──────────┘     └──────────────┬─────────────┘
               └──────────────┬─────────────┘
                              ▼
               ┌──────────────────────────┐
@@ -589,12 +589,12 @@ python -m pytest tests/backend_test.py -v
 
 ## 🗺️ Future Ready — Live Procurement Ecosystem
 
-> **Real-time market data and LLM-powered advice are already live.** ProcureAI silently enriches every search with real Google Shopping prices via SerpAPI, and generates natural language procurement recommendations using Google Gemini. Set `SERPAPI_KEY` and `GEMINI_API_KEY` in your `.env` to enable them. Both are optional — the system works perfectly without them.
+> **ProcureAI is designed to integrate optional live market data and LLM-powered procurement advice.** When `SERPAPI_KEY` is configured, searches are enriched with real Google Shopping prices. When `GEMINI_API_KEY` is configured, natural language procurement explanations are generated via Google Gemini. Both are optional — the system works perfectly without them using built-in mock providers and rule-based explanations.
 
 | Phase | Feature | Description |
 |---|---|---|
-| **✅ Done** | Live Market Prices | Real-time prices from Google Shopping India via SerpAPI — filtered to your selected suppliers, blended silently into AI scoring |
-| **✅ Done** | AI Procurement Advisor | Gemini 2.0 Flash generates natural language explanations for every recommendation — e.g. *"Flipkart is recommended because it offers the lowest cost at ₹19,990 while maintaining 4-day delivery..."* |
+| **✅ Available (Optional)** | Live Market Prices | Real-time prices from Google Shopping India via SerpAPI — filtered to your selected suppliers, blended silently into AI scoring. Requires `SERPAPI_KEY`. |
+| **✅ Available (Optional)** | AI Procurement Advisor | Gemini 2.0 Flash generates natural language explanations for every recommendation — e.g. *"Flipkart is recommended because it offers the lowest cost at ₹19,990 while maintaining 4-day delivery..."* Requires `GEMINI_API_KEY`. Falls back to rule-based explanations. |
 | **P1** | More Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — live pricing and availability |
 | **P1** | Live Supplier Quotes | Real-time quote requests and responses from Supplier Hub network |
 | **P1** | ERP Integration | Sync procurement data with SAP, Oracle, Zoho for seamless order management |
@@ -626,7 +626,7 @@ python -m pytest tests/backend_test.py -v
 
 ## 🏅 Competitive Advantages
 
-- ✅ **Marketplace Comparison** — All suppliers in one click
+- ✅ **Marketplace Comparison** — Compare configured marketplaces and your private suppliers in one search
 - ✅ **Private Supplier Network** — Online + Offline suppliers combined
 - ✅ **Explainable AI** — Confidence score + radar chart + business reasoning
 - ✅ **6 Procurement Strategies** — Dynamically rerank without changing data
