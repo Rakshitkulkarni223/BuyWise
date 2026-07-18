@@ -326,6 +326,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
                     "bestPrice": result.get("splitTotal", 0),
                     "estimatedSavings": total_savings,
                     "weightProfile": body.weightProfile or "balanced",
+                    "isBasket": True,
                     "createdAt": now,
                     "updatedAt": now,
                 })

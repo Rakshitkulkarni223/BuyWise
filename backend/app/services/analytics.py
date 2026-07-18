@@ -193,17 +193,17 @@ class HistoryService:
             skip = (page - 1) * limit
 
             search_docs, basket_docs, search_count, basket_count = await _parallel(
-                db.searchhistories.find({"userId": uid}).sort("createdAt", -1).to_list(length=10000),
+                db.searchhistories.find({"userId": uid, "isBasket": {"$ne": True}}).sort("createdAt", -1).to_list(length=10000),
                 db.baskethistories.find({"userId": uid}).sort("createdAt", -1).to_list(length=10000),
-                db.searchhistories.count_documents({"userId": uid}),
+                db.searchhistories.count_documents({"userId": uid, "isBasket": {"$ne": True}}),
                 db.baskethistories.count_documents({"userId": uid}),
             )
 
             search_items = []
             for d in search_docs:
-                search_items.append({
+                entry: dict[str, Any] = {
                     "id": str(d["_id"]),
-                    "type": "single",
+                    "type": "basket" if d.get("isBasket") else "single",
                     "query": d.get("query", ""),
                     "category": d.get("category", ""),
                     "suppliers": d.get("suppliers", []),
@@ -213,7 +213,8 @@ class HistoryService:
                     "estimatedSavings": d.get("estimatedSavings", 0),
                     "weightProfile": d.get("weightProfile", "balanced"),
                     "createdAt": d.get("createdAt", datetime.utcnow()).isoformat() if isinstance(d.get("createdAt"), datetime) else str(d.get("createdAt", "")),
-                })
+                }
+                search_items.append(entry)
 
             basket_items = []
             for d in basket_docs:
