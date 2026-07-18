@@ -45,7 +45,7 @@ class SearchInput(BaseModel):
     category: str = Field(..., min_length=1)
     suppliers: list[str] = Field(default_factory=list)
     query: str = Field(..., min_length=1)
-    sortBy: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
+    sortBy: Optional[Literal["lowest_price", "lowest_total_cost", "highest_rating", "fastest_delivery", "highest_discount"]] = None
     filters: Optional[SearchFilters] = None
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     recommendationMode: Optional[RecommendationMode] = None
@@ -66,7 +66,7 @@ class RecommendationInput(BaseModel):
 class PreferenceInput(BaseModel):
     defaultCategory: Optional[str] = None
     enabledSuppliers: Optional[list[str]] = None
-    sortPreference: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
+    sortPreference: Optional[Literal["lowest_price", "lowest_total_cost", "highest_rating", "fastest_delivery", "highest_discount"]] = None
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     businessType: Optional[str] = None
     city: Optional[str] = None
