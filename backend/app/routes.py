@@ -294,6 +294,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
         # Persist basket history (fire and forget)
         try:
             db = get_db()
+            now = datetime.utcnow()
             fulfilled = [i for i in result.get("items", []) if i.get("supplier")]
             if fulfilled:
                 await db.baskethistories.insert_one({
@@ -308,9 +309,28 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
                     "supplierCount": result.get("supplierCount", 0),
                     "recommendedPlan": result.get("recommendedPlan", "split"),
                     "weightProfile": body.weightProfile or "balanced",
-                    "createdAt": datetime.utcnow(),
-                    "updatedAt": datetime.utcnow(),
+                    "createdAt": now,
+                    "updatedAt": now,
                 })
+                # Also record each basket item in searchhistories so they appear in dashboard
+                search_docs = []
+                for item in fulfilled:
+                    search_docs.append({
+                        "userId": ObjectId(user["sub"]),
+                        "query": item["query"],
+                        "category": body.category,
+                        "suppliers": body.suppliers,
+                        "resultCount": 1,
+                        "recommendedSupplier": item.get("supplier", ""),
+                        "bestPrice": item.get("price", 0),
+                        "estimatedSavings": item.get("savings", 0),
+                        "weightProfile": body.weightProfile or "balanced",
+                        "createdAt": now,
+                        "updatedAt": now,
+                    })
+                if search_docs:
+                    await db.searchhistories.insert_many(search_docs)
+                    print(f"[INFO] Basket search history saved: {len(search_docs)} items for category='{body.category}'")
         except Exception as he:
             print(f"[WARN] Failed to persist basket history: {he}")
 

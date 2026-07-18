@@ -336,19 +336,22 @@ function SupplierComparisonDropdown({
 
     return (
       <div className="overflow-hidden rounded-md border border-line bg-surface">
-        <div className="flex items-center gap-3 border-b border-line bg-bg px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-bg px-4 py-2.5 sm:flex-nowrap sm:gap-3">
           <ArrowUpDown size={14} className="text-muted shrink-0" />
           <span className="label-eyebrow shrink-0">Supplier Comparison</span>
           <select
             value={selectedIdx}
             onChange={(e) => { try { setSelectedIdx(Number(e.target.value)); } catch { /* silent */ } }}
-            className="ml-auto max-w-[260px] rounded-md border border-line bg-surface px-2.5 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+            className="ml-auto min-w-0 max-w-full truncate rounded-md border border-line bg-surface px-2.5 py-1 text-sm text-ink focus:border-accent focus:outline-none sm:max-w-[260px]"
           >
-            {comparisons.map((c, i) => (
-              <option key={`${c.query}-${i}`} value={i}>
-                {c.query} ({c.suppliers.length} supplier{c.suppliers.length > 1 ? 's' : ''})
-              </option>
-            ))}
+            {comparisons.map((c, i) => {
+              const label = c.query.length > 30 ? c.query.slice(0, 30) + '…' : c.query;
+              return (
+                <option key={`${c.query}-${i}`} value={i}>
+                  {label} ({c.suppliers.length} supplier{c.suppliers.length > 1 ? 's' : ''})
+                </option>
+              );
+            })}
           </select>
         </div>
 
