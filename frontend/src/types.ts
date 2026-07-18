@@ -24,7 +24,7 @@ export interface Supplier {
   enabled: boolean;
 }
 
-export type SortOption = 'lowest_price' | 'highest_rating' | 'fastest_delivery' | 'highest_discount';
+export type SortOption = 'lowest_price' | 'lowest_total_cost' | 'highest_rating' | 'fastest_delivery' | 'highest_discount';
 export type WeightProfileKey = 'balanced' | 'budget' | 'urgent' | 'fast';
 export type RecommendationMode =
   | 'balanced'

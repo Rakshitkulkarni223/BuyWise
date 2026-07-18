@@ -41,7 +41,6 @@ import { RecommendationModeSelector } from '../components/RecommendationModeSele
 import { ProcurementInsightsPanel } from '../components/ProcurementInsightsPanel';
 import { ProcurementHealthMeter } from '../components/ProcurementHealthMeter';
 import { SupplierComparisonMatrix } from '../components/SupplierComparisonMatrix';
-import { TotalCostBreakdownPanel } from '../components/TotalCostBreakdownPanel';
 import { LongTermRecommendationCard } from '../components/LongTermRecommendationCard';
 import { SupplierIntelligenceCard } from '../components/SupplierIntelligenceCard';
 import { SupplierSourceSelector } from '../components/SupplierSourceSelector';
@@ -669,12 +668,6 @@ export function SearchPage() {
                         supplierColors={supplierColors}
                       />
                     )}
-                    {result.intelligence.totalCosts?.length > 0 && (
-                      <TotalCostBreakdownPanel
-                        totalCosts={result.intelligence.totalCosts}
-                        supplierColors={supplierColors}
-                      />
-                    )}
                   </div>
                 </div>
               )}
@@ -715,6 +708,7 @@ export function SearchPage() {
                 query={query}
                 category={category}
                 recommendation={result.recommendation}
+                totalCosts={result.intelligence?.totalCosts}
               />
             </div>
           )}

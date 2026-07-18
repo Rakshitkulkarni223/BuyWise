@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { Product, SortOption } from '../types';
+import type { Product, SortOption, TotalCostBreakdown } from '../types';
 import { Badge } from './ui/Badge';
 import { Switch } from './ui/Switch';
 import { SupplierLogo } from './SupplierLogo';
@@ -13,12 +13,13 @@ import { useWatchlist } from '../hooks/useWatchlist';
 
 const SORTS: { value: SortOption; label: string }[] = [
   { value: 'lowest_price', label: 'Lowest Price' },
+  { value: 'lowest_total_cost', label: 'Lowest Total Cost' },
   { value: 'highest_rating', label: 'Highest Rating' },
   { value: 'fastest_delivery', label: 'Fastest Delivery' },
   { value: 'highest_discount', label: 'Highest Discount' },
 ];
 
-const sorters: Record<SortOption, (a: Product, b: Product) => number> = {
+const defaultSorters: Record<string, (a: Product, b: Product) => number> = {
   lowest_price: (a, b) => a.price - b.price,
   highest_rating: (a, b) => b.rating - a.rating,
   fastest_delivery: (a, b) => a.deliveryDays - b.deliveryDays,
@@ -34,6 +35,7 @@ export function ComparisonResults({
   query = '',
   category = '',
   recommendation,
+  totalCosts,
 }: {
   products: Product[];
   recommendedSupplier?: string;
@@ -43,6 +45,7 @@ export function ComparisonResults({
   query?: string;
   category?: string;
   recommendation?: { supplier: string; estimatedSavings: number; confidence: number } | null;
+  totalCosts?: TotalCostBreakdown[];
 }) {
   const [sortBy, setSortBy] = useState<SortOption>(initialSort);
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -51,13 +54,45 @@ export function ComparisonResults({
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 6;
 
+  // Build lookup: productId -> TotalCostBreakdown
+  const costMap = useMemo(() => {
+    try {
+      const map = new Map<string, TotalCostBreakdown>();
+      if (totalCosts) {
+        for (const tc of totalCosts) map.set(tc.productId, tc);
+      }
+      return map;
+    } catch { return new Map<string, TotalCostBreakdown>(); }
+  }, [totalCosts]);
+
+  const lowestTotalCost = useMemo(() => {
+    try {
+      if (!totalCosts || totalCosts.length === 0) return 0;
+      return Math.min(...totalCosts.map(tc => tc.totalProcurementCost));
+    } catch { return 0; }
+  }, [totalCosts]);
+
+  // Sorters including total-cost (needs costMap)
+  const sorters = useMemo((): Record<SortOption, (a: Product, b: Product) => number> => {
+    try {
+      return {
+        ...defaultSorters,
+        lowest_total_cost: (a, b) => {
+          const aCost = costMap.get(a.id)?.totalProcurementCost ?? a.price;
+          const bCost = costMap.get(b.id)?.totalProcurementCost ?? b.price;
+          return aCost - bCost;
+        },
+      } as Record<SortOption, (a: Product, b: Product) => number>;
+    } catch { return defaultSorters as Record<SortOption, (a: Product, b: Product) => number>; }
+  }, [costMap]);
+
   const view = useMemo(() => {
     let list = [...products];
     if (inStockOnly) list = list.filter((p) => p.availability);
     if (minRating > 0) list = list.filter((p) => p.rating >= minRating);
     list.sort(sorters[sortBy]);
     return list;
-  }, [products, sortBy, inStockOnly, minRating]);
+  }, [products, sortBy, inStockOnly, minRating, sorters]);
 
   // Reset page when filters change
   useMemo(() => { setCurrentPage(1); }, [sortBy, inStockOnly, minRating]);
@@ -145,7 +180,7 @@ export function ComparisonResults({
       ) : (
         <>
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-md border border-line bg-surface lg:block">
+          <div className="hidden overflow-x-auto rounded-md border border-line bg-surface lg:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg text-left">
@@ -153,6 +188,7 @@ export function ComparisonResults({
                   <th className="px-4 py-2.5 label-eyebrow">Source</th>
                   <th className="px-4 py-2.5 label-eyebrow">Product</th>
                   <th className="px-4 py-2.5 label-eyebrow text-right">Price</th>
+                  <th className="px-4 py-2.5 label-eyebrow text-right">Total Cost</th>
                   <th className="px-4 py-2.5 label-eyebrow text-center">Discount</th>
                   <th className="px-4 py-2.5 label-eyebrow text-center">Rating</th>
                   <th className="px-4 py-2.5 label-eyebrow text-center">Delivery</th>
@@ -227,6 +263,26 @@ export function ComparisonResults({
                             {formatINR(p.originalPrice)}
                           </div>
                         )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {(() => {
+                          try {
+                            const tc = costMap.get(p.id);
+                            if (!tc) return <span className="text-xs text-muted">—</span>;
+                            const logistics = tc.totalProcurementCost - tc.productPrice;
+                            const isLowest = tc.totalProcurementCost === lowestTotalCost;
+                            return (
+                              <div>
+                                <div className={cn('data-num font-bold', isLowest ? 'text-success' : 'text-ink')}>
+                                  {formatINR(tc.totalProcurementCost)}
+                                </div>
+                                {logistics > 0 && (
+                                  <div className="data-num text-[10px] text-muted">+{formatINR(logistics)} logistics</div>
+                                )}
+                              </div>
+                            );
+                          } catch { return <span className="text-xs text-muted">—</span>; }
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-center">
                         {p.discount > 0 ? (
@@ -396,6 +452,25 @@ export function ComparisonResults({
                       </span>
                     )}
                   </div>
+                  {(() => {
+                    try {
+                      const tc = costMap.get(p.id);
+                      if (!tc) return null;
+                      const logistics = tc.totalProcurementCost - tc.productPrice;
+                      const isLowest = tc.totalProcurementCost === lowestTotalCost;
+                      return (
+                        <div className="mt-2 flex items-center justify-between rounded bg-bg/50 px-2.5 py-1.5 text-xs">
+                          <span className="text-muted">Total Cost</span>
+                          <span className={cn('data-num font-bold', isLowest ? 'text-success' : 'text-ink')}>
+                            {formatINR(tc.totalProcurementCost)}
+                            {logistics > 0 && (
+                              <span className="ml-1 text-[10px] font-normal text-muted">+{formatINR(logistics)}</span>
+                            )}
+                          </span>
+                        </div>
+                      );
+                    } catch { return null; }
+                  })()}
                   <div className="mt-3 flex items-center justify-between text-xs text-muted">
                     <span>Delivery: {deliveryLabel(p.deliveryDays)}</span>
                     <span>{p.availability ? 'In stock' : 'Out of stock'}</span>

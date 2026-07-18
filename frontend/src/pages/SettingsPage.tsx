@@ -10,6 +10,7 @@ import { useLocation } from '../context/LocationContext';
 
 const SORTS: { value: SortOption; label: string }[] = [
   { value: 'lowest_price', label: 'Lowest Price' },
+  { value: 'lowest_total_cost', label: 'Lowest Total Cost' },
   { value: 'highest_rating', label: 'Highest Rating' },
   { value: 'fastest_delivery', label: 'Fastest Delivery' },
   { value: 'highest_discount', label: 'Highest Discount' },
