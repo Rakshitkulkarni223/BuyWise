@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Split, Layers, Truck, Gauge, Check, PackageX, Store, Building2, ArrowUpDown } from 'lucide-react';
+import { Split, Layers, Truck, Gauge, Check, PackageX, Store, Building2, ArrowUpDown, MapPin } from 'lucide-react';
 import type { BasketOptimizeResponse } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
@@ -320,6 +320,7 @@ export function BasketResults({
                         <tr className="border-b border-line text-left text-xs text-muted">
                           <th className="pb-1.5 pr-3 font-medium">Supplier</th>
                           <th className="pb-1.5 pr-3 font-medium">Source</th>
+                          <th className="pb-1.5 pr-3 font-medium">Location</th>
                           <th className="pb-1.5 pr-3 text-right font-medium">Unit Price</th>
                           <th className="pb-1.5 pr-3 text-right font-medium">Line Total</th>
                           <th className="pb-1.5 pr-3 text-right font-medium">Delivery</th>
@@ -360,6 +361,19 @@ export function BasketResults({
                                   <Badge tone="accent" className="gap-1">
                                     <Store size={9} /> Marketplace
                                   </Badge>
+                                )}
+                              </td>
+                              <td className="py-2 pr-3">
+                                {s.city ? (
+                                  <div className="flex items-center gap-1 text-xs text-muted">
+                                    <MapPin size={10} className="shrink-0" />
+                                    <span>{s.city}</span>
+                                    {s.distanceKm != null && s.distanceKm > 0 && (
+                                      <span className="text-[10px] text-muted/70">({s.distanceKm}km)</span>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-muted/50">—</span>
                                 )}
                               </td>
                               <td className="py-2 pr-3 text-right">

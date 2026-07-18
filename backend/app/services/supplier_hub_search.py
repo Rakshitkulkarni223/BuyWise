@@ -41,6 +41,20 @@ class SupplierHubSearchService:
             return []
 
     @staticmethod
+    async def get_all_suppliers(user_id: str) -> list[dict]:
+        """Return all active Supplier Hub suppliers for a user (all categories)."""
+        try:
+            db = get_db()
+            cursor = db.supplier_hub_suppliers.find({
+                "userId": _oid(user_id),
+                "active": True,
+            }).sort("name", 1)
+            docs = await cursor.to_list(length=500)
+            return docs
+        except Exception:
+            return []
+
+    @staticmethod
     async def get_products_for_supplier(supplier_id: ObjectId, category: Optional[str] = None) -> list[dict]:
         """Return products for a supplier, optionally filtered by category."""
         try:

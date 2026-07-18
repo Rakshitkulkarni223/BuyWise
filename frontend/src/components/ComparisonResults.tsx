@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2 } from 'lucide-react';
+import { ExternalLink, Crown, ArrowUpDown, PackageX, Download, FileText, Eye, EyeOff, Store, Building2, MapPin } from 'lucide-react';
 import type { Product, SortOption } from '../types';
 import { Badge } from './ui/Badge';
 import { Switch } from './ui/Switch';
@@ -181,6 +181,14 @@ export function ComparisonResults({
                             <Store size={10} /> Marketplace
                           </Badge>
                         )}
+                        {p.city && (
+                          <div className="mt-1 flex items-center gap-0.5 text-[10px] text-muted">
+                            <MapPin size={8} className="shrink-0" /> {p.city}
+                            {p.distanceKm != null && p.distanceKm > 0 && (
+                              <span className="text-muted/70">({p.distanceKm}km)</span>
+                            )}
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
@@ -303,7 +311,7 @@ export function ComparisonResults({
                       {p.discount > 0 && <Badge tone="success">{p.discount}% off</Badge>}
                     </div>
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-2 flex items-center gap-2">
                     {p.supplierSource === 'supplier_hub' ? (
                       <Badge tone="neutral" className="gap-1">
                         <Building2 size={10} /> My Supplier
@@ -312,6 +320,14 @@ export function ComparisonResults({
                       <Badge tone="accent" className="gap-1">
                         <Store size={10} /> Marketplace
                       </Badge>
+                    )}
+                    {p.city && (
+                      <span className="flex items-center gap-0.5 text-[10px] text-muted">
+                        <MapPin size={8} /> {p.city}
+                        {p.distanceKm != null && p.distanceKm > 0 && (
+                          <span className="text-muted/70">({p.distanceKm}km)</span>
+                        )}
+                      </span>
                     )}
                   </div>
                   <div className="mt-3 flex items-center justify-between text-xs text-muted">

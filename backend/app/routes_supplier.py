@@ -149,6 +149,8 @@ async def suppliers_by_category(category: str, user: dict = Depends(get_current_
                 "id": str(d.get("_id", "")),
                 "name": d.get("name", ""),
                 "supplierType": d.get("supplierType", ""),
+                "city": d.get("city"),
+                "state": d.get("state"),
                 "deliveryDays": d.get("deliveryDays"),
                 "creditPeriod": d.get("creditPeriod"),
                 "reliabilityScore": d.get("reliabilityScore"),
@@ -158,6 +160,21 @@ async def suppliers_by_category(category: str, user: dict = Depends(get_current_
             for d in docs
         ]
         return ok(data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/suppliers/cities")
+async def get_supplier_cities(user: dict = Depends(get_current_user)):
+    try:
+        docs = await SupplierHubSearchService.get_all_suppliers(user["sub"])
+        cities = set()
+        for d in docs:
+            city = d.get("city")
+            state = d.get("state")
+            if city:
+                cities.add(f"{city}, {state}" if state else city)
+        return ok(sorted(list(cities)))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -11,7 +11,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from app.config import CATALOG
+from app.config import CATALOG, DEFAULT_USER_CITY, get_city_distance, distance_to_delivery_days
 
 
 def _tokenize(text: str) -> list[str]:
@@ -60,7 +60,12 @@ class SupplierHubProviderAdapter:
             s = self.supplier
             supplier_name = s.get("name", "Unknown Supplier")
             supplier_id = str(s.get("_id", ""))
-            delivery_days = max(0, s.get("deliveryDays") or 3)
+            base_delivery_days = max(0, s.get("deliveryDays") or 3)
+            supplier_city = s.get("city") or ""
+            supplier_state = s.get("state") or ""
+            # Calculate distance-based delivery days
+            distance_km = get_city_distance(DEFAULT_USER_CITY, supplier_city)
+            delivery_days = distance_to_delivery_days(distance_km, base_delivery_days)
             reliability = s.get("reliabilityScore")
             # Scale reliability (0-10) to rating (0-5)
             if reliability is not None:
@@ -124,6 +129,9 @@ class SupplierHubProviderAdapter:
                         "returnPolicyDays": None,
                         "productUrl": "",
                         "supplierSource": "supplier_hub",
+                        "city": supplier_city,
+                        "state": supplier_state,
+                        "distanceKm": distance_km,
                     })
                 except Exception:
                     continue

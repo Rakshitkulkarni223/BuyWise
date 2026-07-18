@@ -242,6 +242,9 @@ class BasketOptimizationService:
                         "deliveryDays": prod.get("deliveryDays", 0),
                         "rating": prod.get("rating", 0),
                         "supplierSource": prod.get("supplierSource", "marketplace"),
+                        "city": prod.get("city", ""),
+                        "state": prod.get("state", ""),
+                        "distanceKm": prod.get("distanceKm", 0),
                     })
                 suppliers_list.sort(key=lambda x: x["price"])
                 comparisons.append({

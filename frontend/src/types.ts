@@ -53,6 +53,9 @@ export interface Product {
   returnPolicyDays?: number;
   productUrl: string;
   supplierSource?: 'marketplace' | 'supplier_hub';
+  city?: string;
+  state?: string;
+  distanceKm?: number;
 }
 
 export interface RecommendationFactor {
@@ -208,6 +211,9 @@ export interface BasketComparisonSupplier {
   deliveryDays: number;
   rating: number;
   supplierSource: 'marketplace' | 'supplier_hub';
+  city?: string;
+  state?: string;
+  distanceKm?: number;
 }
 
 export interface BasketComparison {

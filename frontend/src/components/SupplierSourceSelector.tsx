@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Store, ChevronDown, CheckCheck, Square, Building2 } from 'lucide-react';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Store, ChevronDown, CheckCheck, Square, Building2, MapPin } from 'lucide-react';
 import type { Supplier } from '../types';
 import type { SupplierHubSupplierSummary } from '../types_supplier';
 import { SUPPLIER_TYPE_LABELS } from '../types_supplier';
@@ -28,6 +28,7 @@ function SupplierGroup({
   onSelectNone,
   defaultExpanded = true,
   renderBadge,
+  locationFilter,
 }: {
   title: string;
   icon: React.ReactNode;
@@ -38,11 +39,24 @@ function SupplierGroup({
   onSelectNone: () => void;
   defaultExpanded?: boolean;
   renderBadge?: (supplier: { name: string; color?: string }) => React.ReactNode;
+  locationFilter?: string;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const selectedCount = suppliers.filter((s) => selected.has(s.name)).length;
   const allSelected = selectedCount === suppliers.length && suppliers.length > 0;
   const noneSelected = selectedCount === 0;
+
+  // Filter suppliers by location if a filter is set
+  const visibleSuppliers = useMemo(() => {
+    if (!locationFilter) return suppliers;
+    return suppliers.filter((s) => {
+      const shSupplier = s as SupplierHubSupplierSummary;
+      const loc = shSupplier.city && shSupplier.state
+        ? `${shSupplier.city}, ${shSupplier.state}`
+        : shSupplier.city || '';
+      return loc === locationFilter;
+    });
+  }, [suppliers, locationFilter]);
 
   const handleGroupToggle = useCallback(() => {
     try {
@@ -97,9 +111,9 @@ function SupplierGroup({
       </div>
 
       {/* Supplier list */}
-      {expanded && suppliers.length > 0 && (
+      {expanded && visibleSuppliers.length > 0 && (
         <div className="grid gap-1.5 p-3 sm:grid-cols-2 lg:grid-cols-3">
-          {suppliers.map((s) => (
+          {visibleSuppliers.map((s) => (
             <label
               key={s.name}
               className={cn(
@@ -124,9 +138,9 @@ function SupplierGroup({
         </div>
       )}
 
-      {expanded && suppliers.length === 0 && (
+      {expanded && visibleSuppliers.length === 0 && (
         <div className="px-3 py-4 text-center text-xs text-muted">
-          No suppliers in this group.
+          {locationFilter ? `No suppliers in ${locationFilter}.` : 'No suppliers in this group.'}
         </div>
       )}
     </div>
@@ -144,6 +158,28 @@ export function SupplierSourceSelector({
   onSelectNoneSupplierHub,
 }: SupplierSourceSelectorProps) {
   const hasSupplierHub = supplierHubSuppliers.length > 0;
+  const [locationFilter, setLocationFilter] = useState<string>('');
+
+  // Extract unique cities from supplier hub suppliers
+  const availableCities = useMemo(() => {
+    const cities = new Set<string>();
+    for (const s of supplierHubSuppliers) {
+      if (s.city && s.state) {
+        cities.add(`${s.city}, ${s.state}`);
+      } else if (s.city) {
+        cities.add(s.city);
+      }
+    }
+    return sorted(Array.from(cities));
+  }, [supplierHubSuppliers]);
+
+  function sorted(arr: string[]) {
+    try {
+      return arr.sort((a, b) => a.localeCompare(b));
+    } catch {
+      return arr;
+    }
+  }
 
   return (
     <div className="space-y-3" data-testid="supplier-source-selector">
@@ -159,26 +195,62 @@ export function SupplierSourceSelector({
       />
 
       {hasSupplierHub && (
-        <SupplierGroup
-          title="My Supplier Network"
-          icon={<Building2 size={14} className="text-accent" />}
-          suppliers={supplierHubSuppliers}
-          selected={selected}
-          onToggle={onToggle}
-          onSelectAll={onSelectAllSupplierHub}
-          onSelectNone={onSelectNoneSupplierHub}
-          defaultExpanded={true}
-          renderBadge={(s) => {
-            const shSupplier = supplierHubSuppliers.find((sh) => sh.name === s.name);
-            if (!shSupplier) return null;
-            const typeLabel = SUPPLIER_TYPE_LABELS[shSupplier.supplierType] || shSupplier.supplierType;
-            return (
-              <Badge tone="neutral" className="shrink-0 text-[10px] px-1.5 py-0.5">
-                {typeLabel}
-              </Badge>
-            );
-          }}
-        />
+        <>
+          {/* Location filter */}
+          {availableCities.length > 1 && (
+            <div className="flex items-center gap-2 px-1">
+              <MapPin size={13} className="text-muted" />
+              <select
+                value={locationFilter}
+                onChange={(e) => { try { setLocationFilter(e.target.value); } catch { /* silent */ } }}
+                className="rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs text-ink focus:border-accent focus:outline-none"
+              >
+                <option value="">All locations</option>
+                {availableCities.map((city) => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+              {locationFilter && (
+                <button
+                  type="button"
+                  onClick={() => { try { setLocationFilter(''); } catch { /* silent */ } }}
+                  className="text-xs text-muted hover:text-ink transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
+
+          <SupplierGroup
+            title="My Supplier Network"
+            icon={<Building2 size={14} className="text-accent" />}
+            suppliers={supplierHubSuppliers}
+            selected={selected}
+            onToggle={onToggle}
+            onSelectAll={onSelectAllSupplierHub}
+            onSelectNone={onSelectNoneSupplierHub}
+            defaultExpanded={true}
+            locationFilter={locationFilter}
+            renderBadge={(s) => {
+              const shSupplier = supplierHubSuppliers.find((sh) => sh.name === s.name);
+              if (!shSupplier) return null;
+              const typeLabel = SUPPLIER_TYPE_LABELS[shSupplier.supplierType] || shSupplier.supplierType;
+              return (
+                <div className="flex items-center gap-1 shrink-0">
+                  {shSupplier.city && (
+                    <Badge tone="neutral" className="text-[10px] px-1.5 py-0.5 gap-0.5">
+                      <MapPin size={8} /> {shSupplier.city}
+                    </Badge>
+                  )}
+                  <Badge tone="neutral" className="text-[10px] px-1.5 py-0.5">
+                    {typeLabel}
+                  </Badge>
+                </div>
+              );
+            }}
+          />
+        </>
       )}
     </div>
   );

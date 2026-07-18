@@ -254,3 +254,87 @@ def clamp(n: float, mn: float, mx: float) -> float:
         return max(mn, min(mx, n))
     except Exception:
         return n
+
+
+# ---------------------------------------------------------------------------
+# City distance matrix (approximate road distances in km between major Indian cities)
+# Used for distance-based delivery estimation for Supplier Hub suppliers.
+# ---------------------------------------------------------------------------
+
+CITY_DISTANCES_KM: dict[str, dict[str, int]] = {
+    "Mumbai": {"Mumbai": 0, "Pune": 150, "Nashik": 180, "Surat": 280, "Ahmedabad": 520, "Bengaluru": 980, "Hyderabad": 710, "Chennai": 1330, "Delhi": 1410, "Noida": 1420, "Greater Noida": 1430, "Faridabad": 1400, "Gurugram": 1410, "Anand": 420, "Indore": 580, "Nagpur": 810, "Kolkata": 1960, "Tirupur": 1280, "Coimbatore": 1300},
+    "Pune": {"Pune": 0, "Mumbai": 150, "Nashik": 210, "Surat": 420, "Ahmedabad": 660, "Bengaluru": 840, "Hyderabad": 560, "Chennai": 1180, "Delhi": 1290, "Noida": 1300, "Greater Noida": 1310, "Faridabad": 1280, "Gurugram": 1290, "Anand": 560, "Indore": 520, "Nagpur": 680, "Kolkata": 1840, "Tirupur": 1130, "Coimbatore": 1150},
+    "Bengaluru": {"Bengaluru": 0, "Mumbai": 980, "Pune": 840, "Chennai": 350, "Hyderabad": 570, "Coimbatore": 365, "Tirupur": 380, "Kochi": 550, "Mysuru": 150, "Delhi": 2150, "Noida": 2160, "Greater Noida": 2170, "Faridabad": 2140, "Gurugram": 2150, "Anand": 1390, "Kolkata": 1870},
+    "Chennai": {"Chennai": 0, "Bengaluru": 350, "Hyderabad": 630, "Coimbatore": 500, "Tirupur": 470, "Mumbai": 1330, "Pune": 1180, "Delhi": 2200, "Noida": 2210, "Greater Noida": 2220, "Faridabad": 2190, "Gurugram": 2200, "Kolkata": 1670, "Anand": 1750},
+    "Hyderabad": {"Hyderabad": 0, "Bengaluru": 570, "Chennai": 630, "Mumbai": 710, "Pune": 560, "Nagpur": 500, "Delhi": 1550, "Noida": 1560, "Greater Noida": 1570, "Faridabad": 1540, "Gurugram": 1550, "Kolkata": 1480, "Anand": 1130, "Tirupur": 940, "Coimbatore": 920},
+    "Delhi": {"Delhi": 0, "Noida": 20, "Greater Noida": 40, "Faridabad": 30, "Gurugram": 30, "Mumbai": 1410, "Pune": 1290, "Bengaluru": 2150, "Chennai": 2200, "Hyderabad": 1550, "Kolkata": 1540, "Ahmedabad": 950, "Indore": 780, "Jaipur": 280, "Anand": 1080, "Nagpur": 1090},
+    "Noida": {"Noida": 0, "Delhi": 20, "Greater Noida": 25, "Faridabad": 35, "Gurugram": 50, "Mumbai": 1420, "Pune": 1300, "Bengaluru": 2160, "Chennai": 2210, "Hyderabad": 1560, "Kolkata": 1550, "Anand": 1090},
+    "Greater Noida": {"Greater Noida": 0, "Delhi": 40, "Noida": 25, "Faridabad": 55, "Gurugram": 70, "Mumbai": 1430, "Pune": 1310, "Bengaluru": 2170, "Chennai": 2220, "Hyderabad": 1570, "Kolkata": 1560, "Anand": 1100},
+    "Faridabad": {"Faridabad": 0, "Delhi": 30, "Noida": 35, "Greater Noida": 55, "Gurugram": 45, "Mumbai": 1400, "Pune": 1280, "Bengaluru": 2140, "Chennai": 2190, "Hyderabad": 1540, "Kolkata": 1530, "Anand": 1070},
+    "Gurugram": {"Gurugram": 0, "Delhi": 30, "Noida": 50, "Greater Noida": 70, "Faridabad": 45, "Mumbai": 1410, "Pune": 1290, "Bengaluru": 2150, "Chennai": 2200, "Hyderabad": 1550, "Kolkata": 1540, "Anand": 1080},
+    "Anand": {"Anand": 0, "Ahmedabad": 75, "Mumbai": 420, "Pune": 560, "Surat": 215, "Vadodara": 40, "Bengaluru": 1390, "Chennai": 1750, "Hyderabad": 1130, "Delhi": 1080, "Noida": 1090, "Faridabad": 1070, "Gurugram": 1080, "Kolkata": 2010},
+    "Tirupur": {"Tirupur": 0, "Coimbatore": 50, "Chennai": 470, "Bengaluru": 380, "Hyderabad": 940, "Mumbai": 1280, "Pune": 1130, "Delhi": 2230, "Kolkata": 1970, "Anand": 1660},
+    "Coimbatore": {"Coimbatore": 0, "Tirupur": 50, "Chennai": 500, "Bengaluru": 365, "Hyderabad": 920, "Mumbai": 1300, "Pune": 1150, "Delhi": 2250, "Kolkata": 1990, "Anand": 1680},
+    "Kolkata": {"Kolkata": 0, "Delhi": 1540, "Noida": 1550, "Faridabad": 1530, "Gurugram": 1540, "Mumbai": 1960, "Pune": 1840, "Bengaluru": 1870, "Chennai": 1670, "Hyderabad": 1480, "Anand": 2010, "Nagpur": 1140},
+    "Ahmedabad": {"Ahmedabad": 0, "Anand": 75, "Mumbai": 520, "Pune": 660, "Surat": 265, "Delhi": 950, "Noida": 960, "Faridabad": 940, "Gurugram": 950, "Bengaluru": 1500, "Hyderabad": 1200, "Indore": 380},
+    "Indore": {"Indore": 0, "Mumbai": 580, "Pune": 520, "Delhi": 780, "Ahmedabad": 380, "Nagpur": 380, "Bengaluru": 1360, "Hyderabad": 830, "Anand": 440},
+    "Nagpur": {"Nagpur": 0, "Mumbai": 810, "Pune": 680, "Hyderabad": 500, "Indore": 380, "Delhi": 1090, "Kolkata": 1140, "Bengaluru": 1090, "Chennai": 1160},
+    "Surat": {"Surat": 0, "Mumbai": 280, "Pune": 420, "Ahmedabad": 265, "Anand": 215, "Delhi": 1180, "Bengaluru": 1260},
+    "Nashik": {"Nashik": 0, "Mumbai": 180, "Pune": 210, "Surat": 320, "Ahmedabad": 400, "Anand": 350},
+    "Jaipur": {"Jaipur": 0, "Delhi": 280, "Noida": 300, "Gurugram": 240, "Faridabad": 290, "Mumbai": 1140, "Ahmedabad": 670, "Indore": 600},
+    "Kochi": {"Kochi": 0, "Bengaluru": 550, "Coimbatore": 190, "Chennai": 685, "Tirupur": 240, "Mumbai": 1360},
+    "Mysuru": {"Mysuru": 0, "Bengaluru": 150, "Coimbatore": 200, "Chennai": 500, "Mumbai": 1130},
+    "Vadodara": {"Vadodara": 0, "Anand": 40, "Ahmedabad": 110, "Surat": 255, "Mumbai": 460, "Pune": 600, "Delhi": 1030},
+}
+
+# Default user location (can be overridden via user preferences)
+DEFAULT_USER_CITY = "Mumbai"
+
+
+def get_city_distance(city_a: str, city_b: str) -> int:
+    """Get approximate road distance in km between two cities. Returns 0 if unknown."""
+    try:
+        if not city_a or not city_b:
+            return 0
+        if city_a == city_b:
+            return 0
+        row = CITY_DISTANCES_KM.get(city_a, {})
+        dist = row.get(city_b)
+        if dist is not None:
+            return dist
+        # Try reverse lookup
+        row = CITY_DISTANCES_KM.get(city_b, {})
+        dist = row.get(city_a)
+        if dist is not None:
+            return dist
+        # Same state but unknown distance — estimate 200km
+        return 200
+    except Exception:
+        return 0
+
+
+def distance_to_delivery_days(distance_km: int, base_days: int = 0) -> int:
+    """Convert distance to additional delivery days.
+    <100km: +0 days (same-day/next-day)
+    100-300km: +1 day
+    300-600km: +2 days
+    600-1000km: +3 days
+    1000-1500km: +4 days
+    >1500km: +5 days
+    """
+    try:
+        if distance_km <= 0:
+            return base_days
+        if distance_km < 100:
+            return base_days
+        if distance_km < 300:
+            return base_days + 1
+        if distance_km < 600:
+            return base_days + 2
+        if distance_km < 1000:
+            return base_days + 3
+        if distance_km < 1500:
+            return base_days + 4
+        return base_days + 5
+    except Exception:
+        return base_days

@@ -29,6 +29,8 @@ export interface SupplierHubSupplierSummary {
   id: string;
   name: string;
   supplierType: string;
+  city?: string;
+  state?: string;
   deliveryDays?: number;
   creditPeriod?: number;
   reliabilityScore?: number;
