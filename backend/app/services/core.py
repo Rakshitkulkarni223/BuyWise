@@ -712,7 +712,7 @@ class SearchService:
                 from app.config import env as _env
                 if _env.SERPAPI_KEY:
                     from app.services.serpapi_adapter import SerpAPIProviderAdapter
-                    tasks.append(SerpAPIProviderAdapter().search(query, category))
+                    tasks.append(SerpAPIProviderAdapter(allowed_suppliers=suppliers).search(query, category))
             except Exception:
                 pass
 

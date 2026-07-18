@@ -88,13 +88,30 @@ class SerpAPIProviderAdapter:
 
     SERPAPI_URL = "https://serpapi.com/search.json"
 
-    def __init__(self):
+    def __init__(self, allowed_suppliers: list[str] | None = None):
         try:
             self.name = "Google Shopping"
             self.api_key = getattr(env, "SERPAPI_KEY", "") or ""
+            self.allowed_suppliers = allowed_suppliers or []
         except Exception:
             self.name = "Google Shopping"
             self.api_key = ""
+            self.allowed_suppliers = []
+
+    def _matches_allowed(self, source: str) -> str | None:
+        """Check if a SerpAPI source matches any allowed supplier. Returns matched name or None."""
+        try:
+            if not self.allowed_suppliers:
+                return source  # No filter — allow all
+            src_lower = source.lower().strip()
+            for supplier in self.allowed_suppliers:
+                sup_lower = supplier.lower().strip()
+                # Match: "amazon.in" contains "amazon", "Flipkart" == "flipkart", etc.
+                if sup_lower in src_lower or src_lower in sup_lower:
+                    return supplier  # Return the canonical supplier name
+            return None
+        except Exception:
+            return None
 
     async def search(self, query: str, category: str) -> list[dict]:
         """Query Google Shopping via SerpAPI and return normalized product dicts."""
@@ -157,8 +174,11 @@ class SerpAPIProviderAdapter:
                     if isinstance(reviews, str):
                         reviews = int(re.sub(r"[^\d]", "", reviews) or "0")
 
-                    # Source / seller — use real seller name (e.g. "Amazon.in", "Flipkart")
-                    source = item.get("source") or "Online Store"
+                    # Source / seller — match against allowed suppliers
+                    raw_source = item.get("source") or ""
+                    matched_name = self._matches_allowed(raw_source)
+                    if matched_name is None:
+                        continue  # Skip sellers not in user's supplier list
 
                     # Delivery
                     delivery_text = item.get("delivery") or ""
@@ -175,7 +195,7 @@ class SerpAPIProviderAdapter:
 
                     products.append({
                         "id": product_id,
-                        "provider": source,
+                        "provider": matched_name,
                         "title": title,
                         "brand": _extract_brand(title),
                         "category": category,
