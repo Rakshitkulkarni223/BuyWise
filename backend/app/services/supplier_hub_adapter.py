@@ -39,15 +39,17 @@ def _score_product(product_name: str, brand: str, query_tokens: list[str]) -> fl
 class SupplierHubProviderAdapter:
     """Adapts a Supplier Hub supplier + its products into the standard Product format."""
 
-    def __init__(self, supplier_doc: dict, product_docs: list[dict]):
+    def __init__(self, supplier_doc: dict, product_docs: list[dict], user_city: str = ""):
         try:
             self.supplier = supplier_doc
             self.name: str = supplier_doc.get("name", "Unknown Supplier")
             self.products = product_docs or []
+            self.user_city = user_city or DEFAULT_USER_CITY
         except Exception:
             self.supplier = {}
             self.name = "Unknown Supplier"
             self.products = []
+            self.user_city = DEFAULT_USER_CITY
 
     async def search(self, query: str, category: str) -> list[dict]:
         try:
@@ -64,7 +66,7 @@ class SupplierHubProviderAdapter:
             supplier_city = s.get("city") or ""
             supplier_state = s.get("state") or ""
             # Calculate distance-based delivery days
-            distance_km = get_city_distance(DEFAULT_USER_CITY, supplier_city)
+            distance_km = get_city_distance(self.user_city, supplier_city)
             delivery_days = distance_to_delivery_days(distance_km, base_delivery_days)
             reliability = s.get("reliabilityScore")
             # Scale reliability (0-10) to rating (0-5)

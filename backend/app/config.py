@@ -290,6 +290,9 @@ CITY_DISTANCES_KM: dict[str, dict[str, int]] = {
 # Default user location (can be overridden via user preferences)
 DEFAULT_USER_CITY = "Mumbai"
 
+# Sorted list of all cities available in the distance matrix
+AVAILABLE_CITIES: list[str] = sorted(CITY_DISTANCES_KM.keys())
+
 
 def get_city_distance(city_a: str, city_b: str) -> int:
     """Get approximate road distance in km between two cities. Returns 0 if unknown."""

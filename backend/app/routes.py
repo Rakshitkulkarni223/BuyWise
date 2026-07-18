@@ -369,6 +369,15 @@ async def weight_profiles(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/cities")
+async def list_cities(user: dict = Depends(get_current_user)):
+    try:
+        from app.config import AVAILABLE_CITIES, DEFAULT_USER_CITY
+        return ok({"cities": AVAILABLE_CITIES, "default": DEFAULT_USER_CITY})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ===================================================================
 # History
 # ===================================================================

@@ -82,6 +82,9 @@ export interface Recommendation {
     riskLevel?: string;
     supplierScore?: number;
     deliveryReliability?: number;
+    deliveryDays?: number;
+    city?: string;
+    distanceKm?: number;
   }[];
 }
 
@@ -195,6 +198,9 @@ export interface BasketItemResult {
   availability: boolean;
   reasons: string[];
   supplierSource?: 'marketplace' | 'supplier_hub';
+  city?: string;
+  state?: string;
+  distanceKm?: number;
 }
 
 export interface BasketSupplierGroup {
@@ -202,6 +208,8 @@ export interface BasketSupplierGroup {
   subtotal: number;
   eta: string;
   supplierSource?: 'marketplace' | 'supplier_hub';
+  city?: string;
+  distanceKm?: number;
 }
 
 export interface BasketComparisonSupplier {

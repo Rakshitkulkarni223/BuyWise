@@ -210,7 +210,17 @@ export function BasketResults({
                   <SupplierLogo name={supplier} color={supplierColors[supplier]} size={32} />
                   <div>
                     <div className="font-semibold text-ink">{supplier}</div>
-                    <div className="text-xs text-muted">{group.eta}</div>
+                    <div className="flex items-center gap-2 text-xs text-muted">
+                      <span>{group.eta}</span>
+                      {group.city && (
+                        <span className="flex items-center gap-0.5">
+                          <MapPin size={9} /> {group.city}
+                          {group.distanceKm != null && group.distanceKm > 0 && (
+                            <span className="text-muted/70">({group.distanceKm}km)</span>
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

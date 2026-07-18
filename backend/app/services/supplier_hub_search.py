@@ -74,7 +74,7 @@ class SupplierHubSearchService:
             return []
 
     @staticmethod
-    async def gather(user_id: str, query: str, category: str, supplier_names: Optional[list[str]] = None) -> list[dict]:
+    async def gather(user_id: str, query: str, category: str, supplier_names: Optional[list[str]] = None, user_city: str = "") -> list[dict]:
         """
         Fetch Supplier Hub suppliers + products for the user/category,
         run adapters in parallel, and return merged Product dicts.
@@ -102,7 +102,7 @@ class SupplierHubSearchService:
             for i, supplier in enumerate(suppliers):
                 products = product_results[i] if isinstance(product_results[i], list) else []
                 if products:
-                    adapters.append(SupplierHubProviderAdapter(supplier, products))
+                    adapters.append(SupplierHubProviderAdapter(supplier, products, user_city=user_city))
 
             if not adapters:
                 return []

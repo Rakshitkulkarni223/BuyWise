@@ -489,6 +489,9 @@ class RecommendationService:
                     "riskLevel": ri.get("riskLevel", "Medium"),
                     "supplierScore": si.get("supplierScore", 0),
                     "deliveryReliability": si.get("deliveryReliability", 0),
+                    "deliveryDays": p.get("deliveryDays", 0),
+                    "city": p.get("city", ""),
+                    "distanceKm": p.get("distanceKm", 0),
                 })
 
             return {
@@ -518,6 +521,10 @@ class RecommendationService:
             tc = next((t for t in total_costs if t["supplier"] == supplier), None)
             others = [p for p in all_products if p["provider"] != supplier]
 
+            best_city = best.get("city") or ""
+            best_distance = best.get("distanceKm") or 0
+            best_days = best["deliveryDays"]
+
             # Mode-specific primary reason
             if mode == "lowest_cost":
                 if tc:
@@ -533,8 +540,10 @@ class RecommendationService:
                 )
             elif mode == "fastest_delivery":
                 d = best["deliveryDays"]
+                loc_str = f" from {best_city}" if best_city else ""
                 reasons.append(
-                    f"{supplier} is recommended for urgent procurement with delivery in {d} day{'s' if d != 1 else ''}."
+                    f"{supplier} is recommended for urgent procurement with delivery in {d} day{'s' if d != 1 else ''}"
+                    f"{loc_str}, reducing stock-out risk and enabling just-in-time inventory."
                 )
             elif mode == "highest_reliability":
                 reasons.append(
@@ -548,27 +557,76 @@ class RecommendationService:
                 )
             else:
                 # balanced
+                loc_str = f" based in {best_city}" if best_city else ""
                 reasons.append(
-                    f"{supplier} is recommended because it offers the best balance of "
+                    f"{supplier}{loc_str} is recommended because it offers the best balance of "
                     f"total procurement cost, delivery reliability, and low operational risk."
                 )
 
-            # Comparative insight
+            # Comparative insight — intelligent cost vs delivery trade-off
             if others:
                 cheaper = next((p for p in others if p["price"] < best["price"]), None)
                 if cheaper and mode != "lowest_cost":
                     diff = best["price"] - cheaper["price"]
+                    cheaper_days = cheaper["deliveryDays"]
+                    cheaper_city = cheaper.get("city") or ""
+                    cheaper_distance = cheaper.get("distanceKm") or 0
                     cheaper_risk = risk_scores.get(cheaper["provider"], {}).get("riskLevel", "Medium")
                     cheaper_rel = intel.get(cheaper["provider"], {}).get("deliveryReliability", 0)
-                    reasons.append(
-                        f"{cheaper['provider']} is {format_inr(diff)} cheaper but has lower reliability "
-                        f"({cheaper_rel}%) and {cheaper_risk.lower()} risk, increasing long-term procurement risk."
-                    )
+
+                    # Build trade-off message based on what matters
+                    trade_offs = []
+                    if best_days < cheaper_days:
+                        day_diff = cheaper_days - best_days
+                        trade_offs.append(f"delivers {day_diff} day{'s' if day_diff != 1 else ''} faster")
+                    if best_distance < cheaper_distance and best_distance > 0:
+                        trade_offs.append(f"is {cheaper_distance - best_distance}km closer (lower logistics cost)")
+                    if cheaper_rel < si.get("deliveryReliability", 0):
+                        trade_offs.append(f"has {round(si.get('deliveryReliability', 0) - cheaper_rel, 1)}% higher delivery reliability")
+
+                    if trade_offs:
+                        trade_off_text = ", ".join(trade_offs)
+                        cheaper_loc = f" ({cheaper_city})" if cheaper_city else ""
+                        reasons.append(
+                            f"Although {cheaper['provider']}{cheaper_loc} is {format_inr(diff)} cheaper, "
+                            f"{supplier} {trade_off_text}, reducing stock-out risk and total cost of ownership."
+                        )
+                    else:
+                        reasons.append(
+                            f"{cheaper['provider']} is {format_inr(diff)} cheaper but has lower reliability "
+                            f"({cheaper_rel}%) and {cheaper_risk.lower()} risk, increasing long-term procurement risk."
+                        )
+                elif not cheaper and mode != "lowest_cost":
+                    # We are the cheapest — mention it
+                    reasons.append(f"{supplier} also offers the lowest price at {format_inr(best['price'])}.")
+
+                # If someone else is faster but we're chosen for cost
+                faster = next((p for p in others if p["deliveryDays"] < best_days), None)
+                if faster and mode in ("lowest_cost", "balanced"):
+                    day_diff = best_days - faster["deliveryDays"]
+                    faster_city = faster.get("city") or ""
+                    faster_loc = f" ({faster_city})" if faster_city else ""
+                    price_adv = faster["price"] - best["price"]
+                    if price_adv > 0:
+                        reasons.append(
+                            f"{faster['provider']}{faster_loc} delivers {day_diff} day{'s' if day_diff != 1 else ''} faster "
+                            f"but costs {format_inr(price_adv)} more — {supplier} provides better value."
+                        )
+
+            # Location context
+            if best_city and best_distance > 0:
+                reasons.append(
+                    f"Located in {best_city} ({best_distance}km from your location) — "
+                    f"proximity reduces transit risk and logistics costs."
+                )
+            elif best_city:
+                reasons.append(f"Local supplier in {best_city} — minimises delivery time and logistics overhead.")
 
             # Reliability and risk context
-            reasons.append(
-                f"This recommendation balances cost, quality, logistics, and supplier stability."
-            )
+            if si.get("deliveryReliability", 0) >= 90:
+                reasons.append(
+                    f"High delivery reliability at {si['deliveryReliability']}% ensures consistent fulfilment."
+                )
 
             # Delivery and stock
             if best["deliveryDays"] == 0:
@@ -579,7 +637,7 @@ class RecommendationService:
             if best.get("warrantyMonths") and best["warrantyMonths"] > 0:
                 reasons.append(f"{best['warrantyMonths']}-month warranty included")
 
-            return reasons[:5]
+            return reasons[:6]
         except Exception:
             return []
 
@@ -632,7 +690,7 @@ class RecommendationService:
 
 class SearchService:
     @staticmethod
-    async def gather(query: str, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False) -> list[dict]:
+    async def gather(query: str, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False, user_city: str = "") -> list[dict]:
         """Query every supplier adapter in parallel. Optionally also query Supplier Hub suppliers."""
         try:
             adapters = [
@@ -647,7 +705,7 @@ class SearchService:
                 # Supplier Hub names = selected names that aren't marketplace suppliers
                 sh_names = [s for s in suppliers if s not in marketplace_names]
                 # Always query Supplier Hub when flag is set; pass sh_names to filter (None = all)
-                tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None))
+                tasks.append(SupplierHubSearchService.gather(user_id, query, category, sh_names if sh_names else None, user_city=user_city))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
             products: list[dict] = []
@@ -684,7 +742,8 @@ class SearchService:
                 raise ValueError(f"Unknown category: {category}")
 
             include_supplier_hub = req.get("includeSupplierHub", True)
-            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
+            user_city = req.get("userCity") or ""
+            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub, user_city=user_city)
             results = ComparisonService.apply(
                 products, req.get("sortBy"), req.get("filters")
             )

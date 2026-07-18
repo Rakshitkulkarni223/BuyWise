@@ -166,7 +166,7 @@ class BasketOptimizationService:
                 chosen_suppliers.add(product["provider"])
                 max_days = max(max_days, product["deliveryDays"])
 
-                g = grouped.get(product["provider"], {"items": [], "subtotal": 0, "eta": "Today", "_days": 0, "_source": product.get("supplierSource", "marketplace")})
+                g = grouped.get(product["provider"], {"items": [], "subtotal": 0, "eta": "Today", "_days": 0, "_source": product.get("supplierSource", "marketplace"), "_city": product.get("city", ""), "_distance": product.get("distanceKm", 0)})
                 g["items"].append(a["query"])
                 g["subtotal"] += line_total
                 g["_days"] = max(g.get("_days", 0), product["deliveryDays"])
@@ -180,11 +180,21 @@ class BasketOptimizationService:
                     "lineTotal": line_total, "deliveryDays": product["deliveryDays"],
                     "availability": True, "reasons": reasons,
                     "supplierSource": product.get("supplierSource", "marketplace"),
+                    "city": product.get("city", ""),
+                    "state": product.get("state", ""),
+                    "distanceKm": product.get("distanceKm", 0),
                 })
 
             grouped_by_supplier = {}
             for s, g in grouped.items():
-                grouped_by_supplier[s] = {"items": g["items"], "subtotal": round(g["subtotal"]), "eta": g["eta"], "supplierSource": g.get("_source", "marketplace")}
+                grouped_by_supplier[s] = {
+                    "items": g["items"],
+                    "subtotal": round(g["subtotal"]),
+                    "eta": g["eta"],
+                    "supplierSource": g.get("_source", "marketplace"),
+                    "city": g.get("_city", ""),
+                    "distanceKm": g.get("_distance", 0),
+                }
 
             chosen_net = chosen_total + penalty * len(chosen_suppliers)
             other_net = baseline_net if recommended_plan == "split" else split_net
@@ -294,10 +304,11 @@ class BasketOptimizationService:
             weight_profile = req.get("weightProfile", "balanced")
             recommendation_mode = req.get("recommendationMode", "balanced")
             include_supplier_hub = req.get("includeSupplierHub", True)
+            user_city = req.get("userCity") or ""
 
             import asyncio
             gathered = await asyncio.gather(*[
-                BasketOptimizationService._gather_item(it, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
+                BasketOptimizationService._gather_item(it, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub, user_city=user_city)
                 for it in items
             ])
 
@@ -309,11 +320,11 @@ class BasketOptimizationService:
             raise
 
     @staticmethod
-    async def _gather_item(item: dict, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False) -> dict:
+    async def _gather_item(item: dict, category: str, suppliers: list[str], user_id: str | None = None, include_supplier_hub: bool = False, user_city: str = "") -> dict:
         try:
             query = item["query"].strip()
             qty = max(1, round(item.get("quantity", 1) or 1))
-            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub)
+            products = await SearchService.gather(query, category, suppliers, user_id=user_id, include_supplier_hub=include_supplier_hub, user_city=user_city)
             return {"query": query, "quantity": qty, "products": products}
         except Exception:
             return {"query": item.get("query", ""), "quantity": 1, "products": []}

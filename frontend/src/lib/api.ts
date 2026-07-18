@@ -84,6 +84,7 @@ export const api = {
     weightProfile?: string;
     recommendationMode?: string;
     includeSupplierHub?: boolean;
+    userCity?: string;
   }) => unwrap<SearchResponse>(API.post('/search', body)),
 
   // Split-cart / basket optimization
@@ -95,6 +96,7 @@ export const api = {
     consolidationPenalty?: number;
     recommendationMode?: string;
     includeSupplierHub?: boolean;
+    userCity?: string;
   }) => unwrap<BasketOptimizeResponse>(API.post('/basket/optimize', body)),
   basketHistory: (page = 1, limit = 20) =>
     unwrap<PaginatedResponse<BasketHistoryEntry>>(API.get('/basket/history', { params: { page, limit } })),
@@ -105,6 +107,7 @@ export const api = {
   weightProfiles: () => unwrap<WeightProfile[]>(API.get('/weight-profiles')),
   recommendationModes: () =>
     unwrap<RecommendationModeOption[]>(API.get('/recommendation-modes')),
+  cities: () => unwrap<{ cities: string[]; default: string }>(API.get('/cities')),
 
   // History
   history: (page = 1, limit = 20) =>
