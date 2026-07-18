@@ -50,6 +50,7 @@ class SearchInput(BaseModel):
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     recommendationMode: Optional[RecommendationMode] = None
     includeSupplierHub: Optional[bool] = True
+    userCity: Optional[str] = None
 
 
 class RecommendationInput(BaseModel):
@@ -68,6 +69,7 @@ class PreferenceInput(BaseModel):
     sortPreference: Optional[Literal["lowest_price", "highest_rating", "fastest_delivery", "highest_discount"]] = None
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     businessType: Optional[str] = None
+    city: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -87,3 +89,4 @@ class BasketInput(BaseModel):
     consolidationPenalty: Optional[float] = Field(None, ge=0, le=100000)
     recommendationMode: Optional[RecommendationMode] = None
     includeSupplierHub: Optional[bool] = True
+    userCity: Optional[str] = None

@@ -222,7 +222,7 @@ async def search(body: SearchInput, user: dict = Depends(get_current_user)):
             try:
                 db = get_db()
                 rec = result.get("recommendation")
-                await db.searchhistories.insert_one({
+                doc = {
                     "userId": ObjectId(user["sub"]),
                     "query": result["query"],
                     "category": result["category"],
@@ -234,7 +234,9 @@ async def search(body: SearchInput, user: dict = Depends(get_current_user)):
                     "weightProfile": req.get("weightProfile", "balanced"),
                     "createdAt": datetime.utcnow(),
                     "updatedAt": datetime.utcnow(),
-                })
+                }
+                await db.searchhistories.insert_one(doc)
+                print(f"[INFO] Search history saved: query='{result['query']}' category='{result['category']}' count={result['count']}")
             except Exception as he:
                 print(f"[WARN] Failed to persist search history: {he}")
 
@@ -285,6 +287,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
             "consolidationPenalty": body.consolidationPenalty or 0,
             "recommendationMode": body.recommendationMode or "balanced",
             "includeSupplierHub": body.includeSupplierHub if body.includeSupplierHub is not None else True,
+            "userCity": body.userCity or "",
         }
         result = await BasketOptimizationService.optimize(user["sub"], req)
 
