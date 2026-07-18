@@ -4,7 +4,7 @@ import { api, apiError } from '../lib/api';
 import { useLocation } from '../context/LocationContext';
 
 export function LocationDropdown({ readOnly = false }: { readOnly?: boolean }) {
-  const { city, cities, setCity, refresh } = useLocation();
+  const { city, cities, setCity } = useLocation();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -15,7 +15,6 @@ export function LocationDropdown({ readOnly = false }: { readOnly?: boolean }) {
       setOpen(false);
       setLoading(true);
       await api.updatePreferences({ city: newCity });
-      refresh();
     } catch (e) {
       console.error('Failed to update city', e);
     } finally {

@@ -288,7 +288,7 @@ CITY_DISTANCES_KM: dict[str, dict[str, int]] = {
 }
 
 # Default user location (can be overridden via user preferences)
-DEFAULT_USER_CITY = "Mumbai"
+DEFAULT_USER_CITY = "Hyderabad"
 
 # Sorted list of all cities available in the distance matrix
 AVAILABLE_CITIES: list[str] = sorted(CITY_DISTANCES_KM.keys())

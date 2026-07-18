@@ -4,47 +4,52 @@ import { api, apiError } from '../lib/api';
 interface LocationState {
   city: string;
   cities: string[];
+  loaded: boolean;
   setCity: (city: string) => void;
-  refresh: () => void;
 }
 
 const LocationContext = createContext<LocationState>({
-  city: 'Mumbai',
+  city: 'Hyderabad',
   cities: [],
+  loaded: false,
   setCity: () => {},
-  refresh: () => {},
 });
 
 export const useLocation = () => useContext(LocationContext);
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
-  const [city, setCityState] = useState<string>('Mumbai');
+  const [city, setCityState] = useState<string>('Hyderabad');
   const [cities, setCities] = useState<string[]>([]);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     try {
       Promise.all([api.cities(), api.preferences()])
         .then(([citiesData, pref]) => {
           setCities(citiesData.cities || []);
-          setCityState(pref.city || citiesData.default || 'Mumbai');
+          setCityState(pref.city || citiesData.default || 'Hyderabad');
+          setLoaded(true);
         })
-        .catch((e) => console.error(apiError(e)));
+        .catch((e) => {
+          console.error(apiError(e));
+          setLoaded(true);
+        });
     } catch (e) {
       console.error('Failed to load location data', e);
+      setLoaded(true);
     }
-  }, [refreshKey]);
-
-  const setCity = useCallback((newCity: string) => {
-    setCityState(newCity);
   }, []);
 
-  const refresh = useCallback(() => {
-    setRefreshKey((k) => k + 1);
+  const setCity = useCallback((newCity: string) => {
+    try {
+      setCityState(newCity);
+    } catch {
+      /* silent */
+    }
   }, []);
 
   return (
-    <LocationContext.Provider value={{ city, cities, setCity, refresh }}>
+    <LocationContext.Provider value={{ city, cities, loaded, setCity }}>
       {children}
     </LocationContext.Provider>
   );

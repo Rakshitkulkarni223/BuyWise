@@ -17,7 +17,7 @@ const SORTS: { value: SortOption; label: string }[] = [
 
 export function SettingsPage() {
   const { user } = useAuth();
-  const { city: contextCity, cities: availableCities, setCity, refresh: refreshLocation } = useLocation();
+  const { city: contextCity, cities: availableCities, setCity } = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
@@ -31,7 +31,8 @@ export function SettingsPage() {
         setPrefs({ ...pr, city: pr.city || contextCity });
       })
       .catch((e) => setError(apiError(e)));
-  }, [contextCity]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const update = (patch: Partial<Preferences>) => {
     setPrefs((prev) => (prev ? { ...prev, ...patch } : prev));
@@ -51,10 +52,7 @@ export function SettingsPage() {
         city: prefs.city,
       });
       setPrefs(updated);
-      if (prefs.city) {
-        setCity(prefs.city);
-      }
-      refreshLocation();
+      setCity(updated.city || prefs.city || contextCity);
       setSaved(true);
     } catch (e) {
       setError(apiError(e));
@@ -133,7 +131,7 @@ export function SettingsPage() {
                 </label>
                 <select
                   data-testid="pref-city"
-                  value={prefs?.city || contextCity || 'Mumbai'}
+                  value={prefs?.city || contextCity || 'Hyderabad'}
                   onChange={(e) => update({ city: e.target.value })}
                   className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
                 >
