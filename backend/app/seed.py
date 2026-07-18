@@ -37,6 +37,13 @@ async def _seed_categories() -> None:
 async def _seed_suppliers() -> None:
     try:
         db = get_db()
+        # Clean up suppliers no longer in CATEGORY_SUPPLIERS (e.g. Google Shopping)
+        all_valid = {(name, cat) for cat, names in CATEGORY_SUPPLIERS.items() for name in names}
+        all_valid_names = {name for name, _ in all_valid}
+        removed = await db.suppliers.delete_many({"name": {"$nin": list(all_valid_names)}})
+        if removed.deleted_count:
+            print(f"[INFO] Cleaned up {removed.deleted_count} stale supplier(s)")
+
         for category, suppliers in CATEGORY_SUPPLIERS.items():
             for name in suppliers:
                 profile = SUPPLIER_PROFILES.get(name, {})
