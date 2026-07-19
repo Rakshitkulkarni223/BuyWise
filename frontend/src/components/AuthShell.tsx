@@ -19,10 +19,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               </span>
               <span className="font-display text-xl font-bold tracking-tight">BuyWise</span>
             </div>
+            <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+              Explainable Procurement Intelligence
+            </div>
 
             <div className="max-w-md">
               <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight">
-                Search once. Compare every supplier. Decide with confidence.
+                Make smarter procurement decisions with explainable AI.
               </h1>
               <p className="mt-4 text-sm text-white/70">
                 An AI-powered procurement platform that compares suppliers, recommends the best purchasing
