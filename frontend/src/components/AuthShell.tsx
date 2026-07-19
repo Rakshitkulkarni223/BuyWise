@@ -17,15 +17,12 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               <span className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white">
                 <Boxes size={20} />
               </span>
-              <span className="font-display text-xl font-bold tracking-tight">BuyWise</span>
-            <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-              Explainable Procurement Intelligence
-            </div>
+              <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
             </div>
 
             <div className="max-w-md">
               <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight">
-                Make smarter procurement decisions with explainable AI.
+                Search once. Compare every supplier. Decide with confidence.
               </h1>
               <p className="mt-4 text-sm text-white/70">
                 An AI-powered procurement platform that compares suppliers, recommends the best purchasing
@@ -35,7 +32,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 {[
                   { icon: Sparkles, text: 'Explainable AI recommendations with confidence scores' },
                   { icon: TrendingDown, text: 'Track measurable procurement savings and business impact' },
-                  { icon: ShieldCheck, text: 'Configurable weight profiles per business type' },
+                  { icon: ShieldCheck, text: 'Configurable procurement strategies and scoring profiles' },
                 ].map((f, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm text-white/85">
                     <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/10">
