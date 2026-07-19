@@ -1,16 +1,14 @@
 """
-BuyWise - FastAPI Backend
+ProcureAI — FastAPI Backend
 
-Native Python/FastAPI backend. Runs on the port provided by the deployment
-environment (or port 8001 locally).
+Native Python/FastAPI backend that replaces the previous Node.js/Express +
+reverse-proxy architecture. Runs on port 8001 (Emergent platform ingress).
 """
 from contextlib import asynccontextmanager
 
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse
 
 from app.config import env
 from app.database import close_db, connect_db
@@ -36,7 +34,7 @@ async def lifespan(application: FastAPI):
 
 
 app = FastAPI(
-    title="BuyWise API",
+    title="ProcureAI API",
     version="1.0.0",
     docs_url=None,
     redoc_url=None,
@@ -71,9 +69,9 @@ app.include_router(ai_router, prefix="/api")
 @app.get("/")
 async def root():
     try:
-        return JSONResponse({"success": True, "service": "buywise-api", "docs": "/api/docs"})
+        return JSONResponse({"success": True, "service": "procureai-api", "docs": "/api/docs"})
     except Exception:
-        return JSONResponse({"success": True, "service": "buywise-api"})
+        return JSONResponse({"success": True, "service": "procureai-api"})
 
 
 @app.get("/health")
@@ -82,13 +80,3 @@ async def health_check():
         return JSONResponse({"status": "ok"})
     except Exception:
         return JSONResponse({"status": "ok"})
-
-
-@app.get("/presentation", response_class=HTMLResponse)
-async def presentation():
-    """Serve the ProcureAI slide deck."""
-    try:
-        ppt_path = Path(__file__).resolve().parent.parent / "presentation" / "index.html"
-        return HTMLResponse(ppt_path.read_text(encoding="utf-8"))
-    except Exception:
-        return HTMLResponse("<h1>Presentation not found</h1>", status_code=404)
