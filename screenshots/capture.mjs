@@ -13,7 +13,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BASE = process.argv[2] || 'https://buywise-compare-1.preview.emergentagent.com';
+const BASE = process.argv[2] || 'https://buywise-1-5tjh.onrender.com';
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
