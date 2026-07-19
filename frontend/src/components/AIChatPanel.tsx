@@ -422,7 +422,7 @@ export function AIChatPanel() {
         )}
       >
         <Sparkles size={20} />
-        <span className="font-semibold text-sm hidden sm:inline">AI Assistant</span>
+        <span className="font-semibold text-sm hidden sm:inline">Ask BuyWise</span>
       </button>
 
       {/* Backdrop */}
@@ -446,7 +446,7 @@ export function AIChatPanel() {
         <div className="flex items-center gap-3 px-4 h-14 border-b border-line flex-shrink-0">
           <div className="flex items-center gap-2 flex-1">
             <Bot size={20} className="text-accent" />
-            <span className="font-display font-bold text-ink">AI Assistant</span>
+            <span className="font-display font-bold text-ink">BuyWise Advisor</span>
             {toolsUsed.length > 0 && (
               <span className="flex items-center gap-1 text-xs text-muted bg-bg px-2 py-0.5 rounded-full">
                 <Wrench size={10} />
@@ -563,7 +563,7 @@ export function AIChatPanel() {
                 </button>
               </div>
               <div className="text-center mt-2">
-                <span className="text-[10px] text-muted/50">Powered by Groq · AI responses may be approximate</span>
+                <span className="text-[10px] text-muted/50">Powered by ProcureAI Intelligence · AI responses may be approximate</span>
               </div>
             </div>
           </>

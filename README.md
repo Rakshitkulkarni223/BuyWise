@@ -76,13 +76,13 @@ This allows buyers to interact with procurement data using natural language whil
 
 ## 📸 Screenshots
 
-| Dashboard | Search & Compare | Explanation Panel |
+| Dashboard | Search & Compare | AI Explanation |
 |---|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
-| Basket Optimization | Business Impact | ROI Calculator |
+| Basket Optimization | AI Assistant | Supplier Hub |
 |---|---|---|
-| ![Basket](screenshots/basket-optimization.png) | ![Impact](screenshots/business-impact.png) | ![ROI](screenshots/roi-calculator.png) |
+| ![Basket](screenshots/basket-optimization.png) | ![AI Chat](screenshots/ai-assistant.png) | ![Suppliers](screenshots/supplier-hub.png) |
 
 <details>
 <summary>More screenshots</summary>
