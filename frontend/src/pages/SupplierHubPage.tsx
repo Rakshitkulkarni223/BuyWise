@@ -110,12 +110,10 @@ export function SupplierHubPage() {
       }
       setLoading(true);
       setError('');
-      // Strip read-only fields that the backend schema doesn't accept
-      const { id: _id, userId: _uid, createdAt: _ca, updatedAt: _ua, ...payload } = form as any;
       if (editingId) {
-        await supplierHubApi.updateSupplier(editingId, payload);
+        await supplierHubApi.updateSupplier(editingId, form);
       } else {
-        await supplierHubApi.createSupplier(payload);
+        await supplierHubApi.createSupplier(form);
       }
       await loadSuppliers();
       setView('list');
@@ -131,7 +129,6 @@ export function SupplierHubPage() {
   const deleteSupplier = async (id: string) => {
     try {
       if (!confirm('Delete this supplier and all its products?')) return;
-      setError('');
       await supplierHubApi.deleteSupplier(id);
       await loadSuppliers();
       if (selectedSupplier?.id === id) {
@@ -152,12 +149,10 @@ export function SupplierHubPage() {
         return;
       }
       setError('');
-      // Strip read-only fields that the backend schema doesn't accept
-      const { id: _id, supplierId: _sid, createdAt: _ca, updatedAt: _ua, ...productPayload } = productForm as any;
       if (editingProductId) {
-        await supplierHubApi.updateProduct(selectedSupplier.id, editingProductId, productPayload);
+        await supplierHubApi.updateProduct(selectedSupplier.id, editingProductId, productForm);
       } else {
-        await supplierHubApi.createProduct(selectedSupplier.id, productPayload);
+        await supplierHubApi.createProduct(selectedSupplier.id, productForm);
       }
       await loadProducts(selectedSupplier.id);
       setShowProductForm(false);
@@ -172,7 +167,6 @@ export function SupplierHubPage() {
     try {
       if (!selectedSupplier) return;
       if (!confirm('Delete this product?')) return;
-      setError('');
       await supplierHubApi.deleteProduct(selectedSupplier.id, productId);
       await loadProducts(selectedSupplier.id);
     } catch (e) {
@@ -295,7 +289,7 @@ export function SupplierHubPage() {
     return (
       <div className="space-y-7">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => { setError(''); setView('list'); }}>
+          <Button variant="ghost" size="sm" onClick={() => setView('list')}>
             <ArrowLeft size={15} /> Back
           </Button>
         </div>
@@ -434,7 +428,7 @@ export function SupplierHubPage() {
     return (
       <div className="space-y-7">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => { setError(''); setView('list'); }}>
+          <Button variant="ghost" size="sm" onClick={() => setView('list')}>
             <ArrowLeft size={15} /> Back
           </Button>
         </div>
