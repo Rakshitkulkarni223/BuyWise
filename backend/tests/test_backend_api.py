@@ -3,7 +3,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://buywise-compare-1.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("BACKEND_URL", "https://buywise-qe5o.onrender.com").rstrip("/")
 INTERNAL_URL = "http://localhost:8001"
 ADMIN_EMAIL = "admin@buywise.com"
 ADMIN_PASSWORD = "Admin@123"

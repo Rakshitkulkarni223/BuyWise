@@ -1,8 +1,8 @@
 """
 BuyWise - FastAPI Backend
 
-Native Python/FastAPI backend that replaces the previous Node.js/Express +
-reverse-proxy architecture. Runs on port 8001 (Emergent platform ingress).
+Native Python/FastAPI backend. Runs on the port provided by the deployment
+environment (or port 8001 locally).
 """
 from contextlib import asynccontextmanager
 

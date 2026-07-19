@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const BASE = 'https://buywise-compare-1.preview.emergentagent.com';
+const BASE = 'https://buywise-1-5tjh.onrender.com';
 const CREDS = { email: 'demo@buywise.com', password: 'Demo@123' };
 const VIDEO_DIR = path.resolve(__dirname);
 

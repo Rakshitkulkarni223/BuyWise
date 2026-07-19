@@ -23,8 +23,8 @@
 
 | | |
 |---|---|
-| **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
-| **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
+| **Web app** | [https://buywise-1-5tjh.onrender.com](https://buywise-1-5tjh.onrender.com) |
+| **API** | [https://buywise-qe5o.onrender.com](https://buywise-qe5o.onrender.com) |
 | **Email** | `demo@buywise.com` |
 | **Password** | `Demo@123` |
 
