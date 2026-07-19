@@ -134,7 +134,7 @@ const nav = async (page, testid) => {
     // 11 ── AI Assistant ──
     console.log('▸ AI Assistant');
     try {
-      const aiBtn = page.locator('button:has-text("Ask ProcureAI")');
+      const aiBtn = page.locator('button:has-text("Ask BuyWise")').first();
       await aiBtn.click({ timeout: 5000 });
       await wait(1500);
 

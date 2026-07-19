@@ -17,7 +17,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               <span className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-white">
                 <Boxes size={20} />
               </span>
-              <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
+              <span className="font-display text-xl font-bold tracking-tight">BuyWise</span>
             </div>
 
             <div className="max-w-md">

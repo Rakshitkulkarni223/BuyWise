@@ -563,7 +563,7 @@ export function AIChatPanel() {
                 </button>
               </div>
               <div className="text-center mt-2">
-                <span className="text-[10px] text-muted/50">Powered by ProcureAI Intelligence · AI responses may be approximate</span>
+                <span className="text-[10px] text-muted/50">Powered by BuyWise Intelligence · AI responses may be approximate</span>
               </div>
             </div>
           </>
