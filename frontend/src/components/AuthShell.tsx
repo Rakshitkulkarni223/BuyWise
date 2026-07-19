@@ -18,9 +18,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 <Boxes size={20} />
               </span>
               <span className="font-display text-xl font-bold tracking-tight">BuyWise</span>
-            </div>
             <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
               Explainable Procurement Intelligence
+            </div>
             </div>
 
             <div className="max-w-md">
