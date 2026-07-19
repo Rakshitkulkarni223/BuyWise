@@ -48,8 +48,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 | | |
 |---|---|
-| **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
-| **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
+| **Production** | [https://buywise-1-5tjh.onrender.com](https://buywise-1-5tjh.onrender.com) |
 | **Email** | `demo@buywise.com` |
 | **Password** | `Demo@123` |
 
