@@ -87,13 +87,13 @@ This allows buyers to interact with procurement data using natural language whil
 <details>
 <summary>More screenshots</summary>
 
-| Analytics | Search History | Watchlist |
+| Business Impact | Analytics | Search History |
 |---|---|---|
-| ![Analytics](screenshots/analytics.png) | ![History](screenshots/history.png) | ![Watchlist](screenshots/watchlist.png) |
+| ![Impact](screenshots/business-impact.png) | ![Analytics](screenshots/analytics.png) | ![History](screenshots/history.png) |
 
-| Settings | Documentation |
-|---|---|
-| ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
+| Watchlist | Settings | Documentation |
+|---|---|---|
+| ![Watchlist](screenshots/watchlist.png) | ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
 
 </details>
 
