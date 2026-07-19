@@ -1,13 +1,103 @@
 """
-LLM Procurement Advisor — Gemini-powered natural language explanations.
+LLM Procurement Advisor — Groq-powered natural language explanations.
 
 Generates human-readable AI procurement advice from recommendation data
-using Google Gemini 2.0 Flash. Falls back to template-based explanation
-if no API key is set or if the API call fails.
+using Groq API (Qwen 3.6-27B / Llama 3.1-8B). Falls back to template-based
+explanation if no API key is set or if the API call fails.
 """
 from __future__ import annotations
 
+import asyncio
+import re
+from openai import AsyncOpenAI
+
 from app.config import env
+
+# ---------------------------------------------------------------------------
+# Groq client (lazy init — only created when GROQ_API_KEY is set)
+# ---------------------------------------------------------------------------
+_groq_client: AsyncOpenAI | None = None
+
+
+def _get_groq_client() -> AsyncOpenAI | None:
+    """Return a shared AsyncOpenAI client pointed at Groq, or None."""
+    global _groq_client
+    try:
+        if not env.GROQ_API_KEY:
+            return None
+        if _groq_client is None:
+            _groq_client = AsyncOpenAI(
+                api_key=env.GROQ_API_KEY,
+                base_url="https://api.groq.com/openai/v1",
+            )
+        return _groq_client
+    except Exception:
+        return None
+
+
+def _strip_reasoning(text: str) -> str:
+    """Remove leaked chain-of-thought / drafting patterns from model output."""
+    try:
+        if not text:
+            return text
+        # Reasoning markers that indicate internal planning leaked into output
+        reasoning_markers = [
+            "Drafting", "Critique:", "Goal:", "Data Points:",
+            "Sentence 1", "Sentence 2", "Sentence 3",
+            "Focus on", "Let me ", "I need to", "I'll ",
+            "Here's my", "Step 1", "Step 2", "Step 3",
+        ]
+        # If the text contains multiple reasoning markers, it's leaked CoT
+        marker_count = sum(1 for m in reasoning_markers if m in text)
+        if marker_count >= 2:
+            return ""
+        # Strip everything before the first actual sentence if garbage prefix exists
+        # e.g. "` tags. Content: ..." → strip until we find a proper sentence start
+        text = re.sub(r"^[`\s]*tags\.?\s*", "", text).strip()
+        text = re.sub(r"^Content:\s*", "", text).strip()
+        return text
+    except Exception:
+        return text
+
+
+async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
+    """Call Groq chat completion. Returns empty string on failure."""
+    try:
+        client = _get_groq_client()
+        if client is None:
+            return ""
+        chosen_model = model or env.AI_PRIMARY_MODEL
+        response = await client.chat.completions.create(
+            model=chosen_model,
+            messages=[
+                {"role": "system", "content": "You are a procurement advisor for BuyWise. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper. Output ONLY the final answer — never show reasoning, planning, drafting steps, critiques, or internal notes."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=env.AI_TEMPERATURE,
+            max_tokens=max_tokens,
+        )
+        text = (response.choices[0].message.content or "").strip()
+        # Strip Qwen <think>...</think> chain-of-thought blocks (complete)
+        text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+        # Strip truncated/unclosed <think> blocks (model hit max_tokens before closing)
+        text = re.sub(r"<think>.*", "", text, flags=re.DOTALL).strip()
+        # Clean up any markdown the model might add
+        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        # Strip leaked chain-of-thought reasoning (no <think> tags but visible planning)
+        text = _strip_reasoning(text)
+        # If primary model produced only <think> content, retry with fallback
+        if not text and model is None and env.AI_FALLBACK_MODEL:
+            return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
+        return text
+    except Exception as e:
+        # If primary model fails, try fallback
+        if model is None and env.AI_FALLBACK_MODEL:
+            try:
+                return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
+            except Exception:
+                pass
+        print(f"[WARN] Groq completion failed: {e}")
+        return ""
 
 
 def _format_inr(amount: float) -> str:
@@ -23,7 +113,7 @@ def _format_inr(amount: float) -> str:
 
 
 def _build_prompt(recommendation: dict, products: list[dict], mode: str) -> str:
-    """Build a structured prompt for Gemini from recommendation data."""
+    """Build a structured prompt from recommendation data."""
     try:
         best = recommendation.get("product", {})
         supplier = recommendation.get("supplier", "Unknown")
@@ -89,7 +179,7 @@ Write the explanation now. Keep it under 80 words. Start with the supplier name.
 
 
 def _template_fallback(recommendation: dict, products: list[dict], mode: str) -> str:
-    """Generate a template-based explanation when Gemini is unavailable."""
+    """Generate a template-based explanation when Groq is unavailable."""
     try:
         supplier = recommendation.get("supplier", "Unknown")
         best = recommendation.get("product", {})
@@ -142,38 +232,23 @@ def _template_fallback(recommendation: dict, products: list[dict], mode: str) ->
 async def generate_explanation(recommendation: dict, products: list[dict], mode: str = "balanced") -> str:
     """Generate a natural language AI explanation for a procurement recommendation.
 
-    Uses Google Gemini if GEMINI_API_KEY is set, otherwise falls back to template.
+    Uses Groq API if GROQ_API_KEY is set, otherwise falls back to template.
     Never raises — returns empty string on failure.
     """
     try:
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return _template_fallback(recommendation, products, mode)
-
         prompt = _build_prompt(recommendation, products, mode)
         if not prompt:
             return _template_fallback(recommendation, products, mode)
 
-        from google import genai
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
-
-        text = response.text.strip() if response.text else ""
-
-        if not text:
-            return _template_fallback(recommendation, products, mode)
-
-        # Clean up any markdown formatting the model might add
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-
-        return text
+        return _template_fallback(recommendation, products, mode)
 
     except Exception as e:
-        print(f"[WARN] Gemini API failed, using template fallback: {e}")
+        print(f"[WARN] LLM explanation failed, using template fallback: {e}")
         try:
             return _template_fallback(recommendation, products, mode)
         except Exception:
@@ -185,7 +260,7 @@ async def generate_explanation(recommendation: dict, products: list[dict], mode:
 # ---------------------------------------------------------------------------
 
 def _build_basket_prompt(intelligence: dict) -> str:
-    """Build a Gemini prompt from basket intelligence data."""
+    """Build a prompt from basket intelligence data."""
     try:
         savings = intelligence.get("savings", {})
         risk = intelligence.get("risk", {})
@@ -209,30 +284,32 @@ def _build_basket_prompt(intelligence: dict) -> str:
 
         prompt = f"""You are a procurement advisor for BuyWise.
 
-Write a concise 2-3 sentence summary of this basket optimization. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
+The user already sees these metrics in the UI: total cost, savings, risk level, delivery window, complexity, AI score, supplier count. Do NOT repeat these numbers.
 
-BASKET OPTIMIZATION:
-- Total procurement cost: ₹{total_cost:,.0f}
-- Product cost: ₹{intelligence.get('productCost', 0):,.0f}
-- Logistics cost: ₹{logistics.get('total', 0):,.0f}
-- Suppliers used: {supplier_count}
+Instead, write 3 short actionable insights about this basket that ADD VALUE beyond the metrics. Focus on:
+1. A strategic observation (e.g. supplier concentration risk, cost-delivery trade-off)
+2. An actionable recommendation (what the buyer should do next)
+3. A forward-looking insight (projected impact or what to watch for)
+
+Keep each insight to 1 sentence. Use this format exactly:
+INSIGHT: [observation]
+ACTION: [recommendation]
+OUTLOOK: [forward-looking point]
+
+BASKET DATA:
+- Total cost: ₹{total_cost:,.0f} (Products: ₹{intelligence.get('productCost', 0):,.0f} + Logistics: ₹{logistics.get('total', 0):,.0f})
+- Suppliers: {supplier_count}, Risk: {risk.get('level', 'Medium')} ({risk.get('score', 50)}/100)
 - Savings: ₹{savings.get('amount', 0):,.0f} ({savings.get('percentage', 0)}%)
-- Risk level: {risk.get('level', 'Medium')} (score: {risk.get('score', 50)}/100)
-- Delivery window: {delivery.get('latest', 0)} days
-- Complexity: {complexity.get('level', 'Easy')}
-- Consolidation: {consolidation.get('label', 'Good')}
-- AI Score: {ai_score}/100
-- Recommended plan: {cost_vs_conv.get('recommended', 'split')}
-{f'- ⚠ {dominant} dominates the basket' if dominant else ''}
+- Delivery: {delivery.get('latest', 0)} days, Complexity: {complexity.get('level', 'Easy')}
+- Consolidation: {consolidation.get('label', 'Good')}, AI Score: {ai_score}/100
+- Plan: {cost_vs_conv.get('recommended', 'split')}
+- Projected monthly savings: ₹{expected.get('monthly', 0):,.0f}, yearly: ₹{expected.get('yearly', 0):,.0f}
+{f'- ⚠ {dominant} has {supplier_dep.get(dominant, {}).get("percentage", 0)}% basket share' if dominant else '- Supplier spend is evenly distributed'}
 
 SUPPLIER DEPENDENCY:
 {chr(10).join(dep_lines) if dep_lines else 'Evenly distributed'}
 
-PROJECTED SAVINGS:
-- Monthly: ₹{expected.get('monthly', 0):,.0f}
-- Yearly: ₹{expected.get('yearly', 0):,.0f}
-
-Write a procurement-focused summary now. Start with "Your basket"."""
+Do NOT use markdown, bullet points, or bold. Write plain text only."""
 
         return prompt
     except Exception:
@@ -242,35 +319,24 @@ Write a procurement-focused summary now. Start with "Your basket"."""
 async def generate_basket_explanation(intelligence: dict) -> str:
     """Generate an AI explanation for basket optimization.
 
-    Uses Gemini if available, otherwise returns the existing template aiSummary.
+    Uses Groq if available, falls back to deterministic template.
     """
     try:
         existing_summary = intelligence.get("aiSummary", "")
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return existing_summary
 
         prompt = _build_basket_prompt(intelligence)
         if not prompt:
             return existing_summary
 
-        from google import genai
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
-
-        text = response.text.strip() if response.text else ""
-        if not text:
-            return existing_summary
-
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-        return text
+        return existing_summary
 
     except Exception as e:
-        print(f"[WARN] Gemini basket summary failed: {e}")
+        print(f"[WARN] Basket summary LLM failed: {e}")
         try:
             return intelligence.get("aiSummary", "")
         except Exception:
@@ -282,7 +348,7 @@ async def generate_basket_explanation(intelligence: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_longterm_prompt(long_term: dict, products: list[dict]) -> str:
-    """Build a Gemini prompt for long-term recommendation."""
+    """Build a prompt for long-term recommendation."""
     try:
         supplier = long_term.get("supplier", "Unknown")
         score = long_term.get("longTermScore", 0)
@@ -327,37 +393,25 @@ Write the explanation now. Start with the supplier name."""
 async def generate_longterm_explanation(long_term: dict, products: list[dict]) -> str:
     """Generate an AI explanation for long-term recommendation.
 
-    Uses Gemini if available, otherwise returns reasons joined as text.
+    Uses Groq if available, falls back to deterministic template.
     """
     try:
         reasons = long_term.get("reasons", [])
         fallback = " ".join(reasons) if reasons else ""
 
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return fallback
-
         prompt = _build_longterm_prompt(long_term, products)
         if not prompt:
             return fallback
 
-        from google import genai
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
-
-        text = response.text.strip() if response.text else ""
-        if not text:
-            return fallback
-
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-        return text
+        return fallback
 
     except Exception as e:
-        print(f"[WARN] Gemini long-term explanation failed: {e}")
+        print(f"[WARN] Long-term LLM failed: {e}")
         try:
             return " ".join(long_term.get("reasons", []))
         except Exception:

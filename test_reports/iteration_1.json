@@ -22,7 +22,7 @@
     "/app/backend/tests/test_backend_api.py"
   ],
   "success_rate": {"backend": "100%", "frontend": "not tested (per request)"},
-  "test_credentials": "admin@procureai.com / Admin@123 (login works, JWT returned, /api/auth/me confirms user)",
+  "test_credentials": "admin@buywise.com / Admin@123 (login works, JWT returned, /api/auth/me confirms user)",
   "seed_data_creation": "None (used seeded admin only)",
   "retest_needed": false,
   "should_main_agent_self_test": false,

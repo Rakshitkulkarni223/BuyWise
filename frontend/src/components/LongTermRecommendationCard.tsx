@@ -4,7 +4,7 @@ import { Clock, Check, Shield, TrendingUp, MessageSquareText } from 'lucide-reac
 import type { LongTermRecommendation } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
-import { formatINR } from '../lib/format';
+import { formatINR, cleanAIText } from '../lib/format';
 import { cn } from '../lib/utils';
 
 export function LongTermRecommendationCard({
@@ -46,26 +46,29 @@ export function LongTermRecommendationCard({
             </div>
           </div>
 
-          {rec.aiExplanation && (
+          {rec.aiExplanation && cleanAIText(rec.aiExplanation) && (
             <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
               <div className="mb-2 flex items-center gap-1.5">
                 <MessageSquareText size={13} className="text-accent" />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
               </div>
-              <p className="text-sm leading-relaxed text-ink-soft">{rec.aiExplanation}</p>
+              <p className="text-sm leading-relaxed text-ink-soft">{cleanAIText(rec.aiExplanation)}</p>
             </div>
           )}
 
-          <ul className="mt-4 space-y-2">
-            {rec.reasons.map((reason, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
-                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                {reason}
-              </li>
-            ))}
-          </ul>
+          {/* Show deterministic reasons only when AI explanation is absent */}
+          {!(rec.aiExplanation && cleanAIText(rec.aiExplanation)) && rec.reasons.length > 0 && (
+            <ul className="mt-4 space-y-2">
+              {rec.reasons.map((reason, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                    <Check size={11} strokeWidth={3} />
+                  </span>
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          )}
 
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-md border border-line bg-bg/30 p-2.5">
