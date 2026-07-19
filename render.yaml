@@ -1,0 +1,11 @@
+services:
+  - type: static
+    name: buywise-frontend
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    routes:
+      - path: "/*"
+        methods:
+          - GET
+        status: 200
+        dest: /index.html
