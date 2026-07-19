@@ -6,9 +6,11 @@ environment (or port 8001 locally).
 """
 from contextlib import asynccontextmanager
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.config import env
 from app.database import close_db, connect_db
@@ -80,3 +82,13 @@ async def health_check():
         return JSONResponse({"status": "ok"})
     except Exception:
         return JSONResponse({"status": "ok"})
+
+
+@app.get("/presentation", response_class=HTMLResponse)
+async def presentation():
+    """Serve the ProcureAI slide deck."""
+    try:
+        ppt_path = Path(__file__).resolve().parent.parent / "presentation" / "index.html"
+        return HTMLResponse(ppt_path.read_text(encoding="utf-8"))
+    except Exception:
+        return HTMLResponse("<h1>Presentation not found</h1>", status_code=404)
