@@ -195,8 +195,8 @@ const GENERAL_SECTIONS: DocSection[] = [
         </p>
         <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
           <video controls playsInline preload="metadata" className="w-full" poster="">
-            <source src="https://github.com/user-attachments/assets/67f26c78-cfef-4fad-b2f0-cb6d5fd10612" type="video/webm" />
-            <source src="https://github.com/user-attachments/assets/67f26c78-cfef-4fad-b2f0-cb6d5fd10612" type="video/mp4" />
+            <source src="/buywise-demo.webm" type="video/webm" />
+            <source src="/buywise-demo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
