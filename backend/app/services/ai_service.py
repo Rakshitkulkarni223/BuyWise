@@ -2,7 +2,7 @@
 AI Procurement Assistant — Main orchestrator.
 
 Handles the conversation loop: user message → LLM → tool calls → LLM → response.
-Uses Groq (OpenAI-compatible) with function calling on Qwen3 32B / Llama 3.3 70B.
+Uses Groq (OpenAI-compatible) with function calling on Llama-3.3-70b-versatile / Llama-3.3-70b.
 """
 from __future__ import annotations
 

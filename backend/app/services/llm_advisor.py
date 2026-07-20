@@ -2,7 +2,7 @@
 LLM Procurement Advisor — Groq-powered natural language explanations.
 
 Generates human-readable AI procurement advice from recommendation data
-using Groq API (Qwen 3.6-27B / Llama 3.1-8B). Falls back to template-based
+using Groq API (Llama 3.3-70b-versatile / Llama 3.1-8B). Falls back to template-based
 explanation if no API key is set or if the API call fails.
 """
 from __future__ import annotations
